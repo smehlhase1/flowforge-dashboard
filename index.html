@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowForge AI Tickets Dashboard</title>
+<style>
+  :root {
+    --done:    #16a34a; --done-lt: #dcfce7;
+    --wip:     #d97706; --wip-lt:  #fef3c7;
+    --todo:    #6b7280; --todo-lt: #f3f4f6;
+    --hold:    #7c3aed; --hold-lt: #ede9fe;
+    --red:     #dc2626; --red-lt:  #fee2e2;
+    --blue:    #2563eb; --blue-lt: #eff6ff;
+    --border:  #e5e7eb; --text: #111827; --muted: #6b7280;
+    --ai:      #7c3aed; --ai-lt:   #ede9fe;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; color: var(--text); background: #f9fafb; }
+  a { color: var(--blue); text-decoration: none; } a:hover { text-decoration: underline; }
+
+  header { background: linear-gradient(135deg, #3b0764 0%, #6d28d9 100%); color: #fff; padding: 32px 40px 28px; }
+  header .inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  header .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin-bottom: 8px; }
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  header .sub { margin-top: 6px; opacity: .65; font-size: 13px; }
+  .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; margin-top: 14px; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  /* Search */
+  .search-wrap { margin-bottom: 20px; position: relative; }
+  .search-wrap input { width: 100%; padding: 10px 16px 10px 42px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fff; color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
+  .search-wrap input:focus { border-color: var(--ai); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+  .search-wrap .si { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+  .search-wrap .sc { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); }
+
+  /* Summary bar */
+  .summary-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 28px; }
+  .summary-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+  .summary-card .num { font-size: 24px; font-weight: 700; line-height: 1; }
+  .summary-card .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .summary-card.purple .num { color: var(--ai); }
+  .summary-card.green  .num { color: var(--done); }
+  .summary-card.amber  .num { color: var(--wip); }
+  .summary-card.gray   .num { color: var(--todo); }
+  .summary-card.blue   .num { color: var(--blue); }
+  .summary-card.red    .num { color: var(--red); }
+
+  /* Section headings */
+  h2 { font-size: 16px; font-weight: 700; color: var(--text); margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .badge-done     { background: var(--done-lt); color: var(--done); }
+  .badge-wip      { background: var(--wip-lt);  color: var(--wip); }
+  .badge-todo     { background: var(--todo-lt); color: var(--todo); }
+  .badge-hold     { background: var(--hold-lt); color: var(--hold); }
+  .badge-closed   { background: #f0fdf4; color: #166534; }
+  .badge-review   { background: #dbeafe; color: #1d4ed8; }
+  .badge-ai       { background: var(--ai-lt);  color: var(--ai); }
+
+  /* Initiative group */
+  .initiative-block { margin-bottom: 20px; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .initiative-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #faf5ff; border-bottom: 1px solid #e9d5ff; cursor: pointer; user-select: none; }
+  .initiative-head .ikey { font-size: 11px; font-family: monospace; color: var(--ai); flex-shrink: 0; }
+  .initiative-head .ititle { font-size: 13px; font-weight: 700; flex: 1; }
+  .initiative-head .icounts { display: flex; gap: 6px; flex-shrink: 0; }
+  .initiative-head .iarrow { font-size: 9px; color: var(--muted); transition: transform .15s; flex-shrink: 0; }
+  .initiative-block.open .iarrow { transform: rotate(90deg); }
+  .initiative-body { display: none; }
+  .initiative-block.open .initiative-body { display: block; }
+
+  /* Epic sub-group */
+  .epic-group { border-bottom: 1px solid #f3f4f6; }
+  .epic-group:last-child { border-bottom: none; }
+  .epic-group-head { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #fefce8; border-bottom: 1px solid #fef08a; }
+  .epic-group-head .eg-key { font-size: 10px; font-family: monospace; color: var(--wip); flex-shrink: 0; }
+  .epic-group-head .eg-title { font-size: 12px; font-weight: 600; flex: 1; color: #78350f; }
+  .epic-group-head .eg-count { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+  /* Ticket rows */
+  .ticket-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ticket-table th { padding: 7px 12px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: #f9fafb; border-bottom: 1px solid var(--border); overflow: hidden; white-space: nowrap; }
+  .ticket-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; font-size: 12px; vertical-align: middle; overflow: hidden; }
+  .ticket-table th:nth-child(1), .ticket-table td:nth-child(1) { width: 96px; }
+  .ticket-table th:nth-child(2), .ticket-table td:nth-child(2) { width: auto; }
+  .ticket-table th:nth-child(3), .ticket-table td:nth-child(3) { width: 130px; }
+  .ticket-table th:nth-child(4), .ticket-table td:nth-child(4) { width: 120px; }
+  .ticket-table th:nth-child(5), .ticket-table td:nth-child(5) { width: 152px; }
+  .ticket-table th:nth-child(6), .ticket-table td:nth-child(6) { width: 82px; }
+  .ticket-table th:nth-child(7), .ticket-table td:nth-child(7) { width: 78px; }
+  .ticket-table tr:last-child td { border-bottom: none; }
+  .ticket-table tr:hover td { background: #faf5ff; }
+  .ticket-table .t-key { font-family: monospace; font-size: 11px; white-space: nowrap; }
+  .ticket-table .t-summary { color: #374151; word-break: break-word; }
+  .ticket-table .t-who { color: var(--muted); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-date { color: var(--muted); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-done { color: var(--done); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-done-na { color: #d1d5db; font-size: 11px; }
+
+  /* Author section */
+  .author-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+  .author-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .author-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid var(--border); }
+  .author-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--ai), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .author-name { font-size: 13px; font-weight: 700; flex: 1; }
+  .author-count { font-size: 11px; color: var(--muted); }
+  .author-body { padding: 0; }
+  .author-ticket { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
+  .author-ticket:last-child { border-bottom: none; }
+  .author-ticket .at-key { font-family: monospace; color: var(--blue); flex-shrink: 0; min-width: 70px; }
+  .author-ticket .at-title { flex: 1; color: #374151; }
+  .author-ticket .at-date { color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+
+  /* Leaderboard */
+  .leaderboard { display: flex; flex-direction: column; gap: 8px; }
+  .lb-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .lb-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; user-select: none; }
+  .lb-head:hover { background: #faf5ff; }
+  .lb-rank { font-size: 18px; font-weight: 800; width: 28px; text-align: center; flex-shrink: 0; color: var(--muted); }
+  .lb-rank.rank-1 { color: #f59e0b; }
+  .lb-rank.rank-2 { color: #94a3b8; }
+  .lb-rank.rank-3 { color: #b45309; }
+  .lb-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--ai), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .lb-avatar.green-grad { background: linear-gradient(135deg, var(--done), #22c55e); }
+  .lb-name { font-size: 14px; font-weight: 700; flex: 1; }
+  .lb-count { font-size: 22px; font-weight: 800; color: var(--ai); min-width: 32px; text-align: right; flex-shrink: 0; }
+  .lb-count.green-count { color: var(--done); }
+  .lb-count-lbl { font-size: 10px; color: var(--muted); margin-left: 4px; flex-shrink: 0; }
+  .lb-arrow { font-size: 9px; color: var(--muted); transition: transform .15s; margin-left: 8px; flex-shrink: 0; }
+  .lb-card.open .lb-arrow { transform: rotate(90deg); }
+  .lb-body { display: none; border-top: 1px solid #f3f4f6; }
+  .lb-card.open .lb-body { display: block; }
+  .lb-ticket { display: flex; align-items: center; gap: 8px; padding: 7px 16px; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
+  .lb-ticket:last-child { border-bottom: none; }
+  .lb-ticket .lt-key { font-family: monospace; color: var(--blue); flex-shrink: 0; min-width: 76px; }
+  .lb-ticket .lt-title { flex: 1; color: #374151; }
+
+  /* ── Bedrock Spend ── */
+  .spend-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .spend-table-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .spend-table { width: 100%; border-collapse: collapse; }
+  .spend-table th { padding: 8px 14px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: #f9fafb; border-bottom: 1px solid var(--border); }
+  .spend-table td { padding: 8px 14px; border-bottom: 1px solid #f3f4f6; font-size: 12px; vertical-align: middle; }
+  .spend-table tr:last-child td { border-bottom: none; }
+  .spend-table tr:hover td { background: #faf5ff; }
+  .cost-strong { font-weight: 700; color: #0f172a; }
+  .spend-bar-wrap { width: 130px; }
+  .spend-bar { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .spend-bar.model-bar { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+  .model-pct { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .user-spend-list { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .user-spend-row { display: flex; align-items: center; gap: 12px; padding: 9px 16px; border-bottom: 1px solid #f3f4f6; }
+  .user-spend-row:last-child { border-bottom: none; }
+  .user-spend-row:hover { background: #faf5ff; }
+  .usr-rank { font-size: 12px; font-weight: 700; width: 22px; text-align: center; color: var(--muted); flex-shrink: 0; }
+  .usr-rank.r1 { color: #f59e0b; }
+  .usr-rank.r2 { color: #94a3b8; }
+  .usr-rank.r3 { color: #b45309; }
+  .usr-name { font-size: 13px; font-weight: 600; flex: 1; color: #1e293b; font-family: monospace; }
+  .usr-req { font-size: 11px; color: var(--muted); white-space: nowrap; width: 90px; text-align: right; flex-shrink: 0; }
+  .usr-bar-wrap { width: 140px; flex-shrink: 0; }
+  .usr-bar { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .usr-cost { font-size: 14px; font-weight: 800; color: #0f172a; white-space: nowrap; width: 76px; text-align: right; flex-shrink: 0; }
+
+  /* s-hide for search */
+  .s-hide { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div>
+      <div class="eyebrow">FlowForge · Claude Code AI</div>
+      <h1>FlowForge Tickets Dashboard</h1>
+      <p class="sub">All Jira tickets carrying the <strong>FlowForge</strong> label — created with Claude Code AI · Last pull: 5 Jul 2026</p>
+      <div class="ai-badge">✦ FlowForge · 47 tickets · 10 initiatives · 17 authors</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <span class="si">🔍</span>
+    <input type="text" id="ff-search" placeholder="Search tickets, summaries, assignees, authors…" autocomplete="off">
+    <span class="sc" id="ff-count"></span>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="summary-bar" style="grid-template-columns: repeat(10, 1fr)">
+    <div class="summary-card purple"><div class="num">47</div><div class="lbl">Total Tickets</div></div>
+    <div class="summary-card green"><div class="num">6</div><div class="lbl">Done</div></div>
+    <div class="summary-card amber"><div class="num">10</div><div class="lbl">In Progress / Review</div></div>
+    <div class="summary-card gray"><div class="num">22</div><div class="lbl">To Do</div></div>
+    <div class="summary-card blue"><div class="num">10</div><div class="lbl">Initiatives</div></div>
+    <div class="summary-card red"><div class="num">17</div><div class="lbl">Authors</div></div>
+    <div class="summary-card purple"><div class="num">$2,594</div><div class="lbl">Total Cost (15 days)</div></div>
+    <div class="summary-card blue"><div class="num">68,035</div><div class="lbl">Total Requests</div></div>
+    <div class="summary-card amber"><div class="num">43</div><div class="lbl">Peak Active Users</div></div>
+    <div class="summary-card green"><div class="num">$173</div><div class="lbl">Avg Daily Cost</div></div>
+  </div>
+
+  <div id="init-section-wrap">
+  <h2>✦ FlowForge Tickets — by Initiative &amp; Epic</h2>
+  <div id="init-section-body">
+  <div class="initiative-block" data-init="fox-uk">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">15011</span>
+      <span class="ititle">Fox UK</span>
+      <div class="icounts">
+        <span class="badge badge-wip">5 active</span>
+        <span class="badge badge-done">2 done</span>
+        <span class="badge badge-todo">3 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12307" target="_blank">PROD-12307</a></span>
+          <span class="eg-title">Fox UK — UAT Wave 1</span>
+          <span class="eg-count">8 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5861" target="_blank">CIL-5861</a></td><td class="t-summary">[FOX] EAPI breaking change: contractUpgrades moved to root level in ViewBaseContractAndUpgrades</td><td class="t-who">Unassigned</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-03</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5849" target="_blank">CIL-5849</a></td><td class="t-summary">[FOX] Saved quotes remain on Dashboard after successful policy purchase</td><td class="t-who">Unassigned</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5820" target="_blank">CIL-5820</a></td><td class="t-summary">[Investigation FOX] Error message when disabling main Auto-Renew</td><td class="t-who">Makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-01</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5840" target="_blank">CIL-5840</a></td><td class="t-summary">[FOX] Medical add-on not returned in quote response when only non-hold-cover add-ons</td><td class="t-who">Boris Stupar</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">QA To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5848" target="_blank">CIL-5848</a></td><td class="t-summary">[FOX] Medical screening status missing in Get Quote by ID response</td><td class="t-who">Ozlam Tahirli</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-review">In Validation</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5824" target="_blank">CIL-5824</a></td><td class="t-summary">[Investigation FOX] Error message displayed when purchasing any type of policy</td><td class="t-who">Ozlam Tahirli</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-review">In Validation</span></td><td class="t-date">2026-07-01</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12353" target="_blank">PROD-12353</a></span>
+          <span class="eg-title">Fox UK — [FR-8] Save and Retrieve Quote</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5571" target="_blank">CIL-5571</a></td><td class="t-summary">[Fox UK] Main Quote Not Returned in List Quotes Endpoint When Only Basic Cover</td><td class="t-who">Mario Pinderi</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13072" target="_blank">PROD-13072</a></span>
+          <span class="eg-title">Fox UK — [FR-13] Migration / Bugs &amp; Fixes</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a></td><td class="t-summary">[travel-service] Webhook Endpoint not writing Logzilla Logs</td><td class="t-who">Mario Pinderi</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Travel (15803 / FOX) ── -->
+  <div class="initiative-block" data-init="travel">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">15803</span>
+      <span class="ititle">Travel / Fox — Requote &amp; EHA Widget</span>
+      <div class="icounts">
+        <span class="badge badge-todo">4 to do</span>
+        <span class="badge badge-done">2 done</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13143" target="_blank">PROD-13143</a></span>
+          <span class="eg-title">[FR-04] Requote 'Get a Quote' (Traveler's Details)</span>
+          <span class="eg-count">2 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5838" target="_blank">CIL-5838</a></td><td class="t-summary">[simplesurance-api + travel-service] Get Quote By ID: Return HTML in response</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5836" target="_blank">CIL-5836</a></td><td class="t-summary">[Spike] Investigate and implement storing raw Fusion HTML in Integration Service</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13062" target="_blank">PROD-13062</a></span>
+          <span class="eg-title">[EHA Widget + MP] — Get Policy and Coverages details</span>
+          <span class="eg-count">2 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a></td><td class="t-summary">Clara — Create new provider Lib Home Assistance Contract Management</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a></td><td class="t-summary">Clara — Add client credentials + Product Code for Widget &amp; Metaportal</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13400" target="_blank">PROD-13400</a></span>
+          <span class="eg-title">EHA Widget — Upload and Delete Case Documents</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5633" target="_blank">CIL-5633</a></td><td class="t-summary">[sisu-api: case mgmt] Create POST /cases/upload-documents endpoint</td><td class="t-who">Unassigned</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MDDR (15044) ── -->
+  <div class="initiative-block" data-init="mddr">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">15044</span>
+      <span class="ititle">MDDR — Multi-Device &amp; Beneficiary Management</span>
+      <div class="icounts">
+        <span class="badge badge-wip">2 active</span>
+        <span class="badge badge-todo">1 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12497" target="_blank">PROD-12497</a></span>
+          <span class="eg-title">MDDR — Individual Policies: E2E Testing</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5651" target="_blank">CIL-5651</a></td><td class="t-summary">[MDDR]: Fix premium amount mapping</td><td class="t-who">Satish Ghone</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-wip">QA To Do</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13196" target="_blank">PROD-13196</a></span>
+          <span class="eg-title">MDDR — Individual Policies: Contract Modification &amp; Cancellation via eAPI</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5669" target="_blank">CIL-5669</a></td><td class="t-summary">[mddr-service] Integrate MDDR Cancel Policy with AZP eAPI (test-partner)</td><td class="t-who">Igor Mishin</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- ── NBG (15045) ── -->
+  <div class="initiative-block" data-init="nbg">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">15045</span>
+      <span class="ititle">NBG — Motor, Property &amp; UL API Modifications</span>
+      <div class="icounts">
+        <span class="badge badge-wip">4 active</span>
+        <span class="badge badge-todo">5 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13244" target="_blank">PROD-13244</a></span>
+          <span class="eg-title">NBG Motor — API Modifications</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a></td><td class="t-summary">[NBG Motor] motor service: Accept an endorsement and immediately issue new policy</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13170" target="_blank">PROD-13170</a></span>
+          <span class="eg-title">NBG Property — API Draft</span>
+          <span class="eg-count">3 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /policies for issuance</td><td class="t-who">Mert Akman</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /quote request</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-wip">Waiting For Merge</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a></td><td class="t-summary">[NBG Property] sisu api: Introduce endpoint for Issuance of Property policy</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">Waiting For Merge</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13171" target="_blank">PROD-13171</a></span>
+          <span class="eg-title">NBG Property — Quote/Offer Integration</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5653" target="_blank">CIL-5653</a></td><td class="t-summary">[NBG Property] property service: Integrate Quote with AZ GR /Offers (Motor)</td><td class="t-who">Marcin Kaminski</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13312" target="_blank">PROD-13312</a></span>
+          <span class="eg-title">NBG Property — Documents Integration</span>
+          <span class="eg-count">3 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5725" target="_blank">CIL-5725</a></td><td class="t-summary">[NBG Property] property service: Integrate POST Policy upload document</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Danylo Lubenets</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">AI-Generation Done</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13320" target="_blank">PROD-13320</a></span>
+          <span class="eg-title">NBG Property — Apply for Policy Integration</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5680" target="_blank">CIL-5680</a></td><td class="t-summary">[NBG Property] property service: Integrate Policy with AZ GR /application</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13267" target="_blank">PROD-13267</a></span>
+          <span class="eg-title">NBG UL — API Modifications</span>
+          <span class="eg-count">2 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5692" target="_blank">CIL-5692</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Apply for Policy endpoint in new Life Insurance API</td><td class="t-who">Neetu Verma</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Quote endpoint in new Life Insurance API</td><td class="t-who">Mehdi Makki</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Clara EHA (15044 / Clara) ── -->
+  <div class="initiative-block" data-init="clara">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">Clara</span>
+      <span class="ititle">Clara EHA — CIL Beneficiary Management</span>
+      <div class="icounts">
+        <span class="badge badge-wip">1 active</span>
+        <span class="badge badge-todo">6 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13255" target="_blank">PROD-13255</a></span>
+          <span class="eg-title">Clara EHA — CIL Beneficiary Management Implementation</span>
+          <span class="eg-count">8 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13314" target="_blank">PROD-13314</a></td><td class="t-summary">Extend CIL data model: add EHA beneficiary fields</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5588" target="_blank">CIL-5588</a></td><td class="t-summary">Cancel EHA beneficiary contract via portal</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5587" target="_blank">CIL-5587</a></td><td class="t-summary">Link EHA beneficiary to individual add-on policy when customer purchases</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5586" target="_blank">CIL-5586</a></td><td class="t-summary">CIL: Create EHA beneficiary — eAPI Beneficiary Management API v3 integration</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5584" target="_blank">CIL-5584</a></td><td class="t-summary">Create partner flow for Clara EHA</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5582" target="_blank">CIL-5582</a></td><td class="t-summary">Prepare CIL webhook endpoint for one-time EHA beneficiary import</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5581" target="_blank">CIL-5581</a></td><td class="t-summary">Consume EHA beneficiary lifecycle events from BIOS via webhook</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5583" target="_blank">CIL-5583</a></td><td class="t-summary">Extend create and update beneficiary endpoints with EHA home-specific fields</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-wip">Waiting For Merge</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Global App CH (18201) ── -->
+  <div class="initiative-block" data-init="global-ch">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">18201</span>
+      <span class="ititle">Global App CH — Switzerland</span>
+      <div class="icounts">
+        <span class="badge badge-todo">3 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12480" target="_blank">PROD-12480</a></span>
+          <span class="eg-title">CH — Person Details 2</span>
+          <span class="eg-count">2 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5695" target="_blank">CIL-5695</a></td><td class="t-summary">[CHOE] API draft: Add care_of_type and care_of fields to InsuredPersonRequestAddress schema</td><td class="t-who">Daniele Vasselli</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5694" target="_blank">CIL-5694</a></td><td class="t-summary">[CHOE] e2e: Support care_of_type and care_of fields in Update Insured Person address update</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12482" target="_blank">PROD-12482</a></span>
+          <span class="eg-title">CH PI-III — Mailbox-Item</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5835" target="_blank">CIL-5835</a></td><td class="t-summary">[CHOE] API Draft: Download Document</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13301" target="_blank">PROD-13301</a></span>
+          <span class="eg-title">CH PI-III — Asynch Process Communication</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5646" target="_blank">CIL-5646</a></td><td class="t-summary">[CHOE] providers: handle async 202 responses and integrate job eligibility (Motor)</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Global App AzD NL (18202) ── -->
+  <div class="initiative-block" data-init="global-azd">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">18202</span>
+      <span class="ititle">Global App AzD — Allianz Direct NL</span>
+      <div class="icounts">
+        <span class="badge badge-wip">3 active</span>
+        <span class="badge badge-done">2 done</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12769" target="_blank">PROD-12769</a></span>
+          <span class="eg-title">AzD NL — Display All Policies</span>
+          <span class="eg-count">3 tickets</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5597" target="_blank">CIL-5597</a></td><td class="t-summary">Global App AzD NL — e2e: List Policies, Get Policy — Product title re-mapping</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-review">In Code Review</span></td><td class="t-date">2026-06-19</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5734" target="_blank">CIL-5734</a></td><td class="t-summary">Global App AzD — List Policies, Get Policies: Ensure stable integration with updated spec</td><td class="t-who">Safiko Papkhadze</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-review">In Validation</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5573" target="_blank">CIL-5573</a></td><td class="t-summary">Global App AzD — API draft: Add product_name to Travel and LegalAid</td><td class="t-who">Alex Yaroshenko</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12770" target="_blank">PROD-12770</a></span>
+          <span class="eg-title">AzD NL — Display Policy Details</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5574" target="_blank">CIL-5574</a></td><td class="t-summary">Global App AzD — API Draft: Status Notification Info</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12629" target="_blank">PROD-12629</a></span>
+          <span class="eg-title">Global App — NFRs Documentation</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5717" target="_blank">CIL-5717</a></td><td class="t-summary">Global App: Implement FlowForge skill for Data Model documentation update</td><td class="t-who">Unassigned</td><td class="t-who">Julia Kuznietsova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Global App AZ Partners (18204) ── -->
+  <div class="initiative-block" data-init="global-azp">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">18204</span>
+      <span class="ititle">Global App — AZ Partners (Allyz AUS)</span>
+      <div class="icounts">
+        <span class="badge badge-wip">2 active</span>
+        <span class="badge badge-todo">1 to do</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13082" target="_blank">PROD-13082</a></span>
+          <span class="eg-title">Allyz AUS — Get Emergency Numbers</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-19" target="_blank">AGB-19</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Emergency Numbers</td><td class="t-who">Unassigned</td><td class="t-who">Sarah Martins</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-17</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13083" target="_blank">PROD-13083</a></span>
+          <span class="eg-title">Allyz AUS — Hospital Finder</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-22" target="_blank">AGB-22</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Hospital Finder</td><td class="t-who">Sarah Martins</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-17</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13079" target="_blank">PROD-13079</a></span>
+          <span class="eg-title">AzP — Lounge Zone Access (QR code)</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-34" target="_blank">AGB-34</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Lounge Zone QR Code Management</td><td class="t-who">Yulia Tsybanova</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-hold">Paused / On Hold</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Top Viaggi (15041) ── -->
+  <div class="initiative-block" data-init="top-viaggi">
+    <div class="initiative-head" onclick="toggleInit(this)">
+      <span class="iarrow">▶</span>
+      <span class="ikey">15041</span>
+      <span class="ititle">Top Viaggi — Beneficiary Creation via CIL &lt;&gt; EAPI &lt;&gt; BIOS</span>
+      <div class="icounts">
+        <span class="badge badge-done">1 done</span>
+      </div>
+    </div>
+    <div class="initiative-body">
+      <div class="epic-group">
+        <div class="epic-group-head">
+          <span class="eg-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-12741" target="_blank">PROD-12741</a></span>
+          <span class="eg-title">Top Viaggi — [FR-1] Enable beneficiary creation</span>
+          <span class="eg-count">1 ticket</span>
+        </div>
+        <table class="ticket-table">
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <tbody>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a></td><td class="t-summary">[CIL-topviaggi-crosslob] Fix Top Viaggi routing: change InsuranceType for CROSS_LOB</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Sascha Mehlhase</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-29</td><td class="t-done">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </div><!-- end init-section-body -->
+  </div><!-- end init-section-wrap -->
+
+  <!-- ══ Section 3: Top 5 Authors by Ticket Count ══ -->
+  <h2>🏆 Top 5 Authors — Most FlowForge Tickets Created <span style="font-size:12px;font-weight:400;color:var(--muted)">(Jun 22 – Jul 6)</span></h2>
+  <div class="leaderboard">
+
+    <div class="lb-card open">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-1">1</span>
+        <div class="lb-avatar">NV</div>
+        <span class="lb-name">Neetu Verma</span>
+        <span class="lb-count">7</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a><span class="lt-title">[NBG UL] Quote endpoint in new Life Insurance API</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5692" target="_blank">CIL-5692</a><span class="lt-title">[NBG UL] Apply for Policy endpoint in new Life Ins API</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5653" target="_blank">CIL-5653</a><span class="lt-title">[NBG Property] Integrate Quote with AZ GR /Offers (Motor)</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a><span class="lt-title">[NBG Property] Integrate Get Policy Document with AZ GR</span><span class="badge badge-wip">AI-Generation Done</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a><span class="lt-title">[NBG Property] sisu api: Introduce Issuance endpoint</span><span class="badge badge-wip">Waiting For Merge</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5680" target="_blank">CIL-5680</a><span class="lt-title">[NBG Property] Integrate Policy with AZ GR /application</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a><span class="lt-title">[NBG Motor] Accept endorsement and immediately issue policy</span><span class="badge badge-wip">In Progress</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-2">2</span>
+        <div class="lb-avatar">OT</div>
+        <span class="lb-name">Ozlam Tahirli</span>
+        <span class="lb-count">6</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5820" target="_blank">CIL-5820</a><span class="lt-title">[FOX] Error message when disabling main Auto-Renew</span><span class="badge badge-wip">In Progress</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5824" target="_blank">CIL-5824</a><span class="lt-title">[FOX] Error message when purchasing any policy type</span><span class="badge badge-review">In Validation</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5840" target="_blank">CIL-5840</a><span class="lt-title">[FOX] Medical add-on not returned when non-hold-cover only</span><span class="badge badge-wip">QA To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5848" target="_blank">CIL-5848</a><span class="lt-title">[FOX] Medical screening status missing in Get Quote</span><span class="badge badge-review">In Validation</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5849" target="_blank">CIL-5849</a><span class="lt-title">[FOX] Saved quotes remain after policy purchase</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5861" target="_blank">CIL-5861</a><span class="lt-title">[FOX] EAPI breaking change: contractUpgrades</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-3">3</span>
+        <div class="lb-avatar">RR</div>
+        <span class="lb-name">Raisat Ramazanova</span>
+        <span class="lb-count">4</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a><span class="lt-title">[NBG Property] sisu api: Extend POST /quote fields</span><span class="badge badge-wip">Waiting For Merge</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a><span class="lt-title">[NBG Property] sisu api: Extend fields for issuance</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5725" target="_blank">CIL-5725</a><span class="lt-title">[NBG Property] Integrate POST Policy upload document</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a><span class="lt-title">[NBG Property] Integrate Get Policy Document with AZ GR</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank" style="color:var(--muted)">4</span>
+        <div class="lb-avatar">FM</div>
+        <span class="lb-name">Floriane Miletic</span>
+        <span class="lb-count">3</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5633" target="_blank">CIL-5633</a><span class="lt-title">[sisu-api: case mgmt] POST /cases/upload-documents</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a><span class="lt-title">Clara — Create provider Lib Home Assistance Contracts</span><span class="badge badge-done">Done</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a><span class="lt-title">Clara — Add credentials for Widget &amp; Metaportal</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank" style="color:var(--muted)">4</span>
+        <div class="lb-avatar">JP</div>
+        <span class="lb-name">Judit Papp</span>
+        <span class="lb-count">3</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5646" target="_blank">CIL-5646</a><span class="lt-title">[CHOE] Handle async 202 + job eligibility (Motor)</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5694" target="_blank">CIL-5694</a><span class="lt-title">[CHOE] e2e: care_of fields in Update Insured Person</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5695" target="_blank">CIL-5695</a><span class="lt-title">[CHOE] API draft: care_of_type and care_of schema</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank" style="color:var(--muted)">4</span>
+        <div class="lb-avatar">RS</div>
+        <span class="lb-name">Rehma Saeed</span>
+        <span class="lb-count">3</span><span class="lb-count-lbl">tickets</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a><span class="lt-title">[travel-service] Webhook not writing Logzilla Logs</span><span class="badge badge-done">Done</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5836" target="_blank">CIL-5836</a><span class="lt-title">[Spike] Storing raw Fusion HTML in Integration Service</span><span class="badge badge-todo">To Do</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5838" target="_blank">CIL-5838</a><span class="lt-title">Get Quote By ID: Return HTML in response</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ Section 4: Top 5 Authors by Done Tickets ══ -->
+  <h2>✅ Top 5 Authors — Most FlowForge Tickets Done <span style="font-size:12px;font-weight:400;color:var(--muted)">(Jun 22 – Jul 6)</span></h2>
+  <div class="leaderboard">
+
+    <div class="lb-card open">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-1">1</span>
+        <div class="lb-avatar green-grad">FM</div>
+        <span class="lb-name">Floriane Miletic</span>
+        <span class="lb-count green-count">2</span><span class="lb-count-lbl">done</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a><span class="lt-title">Clara — Create new provider Lib Home Assistance Contract Management</span><span class="badge badge-done">Done</span></div>
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a><span class="lt-title">Clara — Add client credentials + Product Code for Widget &amp; Metaportal</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-2">2</span>
+        <div class="lb-avatar green-grad">RS</div>
+        <span class="lb-name">Rehma Saeed</span>
+        <span class="lb-count green-count">1</span><span class="lb-count-lbl">done</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a><span class="lt-title">[travel-service] Webhook Endpoint not writing Logzilla Logs</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="lb-card">
+      <div class="lb-head" onclick="this.closest('.lb-card').classList.toggle('open')">
+        <span class="lb-rank rank-2">2</span>
+        <div class="lb-avatar green-grad">SM</div>
+        <span class="lb-name">Sascha Mehlhase</span>
+        <span class="lb-count green-count">1</span><span class="lb-count-lbl">done</span>
+        <span class="lb-arrow">▶</span>
+      </div>
+      <div class="lb-body">
+        <div class="lb-ticket"><a class="lt-key" href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a><span class="lt-title">[CIL-topviaggi-crosslob] Fix Top Viaggi routing: change InsuranceType for CROSS_LOB</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ Section 5: By Author ══ -->
+  <h2>👤 FlowForge Tickets — by Author</h2>
+  <div class="author-grid">
+
+    <div class="author-card" data-author="igor-mishin">
+      <div class="author-head">
+        <div class="author-avatar">IM</div>
+        <div class="author-name">Igor Mishin</div>
+        <div class="author-count">8 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/PROD-13314" target="_blank">PROD-13314</a><span class="at-title">Extend CIL data model: add EHA beneficiary fields</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5588" target="_blank">CIL-5588</a><span class="at-title">Cancel EHA beneficiary contract via portal</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5587" target="_blank">CIL-5587</a><span class="at-title">Link EHA beneficiary to individual add-on policy</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5586" target="_blank">CIL-5586</a><span class="at-title">CIL: Create EHA beneficiary — eAPI v3 integration</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5584" target="_blank">CIL-5584</a><span class="at-title">Create partner flow for Clara EHA</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5582" target="_blank">CIL-5582</a><span class="at-title">CIL webhook for one-time EHA beneficiary import</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5581" target="_blank">CIL-5581</a><span class="at-title">Consume EHA beneficiary lifecycle events from BIOS</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5583" target="_blank">CIL-5583</a><span class="at-title">Extend create/update beneficiary with EHA fields</span><span class="badge badge-wip">Waiting Merge</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="ozlam-tahirli">
+      <div class="author-head">
+        <div class="author-avatar">OT</div>
+        <div class="author-name">Ozlam Tahirli</div>
+        <div class="author-count">7 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5861" target="_blank">CIL-5861</a><span class="at-title">[FOX] EAPI breaking change: contractUpgrades</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5849" target="_blank">CIL-5849</a><span class="at-title">[FOX] Saved quotes remain after policy purchase</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5820" target="_blank">CIL-5820</a><span class="at-title">[FOX] Error message when disabling main Auto-Renew</span><span class="badge badge-wip">In Progress</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5840" target="_blank">CIL-5840</a><span class="at-title">[FOX] Medical add-on not returned when non-hold-cover only</span><span class="badge badge-wip">QA To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5848" target="_blank">CIL-5848</a><span class="at-title">[FOX] Medical screening status missing in Get Quote</span><span class="badge badge-review">In Validation</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5824" target="_blank">CIL-5824</a><span class="at-title">[FOX] Error message when purchasing any policy type</span><span class="badge badge-review">In Validation</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5571" target="_blank">CIL-5571</a><span class="at-title">[Fox UK] Main Quote Not Returned in List Quotes</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="neetu-verma">
+      <div class="author-head">
+        <div class="author-avatar">NV</div>
+        <div class="author-name">Neetu Verma</div>
+        <div class="author-count">7 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5680" target="_blank">CIL-5680</a><span class="at-title">[NBG Property] Integrate Policy with AZ GR /application</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5653" target="_blank">CIL-5653</a><span class="at-title">[NBG Property] Integrate Quote with AZ GR /Offers (Motor)</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5692" target="_blank">CIL-5692</a><span class="at-title">[NBG UL] Apply for Policy endpoint in new Life Ins API</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a><span class="at-title">[NBG UL] Quote endpoint in new Life Insurance API</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a><span class="at-title">[NBG Motor] Accept endorsement and immediately issue policy</span><span class="badge badge-wip">In Progress</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a><span class="at-title">[NBG Property] Integrate Get Policy Document with AZ GR</span><span class="badge badge-wip">AI-Gen Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a><span class="at-title">[NBG Property] sisu api: Introduce Issuance endpoint</span><span class="badge badge-wip">Waiting Merge</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="raisat-ramazanova">
+      <div class="author-head">
+        <div class="author-avatar">RR</div>
+        <div class="author-name">Raisat Ramazanova</div>
+        <div class="author-count">4 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a><span class="at-title">[NBG Property] Integrate Get Policy Document with AZ GR</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5725" target="_blank">CIL-5725</a><span class="at-title">[NBG Property] Integrate POST Policy upload document</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a><span class="at-title">[NBG Property] sisu api: Extend fields for issuance</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a><span class="at-title">[NBG Property] sisu api: Extend POST /quote fields</span><span class="badge badge-wip">Waiting For Merge</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="safiko-papkhadze">
+      <div class="author-head">
+        <div class="author-avatar">SP</div>
+        <div class="author-name">Safiko Papkhadze</div>
+        <div class="author-count">4 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5835" target="_blank">CIL-5835</a><span class="at-title">[CHOE] API Draft: Download Document</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5597" target="_blank">CIL-5597</a><span class="at-title">Global App AzD NL — Product title re-mapping</span><span class="badge badge-review">In Code Review</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5734" target="_blank">CIL-5734</a><span class="at-title">Global App AzD — List/Get Policies stable integration</span><span class="badge badge-review">In Validation</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5573" target="_blank">CIL-5573</a><span class="at-title">Global App AzD — Add product_name to Travel/LegalAid</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="judit-papp">
+      <div class="author-head">
+        <div class="author-avatar">JP</div>
+        <div class="author-name">Judit Papp</div>
+        <div class="author-count">3 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5695" target="_blank">CIL-5695</a><span class="at-title">[CHOE] API draft: care_of_type and care_of schema</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5694" target="_blank">CIL-5694</a><span class="at-title">[CHOE] e2e: care_of fields in Update Insured Person</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5646" target="_blank">CIL-5646</a><span class="at-title">[CHOE] Handle async 202 + job eligibility (Motor)</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="rehma-saeed">
+      <div class="author-head">
+        <div class="author-avatar">RS</div>
+        <div class="author-name">Rehma Saeed</div>
+        <div class="author-count">3 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5838" target="_blank">CIL-5838</a><span class="at-title">Get Quote By ID: Return HTML in response</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5836" target="_blank">CIL-5836</a><span class="at-title">[Spike] Storing raw Fusion HTML in Integration Service</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a><span class="at-title">[travel-service] Webhook not writing Logzilla Logs</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="floriane-miletic">
+      <div class="author-head">
+        <div class="author-avatar">FM</div>
+        <div class="author-name">Floriane Miletic</div>
+        <div class="author-count">3 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5633" target="_blank">CIL-5633</a><span class="at-title">[sisu-api: case mgmt] POST /cases/upload-documents</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a><span class="at-title">Clara — Create provider Lib Home Assistance Contracts</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a><span class="at-title">Clara — Add credentials for Widget &amp; Metaportal</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="bekzat-mustafa">
+      <div class="author-head">
+        <div class="author-avatar">BM</div>
+        <div class="author-name">Bekzat Mustafa</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5669" target="_blank">CIL-5669</a><span class="at-title">[mddr-service] Integrate MDDR Cancel Policy with AZP eAPI</span><span class="badge badge-todo">To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5651" target="_blank">CIL-5651</a><span class="at-title">[MDDR] Fix premium amount mapping</span><span class="badge badge-wip">QA To Do</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="yulia-tsybanova">
+      <div class="author-head">
+        <div class="author-avatar">YT</div>
+        <div class="author-name">Yulia Tsybanova</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/AGB-34" target="_blank">AGB-34</a><span class="at-title">[API RFC] Lounge Zone QR Code Management</span><span class="badge badge-hold">On Hold</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/AGB-22" target="_blank">AGB-22</a><span class="at-title">[API RFC] Hospital Finder</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="sascha-mehlhase">
+      <div class="author-head">
+        <div class="author-avatar">SM</div>
+        <div class="author-name">Sascha Mehlhase</div>
+        <div class="author-count">1 ticket</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a><span class="at-title">[Top Viaggi] Fix routing: InsuranceType CROSS_LOB</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="sarah-martins">
+      <div class="author-head">
+        <div class="author-avatar">SM</div>
+        <div class="author-name">Sarah Martins</div>
+        <div class="author-count">1 ticket</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/AGB-19" target="_blank">AGB-19</a><span class="at-title">[API RFC] Emergency Numbers</span><span class="badge badge-wip">In Progress</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="julia-kuznietsova">
+      <div class="author-head">
+        <div class="author-avatar">JK</div>
+        <div class="author-name">Julia Kuznietsova</div>
+        <div class="author-count">1 ticket</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5717" target="_blank">CIL-5717</a><span class="at-title">Global App: FlowForge skill — Data Model docs update</span><span class="badge badge-todo">To Do</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-author="maria-bezrukova">
+      <div class="author-head">
+        <div class="author-avatar">MB</div>
+        <div class="author-name">Maria Bezrukova</div>
+        <div class="author-count">1 ticket</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5574" target="_blank">CIL-5574</a><span class="at-title">Global App AzD — API Draft: Status Notification Info</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ Section 6: AWS Bedrock Spend — Overall ══ -->
+  <div id="spend-overall-wrap">
+  <h2>💰 AWS Bedrock Spend — Overall (Jun 21 – Jul 5, 2026)</h2>
+  <div class="initiative-block" style="margin-bottom:16px">
+    <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')">
+      <span class="iarrow">▶</span>
+      <span class="ititle">Daily Breakdown — Jun 21 – Jul 5, 2026</span>
+      <div class="icounts"><span class="badge badge-wip">15 days</span></div>
+    </div>
+    <div class="initiative-body">
+      <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
+        <table class="spend-table">
+          <thead>
+            <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Jul 5</td><td class="cost-strong">$53.39</td><td>797</td><td>13</td><td>Sonnet 4.6 · $50.92 · 634 req</td></tr>
+            <tr><td>Jul 4</td><td class="cost-strong">$50.11</td><td>1,311</td><td>4</td><td>Sonnet 4.6 · $50.10 · 1,306 req</td></tr>
+            <tr><td>Jul 3</td><td class="cost-strong">$261.42</td><td>6,303</td><td>39</td><td>Sonnet 4.6 · $248.84 · 5,531 req</td></tr>
+            <tr><td>Jul 2</td><td class="cost-strong">$382.05</td><td>9,007</td><td>43</td><td>Sonnet 4.6 · $361.87 · 7,721 req</td></tr>
+            <tr><td>Jul 1</td><td class="cost-strong">$353.41</td><td>8,419</td><td>37</td><td>Sonnet 4.6 · $321.23 · 6,796 req</td></tr>
+            <tr><td>Jun 30</td><td class="cost-strong">$257.95</td><td>8,227</td><td>35</td><td>Sonnet 4.6 · $230.36 · 5,407 req</td></tr>
+            <tr><td>Jun 29</td><td class="cost-strong">$156.82</td><td>4,591</td><td>34</td><td>Sonnet 4.6 · $152.14 · 3,840 req</td></tr>
+            <tr><td>Jun 28</td><td class="cost-strong">$31.92</td><td>749</td><td>8</td><td>Sonnet 4.6 · $31.56 · 692 req</td></tr>
+            <tr><td>Jun 27</td><td class="cost-strong">$16.41</td><td>675</td><td>6</td><td>Sonnet 4.6 · $14.57 · 411 req</td></tr>
+            <tr><td>Jun 26</td><td class="cost-strong">$200.60</td><td>5,200</td><td>28</td><td>Sonnet 4.6 · $174.65 · 4,197 req</td></tr>
+            <tr><td>Jun 25</td><td class="cost-strong">$229.96</td><td>5,944</td><td>31</td><td>Sonnet 4.6 · $215.40 · 4,839 req</td></tr>
+            <tr><td>Jun 24</td><td class="cost-strong">$184.37</td><td>5,020</td><td>26</td><td>Sonnet 4.6 · $174.35 · 4,072 req</td></tr>
+            <tr><td>Jun 23</td><td class="cost-strong">$219.50</td><td>6,650</td><td>37</td><td>Sonnet 4.6 · $202.02 · 4,765 req</td></tr>
+            <tr><td>Jun 22</td><td class="cost-strong">$157.49</td><td>4,226</td><td>31</td><td>Sonnet 4.6 · $142.84 · 3,097 req</td></tr>
+            <tr><td>Jun 21</td><td class="cost-strong">$39.04</td><td>916</td><td>10</td><td>Sonnet 4.6 · $38.29 · 821 req</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="spend-table-wrap">
+    <table class="spend-table">
+      <thead>
+        <tr><th>Model</th><th>Total Cost (15 days)</th><th style="width:200px">Cost share</th><th>% of spend</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sonnet 4.6</strong></td><td class="cost-strong">$2,409.14</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:92.9%"></div></div></td>
+          <td class="model-pct">92.9%</td>
+        </tr>
+        <tr>
+          <td><strong>Sonnet 4.5</strong></td><td class="cost-strong">$86.83</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:3.3%;background:linear-gradient(90deg,#d97706,#fbbf24)"></div></div></td>
+          <td class="model-pct">3.3%</td>
+        </tr>
+        <tr>
+          <td><strong>Haiku 4.5</strong></td><td class="cost-strong">$83.66</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:3.2%;background:linear-gradient(90deg,#16a34a,#4ade80)"></div></div></td>
+          <td class="model-pct">3.2%</td>
+        </tr>
+        <tr>
+          <td><strong>Opus 4.6</strong></td><td class="cost-strong">$14.82</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:0.6%;background:linear-gradient(90deg,#dc2626,#f87171)"></div></div></td>
+          <td class="model-pct">0.6%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div><!-- end spend-overall-wrap -->
+
+  <!-- ══ Section 7: AWS Bedrock Spend — By User ══ -->
+  <h2 style="cursor:pointer;user-select:none" onclick="toggleUserSpend(this)">👤 AWS Bedrock Spend — By User (Jun 21 – Jul 5, 2026) <span class="usr-sec-arrow" style="font-size:12px;color:var(--muted);font-weight:400;transition:transform .15s;display:inline-block">▶</span></h2>
+  <div id="user-spend-body" style="display:none">
+  <div class="user-spend-list">
+    <div class="user-spend-row"><span class="usr-rank r1">1</span><span class="usr-name">igormishinsisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:100%"></div></div><span class="usr-cost">$249.58</span></div>
+    <div class="user-spend-row"><span class="usr-rank r2">2</span><span class="usr-name">flowforge-gh-workflow</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:77.7%"></div></div><span class="usr-cost">$193.84</span></div>
+    <div class="user-spend-row"><span class="usr-rank r3">3</span><span class="usr-name">AlexYaroshenko</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:55.4%"></div></div><span class="usr-cost">$138.27</span></div>
+    <div class="user-spend-row"><span class="usr-rank">4</span><span class="usr-name">siarhei.kisialeu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:46.5%"></div></div><span class="usr-cost">$116.09</span></div>
+    <div class="user-spend-row"><span class="usr-rank">5</span><span class="usr-name">smehlhase1</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:45.8%"></div></div><span class="usr-cost">$114.31</span></div>
+    <div class="user-spend-row"><span class="usr-rank">6</span><span class="usr-name">mahdimakki</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:45.6%"></div></div><span class="usr-cost">$113.73</span></div>
+    <div class="user-spend-row"><span class="usr-rank">7</span><span class="usr-name">Goga-sam</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:45.2%"></div></div><span class="usr-cost">$112.76</span></div>
+    <div class="user-spend-row"><span class="usr-rank">8</span><span class="usr-name">alpkaraca-simplesurance-alpkaraca</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:41.5%"></div></div><span class="usr-cost">$103.70</span></div>
+    <div class="user-spend-row"><span class="usr-rank">9</span><span class="usr-name">itsmahmoudmo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:40.1%"></div></div><span class="usr-cost">$99.98</span></div>
+    <div class="user-spend-row"><span class="usr-rank">10</span><span class="usr-name">andrei.okhotnikov</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:37.7%"></div></div><span class="usr-cost">$94.08</span></div>
+    <div class="user-spend-row"><span class="usr-rank">11</span><span class="usr-name">neetu-verma-19</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:35.8%"></div></div><span class="usr-cost">$89.40</span></div>
+    <div class="user-spend-row"><span class="usr-rank">12</span><span class="usr-name">sumithsrini</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:30.6%"></div></div><span class="usr-cost">$76.31</span></div>
+    <div class="user-spend-row"><span class="usr-rank">13</span><span class="usr-name">jeanassysisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:25.7%"></div></div><span class="usr-cost">$64.06</span></div>
+    <div class="user-spend-row"><span class="usr-rank">14</span><span class="usr-name">sirk</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:23.4%"></div></div><span class="usr-cost">$58.47</span></div>
+    <div class="user-spend-row"><span class="usr-rank">15</span><span class="usr-name">RaisatRamazanov</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:15.3%"></div></div><span class="usr-cost">$38.20</span></div>
+    <div class="user-spend-row"><span class="usr-rank">16</span><span class="usr-name">bulentkazanci</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:13.4%"></div></div><span class="usr-cost">$33.36</span></div>
+    <div class="user-spend-row"><span class="usr-rank">17</span><span class="usr-name">pauldepraz</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:13.3%"></div></div><span class="usr-cost">$33.10</span></div>
+    <div class="user-spend-row"><span class="usr-rank">18</span><span class="usr-name">hzamani</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:11.2%"></div></div><span class="usr-cost">$27.91</span></div>
+    <div class="user-spend-row"><span class="usr-rank">19</span><span class="usr-name">dmytro-logvinov-kazzlo-dmytro</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:10.0%"></div></div><span class="usr-cost">$24.88</span></div>
+    <div class="user-spend-row"><span class="usr-rank">20</span><span class="usr-name">zivkovicswe</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:9.9%"></div></div><span class="usr-cost">$24.67</span></div>
+    <div class="user-spend-row"><span class="usr-rank">21</span><span class="usr-name">w1kend</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:9.0%"></div></div><span class="usr-cost">$22.52</span></div>
+    <div class="user-spend-row"><span class="usr-rank">22</span><span class="usr-name">DeepakBazinga</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:8.6%"></div></div><span class="usr-cost">$21.36</span></div>
+    <div class="user-spend-row"><span class="usr-rank">23</span><span class="usr-name">josgilmo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:8.4%"></div></div><span class="usr-cost">$20.94</span></div>
+    <div class="user-spend-row"><span class="usr-rank">24</span><span class="usr-name">papkhadze-safiko</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:7.9%"></div></div><span class="usr-cost">$19.59</span></div>
+    <div class="user-spend-row"><span class="usr-rank">25</span><span class="usr-name">Asset-BA</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:7.4%"></div></div><span class="usr-cost">$18.54</span></div>
+    <div class="user-spend-row"><span class="usr-rank">26</span><span class="usr-name">markamdev</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:5.2%"></div></div><span class="usr-cost">$13.07</span></div>
+    <div class="user-spend-row"><span class="usr-rank">27</span><span class="usr-name">florianemiletic</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.7%"></div></div><span class="usr-cost">$11.81</span></div>
+    <div class="user-spend-row"><span class="usr-rank">28</span><span class="usr-name">daria-gorokhova</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:3.5%"></div></div><span class="usr-cost">$8.69</span></div>
+    <div class="user-spend-row"><span class="usr-rank">29</span><span class="usr-name">AndriiGatsaniuk</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:2.8%"></div></div><span class="usr-cost">$7.11</span></div>
+    <div class="user-spend-row"><span class="usr-rank">30</span><span class="usr-name">armidanapolitanoext-hash</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.5%"></div></div><span class="usr-cost">$3.65</span></div>
+    <div class="user-spend-row"><span class="usr-rank">31</span><span class="usr-name">mbezrukova-ext</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.0%"></div></div><span class="usr-cost">$2.45</span></div>
+    <div class="user-spend-row"><span class="usr-rank">32</span><span class="usr-name">eakimova</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.8%"></div></div><span class="usr-cost">$1.88</span></div>
+    <div class="user-spend-row"><span class="usr-rank">33</span><span class="usr-name">MukatdeerQureshi</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.5%"></div></div><span class="usr-cost">$1.34</span></div>
+    <div class="user-spend-row"><span class="usr-rank">34</span><span class="usr-name">sanatZhengisSisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.3%"></div></div><span class="usr-cost">$0.68</span></div>
+    <div class="user-spend-row"><span class="usr-rank">35</span><span class="usr-name">sarahsimplesurance</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.2%"></div></div><span class="usr-cost">$0.60</span></div>
+    <div class="user-spend-row"><span class="usr-rank">36</span><span class="usr-name">yuliiatsybanovaext-cloud</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.2%"></div></div><span class="usr-cost">$0.54</span></div>
+    <div class="user-spend-row"><span class="usr-rank">37</span><span class="usr-name">kzl-danylo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.1%"></div></div><span class="usr-cost">$0.28</span></div>
+    <div class="user-spend-row"><span class="usr-rank">38</span><span class="usr-name">barysik-volha</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.1%"></div></div><span class="usr-cost">$0.00</span></div>
+  </div>
+  </div><!-- end user-spend-body -->
+
+</div>
+
+<script>
+function toggleInit(headEl) {
+  var block = headEl.closest('.initiative-block');
+  block.classList.toggle('open');
+}
+
+
+function toggleUserSpend(h2El) {
+  var body = document.getElementById('user-spend-body');
+  var arrow = h2El.querySelector('.usr-sec-arrow');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+// Move initiative section to bottom of container
+(function() {
+  var container = document.querySelector('.container');
+  var section = document.getElementById('init-section-wrap');
+  if (container && section) container.appendChild(section);
+})();
+
+// Move overall spend section to be first (after summary bar)
+(function() {
+  var summaryBar = document.querySelector('.summary-bar');
+  var spendWrap = document.getElementById('spend-overall-wrap');
+  if (summaryBar && spendWrap) summaryBar.after(spendWrap);
+})();
+
+// Search
+(function() {
+  var input = document.getElementById('ff-search');
+  var countEl = document.getElementById('ff-count');
+  if (!input) return;
+  var initBlocks = Array.from(document.querySelectorAll('.initiative-block'));
+  var authorCards = Array.from(document.querySelectorAll('.author-card'));
+
+  function getText(el) { return el.textContent.toLowerCase(); }
+
+  input.addEventListener('input', function() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      initBlocks.forEach(function(b) { b.classList.remove('s-hide'); });
+      authorCards.forEach(function(c) { c.classList.remove('s-hide'); });
+      countEl.textContent = '';
+      return;
+    }
+    var hits = 0;
+    initBlocks.forEach(function(b) {
+      if (getText(b).includes(q)) { b.classList.remove('s-hide'); b.classList.add('open'); hits++; }
+      else b.classList.add('s-hide');
+    });
+    authorCards.forEach(function(c) {
+      if (getText(c).includes(q)) { c.classList.remove('s-hide'); hits++; }
+      else c.classList.add('s-hide');
+    });
+    countEl.textContent = hits + ' result' + (hits !== 1 ? 's' : '');
+  });
+})();
+</script>
+</body>
+</html>
