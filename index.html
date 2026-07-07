@@ -200,7 +200,9 @@
     <div class="summary-card gray"><div class="num">42</div><div class="lbl">To Do</div></div>
     <div class="summary-card blue"><div class="num">13</div><div class="lbl">Initiatives</div></div>
     <div class="summary-card red"><div class="num">18</div><div class="lbl">Authors</div></div>
+    <div class="summary-card purple"><div class="num">$3,145</div><div class="lbl">Combined Bedrock Total</div></div>
     <div class="summary-card purple"><div class="num">$3,145</div><div class="lbl">AWS Bedrock (16 days)</div></div>
+    <div class="summary-card blue"><div class="num">$0.39</div><div class="lbl">FCP Bedrock (Jul)</div></div>
     <div class="summary-card blue"><div class="num">80,291</div><div class="lbl">Total Requests</div></div>
     <div class="summary-card amber"><div class="num">46</div><div class="lbl">Peak Active Users · Jul 7</div></div>
     <div class="summary-card green"><div class="num">$197</div><div class="lbl">Avg Daily Cost</div></div>
@@ -1910,12 +1912,12 @@
   <div id="fcp-spend-wrap">
   <h2>💰 FCP Bedrock Spend</h2>
 
-  <!-- June 2026 placeholder -->
+  <!-- June 2026 -->
   <div class="initiative-block" style="margin-bottom:16px">
     <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #0891b2">
       <span class="iarrow">▶</span>
       <span class="ititle">June 2026</span>
-      <div class="icounts"><span class="badge badge-wip">— days</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">— total</span></div>
+      <div class="icounts"><span class="badge badge-wip">0 active days</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">$0.00 total</span></div>
     </div>
     <div class="initiative-body">
       <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
@@ -1924,19 +1926,19 @@
             <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
           </thead>
           <tbody>
-            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Data pending</td></tr>
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">No usage recorded</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- July 2026 placeholder -->
+  <!-- July 2026 -->
   <div class="initiative-block" style="margin-bottom:16px">
     <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #0891b2">
       <span class="iarrow">▶</span>
       <span class="ititle">July 2026</span>
-      <div class="icounts"><span class="badge badge-wip">— days</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">— so far</span></div>
+      <div class="icounts"><span class="badge badge-wip">2 / 31 days (Jul 1–7)</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">$0.39 so far</span></div>
     </div>
     <div class="initiative-body">
       <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
@@ -1945,7 +1947,8 @@
             <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
           </thead>
           <tbody>
-            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px">Data pending</td></tr>
+            <tr><td>Jul 4</td><td class="cost-strong">$0.12</td><td>3</td><td>1</td><td>Sonnet 4.6 · $0.12 · 2 req</td></tr>
+            <tr><td>Jul 3</td><td class="cost-strong">$0.27</td><td>11</td><td>1</td><td>Sonnet 4.6 · $0.26 · 6 req</td></tr>
           </tbody>
         </table>
       </div>
