@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integration Layer — Travel & xLob Coverage</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1b2e;--surface:#162032;--surface2:#1e2d45;--border:#253650;
+  --text:#e2e8f0;--muted:#94a3b8;
+  --blue:#0070D2;--blue-light:#3b82f6;--orange:#f97316;
+  --green:#10b981;--amber:#f59e0b;--gray:#6b7280;--red:#ef4444;
+  --purple:#a78bfa;
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+/* ── PRESENTATION ── */
+.deck{width:100vw;height:100vh;display:grid;grid-template-rows:auto 1fr auto;position:relative}
+.slide{display:none;flex-direction:column;height:100%;overflow:hidden}
+.slide.active{display:flex}
+.slide-body{flex:1;overflow-y:auto;padding:28px 48px}
+/* ── HEADER / NAV ── */
+.top-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:11px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.bar-left{display:flex;align-items:center;gap:14px}
+.logo-badge{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-light);background:rgba(59,130,246,.12);padding:4px 12px;border-radius:20px;border:1px solid rgba(59,130,246,.3)}
+.slide-title-bar{font-size:13px;color:var(--muted)}
+.slide-counter{font-size:12px;color:var(--muted)}
+.bottom-bar{background:var(--surface);border-top:1px solid var(--border);padding:10px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.dots{display:flex;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:.2s}
+.dot.on{background:var(--blue-light);transform:scale(1.3)}
+.dot:hover{background:var(--muted)}
+.btns{display:flex;gap:8px}
+.btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;display:flex;align-items:center;gap:6px}
+.btn:hover:not(:disabled){background:var(--border);border-color:var(--blue-light)}
+.btn:disabled{opacity:.3;cursor:default}
+.hint{font-size:11px;color:var(--muted)}
+/* ── TITLE SLIDE ── */
+.title-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;background:radial-gradient(ellipse at 50% 45%,rgba(0,112,210,.14) 0%,transparent 65%)}
+.title-tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue-light);margin-bottom:18px}
+.title-h1{font-size:50px;font-weight:800;line-height:1.05;margin-bottom:14px;background:linear-gradient(135deg,#e2e8f0 30%,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.title-sub{font-size:17px;color:var(--muted);max-width:580px;line-height:1.6;margin-bottom:36px}
+.title-pills{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:36px}
+.pill{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid}
+.pill-blue{background:rgba(59,130,246,.12);color:#60a5fa;border-color:rgba(59,130,246,.3)}
+.pill-green{background:rgba(16,185,129,.12);color:#10b981;border-color:rgba(16,185,129,.3)}
+.pill-amber{background:rgba(245,158,11,.12);color:#fbbf24;border-color:rgba(245,158,11,.3)}
+.pill-purple{background:rgba(167,139,250,.12);color:#a78bfa;border-color:rgba(167,139,250,.3)}
+.title-meta{display:flex;gap:28px;font-size:12px;color:var(--muted)}
+/* ── TYPOGRAPHY ── */
+.h2{font-size:26px;font-weight:700;margin-bottom:6px}
+.h3{font-size:18px;font-weight:700;margin-bottom:10px}
+.lead{font-size:14px;color:var(--muted);line-height:1.6;max-width:800px;margin-bottom:20px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px}
+.card-sm{padding:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+/* ── STATS ── */
+.stat-num{font-size:44px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+/* ── ARCH FLOW ── */
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:20px 0}
+.flow-node{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;min-width:110px;text-align:center}
+.flow-node.cil{background:linear-gradient(135deg,#003781,#0070D2);border-color:#0070D2}
+.flow-node .fn-type{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.flow-node .fn-name{font-size:14px;font-weight:700}
+.flow-node .fn-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.cil .fn-type,.cil .fn-sub{color:rgba(255,255,255,.6)}
+.arrow{font-size:18px;color:var(--blue-light);flex-shrink:0}
+.flow-col{display:flex;flex-direction:column;gap:7px}
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:600}
+.b-live{background:rgba(16,185,129,.14);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.b-prog{background:rgba(59,130,246,.14);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
+.b-plan{background:rgba(107,114,128,.14);color:#9ca3af;border:1px solid rgba(107,114,128,.3)}
+.b-notlive{background:rgba(245,158,11,.14);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:var(--surface2);padding:9px 13px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:hover td{background:var(--surface2)}
+.tbl tr:last-child td{border-bottom:none}
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;gap:0}
+.tb{background:none;border:none;color:var(--muted);padding:9px 20px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s;white-space:nowrap}
+.tb:hover{color:var(--text)}
+.tb.on{color:var(--blue-light);border-bottom-color:var(--blue-light)}
+.panel{display:none}
+.panel.on{display:block}
+/* ── ENDPOINTS ── */
+.ep{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-family:monospace;font-size:12px;margin:4px 0;flex-wrap:wrap}
+.method{font-weight:700;font-size:10px;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.m-get{background:rgba(16,185,129,.2);color:#10b981}
+.m-post{background:rgba(59,130,246,.2);color:#60a5fa}
+.m-patch{background:rgba(245,158,11,.2);color:#fbbf24}
+.m-put{background:rgba(249,115,22,.2);color:#fb923c}
+.m-delete{background:rgba(239,68,68,.2);color:#f87171}
+/* ── COUNTRY CHIPS ── */
+.cc{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:12px;font-weight:500;margin:2px;border:1px solid}
+.cc-live{background:rgba(16,185,129,.1);color:#10b981;border-color:rgba(16,185,129,.3)}
+.cc-prog{background:rgba(59,130,246,.1);color:#60a5fa;border-color:rgba(59,130,246,.3)}
+.cc-plan{background:rgba(107,114,128,.1);color:#9ca3af;border-color:rgba(107,114,128,.3)}
+/* ── MAP ── */
+.map-wrap{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.map-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:10px 16px;border-top:1px solid var(--border)}
+.leg-item{display:flex;align-items:center;gap:6px}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* ── MATRIX ── */
+.matrix-wrap{overflow-x:auto}
+.matrix{border-collapse:collapse;font-size:12px;min-width:900px}
+.matrix th,.matrix td{padding:8px 10px;border:1px solid var(--border);text-align:center;white-space:nowrap}
+.matrix th{background:var(--surface2);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.matrix .row-hdr{text-align:left;background:var(--surface2);font-weight:600}
+.m-yes{background:rgba(16,185,129,.2);color:#10b981;font-weight:700}
+.m-prog{background:rgba(59,130,246,.15);color:#60a5fa;font-weight:700}
+.m-no{color:var(--border)}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--border);margin:18px 0}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mt24{margin-top:24px}
+.gap-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="bar-left">
+      <span class="logo-badge">simplesurance · IL</span>
+      <span class="slide-title-bar" id="barTitle">Travel &amp; xLob Endpoint Coverage</span>
+    </div>
+    <span class="slide-counter" id="barCounter">1 / 10</span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 1 — TITLE
+  ════════════════════════════════════════ -->
+  <div class="slide active" id="s1">
+    <div class="title-body">
+      <div class="title-tag">Integration Layer (IL / CIL)</div>
+      <div class="title-h1">Travel &amp; xLob<br>Endpoint Coverage</div>
+      <div class="title-sub">Geographic reach, backend connectivity, frontend consumers and xLob endpoint families — sourced from Confluence &amp; Jira</div>
+      <div class="title-pills">
+        <span class="pill pill-green">✓ Travel Endpoint</span>
+        <span class="pill pill-blue">Beneficiaries</span>
+        <span class="pill pill-purple">Contract Management</span>
+        <span class="pill pill-amber">Claims</span>
+      </div>
+      <div class="title-meta">
+        <span>📅 July 2026</span>
+        <span>🌍 19+ markets</span>
+        <span>🤝 20+ partners</span>
+        <span>🔌 3 xLob endpoint families</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 2 — WHAT IS THE IL
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="slide-body">
+      <div class="h2">What is the Integration Layer?</div>
+      <p class="lead">The Integration Layer (IL / CIL) is Simplesurance's "One API" platform — partners integrate once and access multiple insurance products in multiple countries. It abstracts heterogeneous Allianz backends behind a single, well-documented REST API.</p>
+
+      <div class="g2 mt16">
+        <div class="card">
+          <div class="section-label">Strategic purpose</div>
+          <ul style="font-size:13px;line-height:1.9;color:var(--text);padding-left:16px">
+            <li>Single REST API for partners — no per-country, per-LoB integrations</li>
+            <li>XLoB: Travel, Motor, Property, RSA, Health in one layer</li>
+            <li>Pan-European + APAC reach through unified routing</li>
+            <li>Hosted on AWS Cloud, microservices, Kubernetes, Temporal for workflow orchestration</li>
+            <li>OAuth2 / OIDC auth, mTLS, PCI DSS &amp; GDPR by design</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="section-label">Architecture components</div>
+          <div class="flow" style="flex-direction:column;align-items:flex-start;gap:10px;padding:0">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">UI Frontend</div><div class="fn-name" style="font-size:12px">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">UI Frontend</div><div class="fn-name" style="font-size:12px">Retail Portal</div><div class="fn-sub">Agent / broker UI</div></div>
+              <div class="flow-node" style="min-width:160px;font-size:11px;padding:8px 10px"><div class="fn-type">Business Partner Frontends</div><div class="fn-name" style="font-size:12px">Direct API integrations</div><div class="fn-sub">Rush · Westpac · Deutsche Bank<br>Santander · Coverwise · Bolttech<br>Fox · Allyz · Global App · Clara…</div></div>
+            </div>
+            <div style="padding-left:65px;color:var(--blue-light)">↕ REST API (OAuth2)</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="flow-node cil" style="min-width:130px"><div class="fn-type">IL Core</div><div class="fn-name" style="color:#fff">CIL / sisu-api</div><div class="fn-sub">travel-service · eAPI</div></div>
+            </div>
+            <div style="padding-left:65px;color:var(--blue-light)">↕ Internal APIs + Temporal</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Backend</div><div class="fn-name" style="font-size:12px">eMagin</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Backend</div><div class="fn-name" style="font-size:12px">ABS</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Backend</div><div class="fn-name" style="font-size:12px">BIOS</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Payment</div><div class="fn-name" style="font-size:12px">OnePay</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Medical</div><div class="fn-name" style="font-size:12px">Verisk</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g4 mt16">
+        <div class="card card-sm" style="text-align:center"><div class="stat-num" style="color:var(--green)">20+</div><div class="stat-label">Live / In-Progress Partners</div></div>
+        <div class="card card-sm" style="text-align:center"><div class="stat-num" style="color:var(--blue-light)">14+</div><div class="stat-label">Countries covered</div></div>
+        <div class="card card-sm" style="text-align:center"><div class="stat-num" style="color:var(--amber)">6</div><div class="stat-label">Travel-active partners (live)</div></div>
+        <div class="card card-sm" style="text-align:center"><div class="stat-num" style="color:var(--purple)">3</div><div class="stat-label">xLob endpoint families</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 3 — TRAVEL ENDPOINT ARCHITECTURE
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s3">
+    <div class="slide-body">
+      <div class="h2">Travel Endpoint — Architecture</div>
+      <p class="lead">The IL travel endpoint is the primary integration point for quote, buy, policy lifecycle, and medical screening. Frontends and partner apps call a single travel API; CIL orchestrates all downstream complexity.</p>
+
+      <div class="card mt16">
+        <div class="section-label">End-to-end flow</div>
+        <div class="flow" style="justify-content:center">
+          <div class="flow-col">
+            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
+            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">Retail Portal</div><div class="fn-sub">Agent UI</div></div>
+            <div class="flow-node"><div class="fn-type">Partner App</div><div class="fn-name">Direct API</div><div class="fn-sub">BBVA · Fox · Rush · Coverwise…</div></div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-node cil">
+            <div class="fn-type">Integration Layer</div>
+            <div class="fn-name" style="color:#fff;font-size:16px">CIL / IL</div>
+            <div class="fn-sub">travel-service<br>sisu-api<br>Temporal orchestration</div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-col">
+            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">eMagin (EQS v3)</div><div class="fn-sub">Quote · Policy · Pricing</div></div>
+            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims</div></div>
+            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">BIOS</div><div class="fn-sub">Open-policy admin</div></div>
+            <div class="flow-node"><div class="fn-type">AU/NZ backend</div><div class="fn-name">Midas</div><div class="fn-sub">Westpac · NZ B2C</div></div>
+            <div class="flow-node"><div class="fn-type">AU/NZ pricing</div><div class="fn-name">FPE</div><div class="fn-sub">Flexible Pricing Engine</div></div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-col">
+            <div class="flow-node"><div class="fn-type">Payment</div><div class="fn-name">OnePay</div><div class="fn-sub">Session · Status</div></div>
+            <div class="flow-node"><div class="fn-type">3rd party</div><div class="fn-name">Verisk</div><div class="fn-sub">Medical screening</div></div>
+            <div class="flow-node"><div class="fn-type">Enterprise API</div><div class="fn-name">Imagine</div><div class="fn-sub">Contract management</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2 mt14">
+        <div class="card">
+          <div class="section-label">Travel API endpoints exposed by IL</div>
+          <div class="ep"><span class="method m-post">POST</span>/travel/quote</div>
+          <div class="ep"><span class="method m-post">POST</span>/travel/policies — create policy</div>
+          <div class="ep"><span class="method m-get">GET</span>/travel/policies — list policies</div>
+          <div class="ep"><span class="method m-get">GET</span>/policies/{id} — policy detail</div>
+          <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person — update</div>
+          <div class="ep"><span class="method m-delete">DELETE</span>/policies/{id}/insured-person/{pid}</div>
+          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
+          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} — retrieve saved quote</div>
+          <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions — email/resume</div>
+          <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+        </div>
+        <div class="card">
+          <div class="section-label">Key capabilities</div>
+          <ul style="font-size:13px;line-height:2;padding-left:16px">
+            <li><strong>Quote &amp; Buy</strong> — real-time via eMagin EQS v3</li>
+            <li><strong>Medical screening</strong> — Verisk (Fox UK, Rush/Hays)</li>
+            <li><strong>Payment</strong> — OnePay session / status polling</li>
+            <li><strong>Policy lifecycle</strong> — amend, cancel, upgrade, renew</li>
+            <li><strong>Save &amp; retrieve quote</strong> — email to customer</li>
+            <li><strong>Geo zones</strong> — EU, ER, R1(UK), R2(WW-ex-US), R3(AU/NZ), WW, IL(domestic)</li>
+            <li><strong>AU/NZ backends</strong> — Midas + FPE (Flexible Pricing Engine) for Westpac &amp; NZ B2C</li>
+            <li><strong>Americas expansion</strong> — Fusion US (alongside eMagin) · Allyz Canada (Magnesium backend)</li>
+            <li><strong>Travel types</strong> — Single Trip (ST) &amp; Annual Multi-Trip (AMT)</li>
+            <li><strong>Beneficiary integration</strong> — BIOS + ABS linkage</li>
+            <li><strong>Partner isolation</strong> — each BP has isolated flow config</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 4 — GEOGRAPHIC REACH (MAP)
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s4">
+    <div class="slide-body" style="padding-bottom:16px">
+      <div class="h2">Travel Endpoint — Geographic Reach</div>
+      <p class="lead">Countries where IL Travel is live, in progress, or planned as of July 2026 — including Americas and Pacific expansion. AgentMax Retail Portal covers 6 European markets across two waves.</p>
+
+      <div class="map-wrap mt16">
+        <svg id="worldMap" viewBox="0 0 960 500" style="width:100%;display:block;background:#0d1b2e"></svg>
+        <div class="map-legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div><span><strong>Live</strong> (Travel on IL)</span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div><span><strong>In Progress</strong></span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div><span><strong>Planned / xLob backend only</strong></span></div>
+          <div style="margin-left:auto;font-size:11px;color:var(--muted)">Hover a country for details</div>
+        </div>
+      </div>
+
+      <div id="mapTooltip" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:12px;max-width:280px;pointer-events:none;z-index:100;box-shadow:0 8px 24px rgba(0,0,0,.5)">
+        <strong id="ttCountry"></strong><br>
+        <span id="ttInfo" style="color:var(--muted)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 5 — PARTNERS TABLE
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s5">
+    <div class="slide-body">
+      <div class="h2">Travel Partners — Full Overview</div>
+      <p class="lead">All partners using the Travel endpoint (or planning to), their status and countries.</p>
+
+      <!-- Filter buttons -->
+      <div class="gap-row mt12 mb12" style="margin-bottom:14px">
+        <span style="font-size:12px;color:var(--muted)">Filter:</span>
+        <button class="btn" id="filterAll" onclick="filterPartners('all')" style="font-size:12px;padding:5px 12px">All</button>
+        <button class="btn" id="filterLive" onclick="filterPartners('live')" style="font-size:12px;padding:5px 12px">Live only</button>
+        <button class="btn" id="filterProg" onclick="filterPartners('progress')" style="font-size:12px;padding:5px 12px">In Progress</button>
+      </div>
+
+      <div class="card" style="overflow:auto">
+        <table class="tbl" id="partnerTable">
+          <thead>
+            <tr>
+              <th>Partner</th>
+              <th>Products</th>
+              <th>Country / Markets</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="live">
+              <td><strong>Rush / Hays UK</strong></td>
+              <td>Travel · Medical Upgrade</td>
+              <td><span class="cc cc-live">UK</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="live">
+              <td><strong>Santander UK</strong></td>
+              <td>Travel Beneficiaries + RSA</td>
+              <td><span class="cc cc-live">UK</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="live">
+              <td><strong>Deutsche Bank / Miles&amp;More</strong></td>
+              <td>Travel Beneficiaries</td>
+              <td><span class="cc cc-live">DE</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="live">
+              <td><strong>Coverwise</strong></td>
+              <td>Travel</td>
+              <td><span class="cc cc-live">UK</span><span class="cc cc-live">IT</span><span class="cc cc-live">DE</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="live">
+              <td><strong>Allyz Hungary</strong></td>
+              <td>Travel Beneficiaries</td>
+              <td><span class="cc cc-live">HU</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="live">
+              <td><strong>Bolttech</strong></td>
+              <td>Travel Beneficiaries</td>
+              <td><span class="cc cc-live">PL</span><span class="cc cc-live">NL</span><span class="cc cc-live">RO</span><span class="cc cc-live">BE</span><span class="cc cc-live">DE</span><span class="cc cc-live">ES</span><span class="cc cc-live">IT</span><span class="cc cc-live">AT</span></td>
+              <td><span class="badge b-live">● Live</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Fox UK (LV)</strong></td>
+              <td>Travel (+ Medical screening Verisk)</td>
+              <td><span class="cc cc-prog">UK</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>AgentMax Replacement — Retail Portal</strong><br><span style="font-size:11px;color:var(--muted)">Wave 1: DE · AT · CH · UK &nbsp;|&nbsp; Wave 2: ES · CZ</span></td>
+              <td>Travel</td>
+              <td><span class="cc cc-prog">DE</span><span class="cc cc-prog">AT</span><span class="cc cc-prog">CH</span><span class="cc cc-prog">UK</span><span class="cc cc-prog">ES</span><span class="cc cc-prog">CZ</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Westpac AU (NAC 2.0)</strong></td>
+              <td>Travel · RSA · EHA</td>
+              <td><span class="cc cc-prog">AU</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Clara / Last Mile (Lloyds, NatWest)</strong></td>
+              <td>Travel · EHA</td>
+              <td><span class="cc cc-prog">UK</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Global App (Allianz SE)</strong></td>
+              <td>Travel · All products</td>
+              <td><span class="cc cc-prog">CH</span><span class="cc cc-prog">AU</span><span class="cc cc-prog">IT</span><span class="cc cc-prog">NL</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Fusion US</strong></td>
+              <td>Travel</td>
+              <td><span class="cc cc-prog">US</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>Allyz Canada (Magnesium)</strong></td>
+              <td>Travel · Contract Creation</td>
+              <td><span class="cc cc-prog">CA</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
+              <td><strong>New Zealand B2C (Allyz NZ)</strong></td>
+              <td>Travel</td>
+              <td><span class="cc cc-prog">NZ</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 6 — xLob OVERVIEW
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s6">
+    <div class="slide-body">
+      <div class="h2">xLob Travel-Relevant Endpoints</div>
+      <p class="lead">Beyond the core Travel Quote &amp; Buy, CIL exposes three xLob endpoint families critical to the full travel insurance lifecycle. Each operates across multiple markets and connects to specific Allianz backends.</p>
+
+      <div class="g3 mt16">
+        <div class="card" style="border-left:3px solid #3b82f6">
+          <div style="font-size:22px;margin-bottom:8px">👤</div>
+          <div class="h3">Beneficiaries</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract in the Allianz backend. Originally built for Santander, reusable across travel partners.</p>
+          <div class="ep"><span class="method m-post">POST</span>/beneficiaries</div>
+          <div class="mt12" style="font-size:12px;color:var(--muted)">Backends: ABS · AHS/HRD · SysteMA</div>
+          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Santander, Deutsche Bank, Allyz HU, Bolttech</span></div>
+        </div>
+
+        <div class="card" style="border-left:3px solid #a78bfa">
+          <div style="font-size:22px;margin-bottom:8px">📋</div>
+          <div class="h3">Contract Management</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Post-sale travel policy lifecycle: add/update/remove insured persons, cancellation eligibility checks, quote management, and document uploads.</p>
+          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/insured-person</div>
+          <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person</div>
+          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
+          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id}</div>
+          <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions</div>
+          <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+          <div class="mt12" style="font-size:12px;color:var(--muted)">Product-agnostic · Any market configured in CIL</div>
+          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays, Fox UK, Santander, AgentMax</span></div>
+        </div>
+
+        <div class="card" style="border-left:3px solid #f97316">
+          <div style="font-size:22px;margin-bottom:8px">⚠️</div>
+          <div class="h3">Claims</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Pass-through claims channel retrieval. CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend.</p>
+          <div class="ep"><span class="method m-get">GET</span>/claims/v1/submission/channels?policy_number=…</div>
+          <div class="mt12" style="font-size:12px;color:var(--muted)">Backend: CH OE Backend (Allianz Switzerland) v0.3.4</div>
+          <div class="mt8"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">CH (Global App) · Clara architecture TBD</span></div>
+          <div class="mt8" style="font-size:12px;color:var(--muted)">Travel claim types: Annulation · Luggage · Assistance &amp; Rental Vehicle</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 7 — BENEFICIARIES DEEP DIVE
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s7">
+    <div class="slide-body">
+      <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
+      <p class="lead">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract in the Allianz backend. CIL acts as middleware, routing requests to the correct backend by country. Not a system of record.</p>
+
+      <div class="g2 mt16">
+        <div>
+          <div class="card">
+            <div class="section-label">Data flow</div>
+            <div style="font-size:13px;line-height:2">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px">Partner / Frontend</div>
+                <span style="color:var(--blue-light)">→ POST /beneficiaries</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding-left:20px">
+                <div class="flow-node cil" style="padding:6px 14px;min-width:0;font-size:12px"><div class="fn-name" style="color:#fff;font-size:12px">CIL</div></div>
+                <span style="color:var(--muted);font-size:12px">validates · routes by product_code · transforms</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:40px">
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">BE/NL/LU/CH</div><div class="fn-name" style="font-size:11px">ABS</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">DE/AT</div><div class="fn-name" style="font-size:11px">AHS/HRD</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">ES/FR/IT/PT</div><div class="fn-name" style="font-size:11px">SysteMA</div></div>
+              </div>
+            </div>
+            <div class="mt12" style="font-size:12px;color:var(--amber)">⚠ All calls are <strong>asynchronous</strong> — requests pending backend approval</div>
+          </div>
+
+          <div class="card mt14">
+            <div class="section-label">Create beneficiaries endpoint</div>
+            <div class="ep"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">→ create one or more beneficiaries</span></div>
+            <div class="mt12" style="font-size:13px;line-height:1.8">Links insured persons to an existing travel policy and contract. Payload includes <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">policy_number</code>, contract details, and an array of beneficiaries with personal data and contact info.<br><br>Returns <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">201 Created</code> — no body. All calls are asynchronous.</div>
+            <div class="mt12 section-label">Routing key</div>
+            <div style="font-size:13px;color:var(--text)"><code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:12px">product_code</code> determines which backend receives the request</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="section-label">Backend coverage by country</div>
+            <div class="mt8">
+              <div style="margin-bottom:10px">
+                <div style="font-size:12px;color:var(--blue-light);font-weight:600;margin-bottom:4px">ABS — Belgium · Netherlands · Luxembourg · Switzerland</div>
+                <span class="cc cc-live">BE</span><span class="cc cc-live">NL</span><span class="cc cc-live">LU</span><span class="cc cc-live">CH</span>
+              </div>
+              <div style="margin-bottom:10px">
+                <div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px">AHS / HRD — Germany · Austria</div>
+                <span class="cc cc-live">DE</span><span class="cc cc-live">AT</span>
+              </div>
+              <div>
+                <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px">SysteMA — Spain · France · Italy · Portugal</div>
+                <span class="cc cc-live">ES</span><span class="cc cc-live">FR</span><span class="cc cc-live">IT</span><span class="cc cc-live">PT</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt14">
+            <div class="section-label">Travel partners using Beneficiaries</div>
+            <table class="tbl">
+              <thead><tr><th>Partner</th><th>Country</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Santander UK</td><td><span class="cc cc-live">UK</span></td><td><span class="badge b-live">● Live</span></td></tr>
+                <tr><td>Deutsche Bank / Miles&amp;More</td><td><span class="cc cc-live">DE</span></td><td><span class="badge b-live">● Live</span></td></tr>
+                <tr><td>Allyz Hungary</td><td><span class="cc cc-live">HU</span></td><td><span class="badge b-live">● Live</span></td></tr>
+                <tr><td>Bolttech</td><td><span class="cc cc-live">PL</span><span class="cc cc-live">NL</span><span class="cc cc-live">RO</span><span class="cc cc-live">BE</span><span class="cc cc-live">DE</span><span class="cc cc-live">ES</span><span class="cc cc-live">IT</span><span class="cc cc-live">AT</span></td><td><span class="badge b-live">● Live</span></td></tr>
+                <tr><td>Westpac AU</td><td><span class="cc cc-prog">AU</span></td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 8 — CONTRACT MANAGEMENT
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s8">
+    <div class="slide-body">
+      <div class="h2">Contract Management Endpoint — Deep Dive</div>
+      <p class="lead">Standardized post-sale policy lifecycle API. Product-agnostic: operates on core entities like policy_number and quote_id, applicable across Travel, Motor, Health — any LoB integrated with CIL.</p>
+
+      <div class="tabs mt16">
+        <button class="tb on" onclick="switchTab('cm','insured')">Insured Persons</button>
+        <button class="tb" onclick="switchTab('cm','cancel')">Cancellation Eligibility</button>
+        <button class="tb" onclick="switchTab('cm','quotes')">Quote Management</button>
+        <button class="tb" onclick="switchTab('cm','docs')">Document Upload</button>
+      </div>
+
+      <div class="panel on" id="cm-insured">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Add / Update / Remove insured person</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/{policy_number}/insured-person</div>
+            <div class="ep"><span class="method m-put">PUT</span>/policies/{policy_number}/insured-person</div>
+            <div class="ep"><span class="method m-delete">DELETE</span>/policies/{policy_number}/insured-person/{person_id}</div>
+            <hr class="divider">
+            <div style="font-size:13px;line-height:1.8"><strong>Use cases:</strong><br>Add new member to health/travel policy · Update contact details · Remove a traveller from a policy<br><br><strong>Response:</strong> 200 OK with person_id (for POST) · 404 if policy/person not found</div>
+          </div>
+          <div class="card">
+            <div class="section-label">Key fields</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>Field</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>policy_number</td><td>Path param — routes to backend</td></tr>
+                <tr><td>person_id</td><td>Returned on POST, required for PUT/DELETE</td></tr>
+                <tr><td>first/last_name, DOB</td><td>Core person data</td></tr>
+                <tr><td>address.country</td><td>ISO 3166-1 alpha-2</td></tr>
+                <tr><td>contact.email / phone</td><td>Either/both required for holder</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="cm-cancel">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Cancellation eligibility check</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/{policy_number}/cancellation-eligibility</div>
+            <hr class="divider">
+            <div style="font-size:13px;line-height:1.8">Checks whether a policy is eligible for cancellation based on refund type and cancellation reason. Returns eligible: true/false, cancellation_date, and a message.<br><br>Partners use this before offering a cancellation option in the UI — prevents invalid cancellation attempts and reduces backend errors.</div>
+          </div>
+          <div class="card">
+            <div class="section-label">Sample response</div>
+            <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.7;overflow-x:auto">{
+  "eligible": true,
+  "cancellation_date": "2025-11-03",
+  "message": "Cancellation is eligible."
+}</pre>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Request body: refund_type (PRORATED etc.) + cancellation_reason</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="cm-quotes">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Get &amp; action a saved quote</div>
+            <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} — retrieve full quote</div>
+            <div class="ep"><span class="method m-post">POST</span>/quotes/{quote_id}/quote-actions</div>
+            <hr class="divider">
+            <div style="font-size:13px;line-height:1.8">
+              <strong>GET</strong>: Full quote including trip details, destinations, premium, product name, coverages, and purchasability status.<br><br>
+              <strong>Quote Actions</strong>: event_type SAVE_QUOTATION — sends the quote by email to the customer. Supports agent_email for agent-driven flows.<br><br>
+              Returns <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">204 No Content</code> on success.
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-label">Quote action payload</div>
+            <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.7;overflow-x:auto">{
+  "event_type": "SAVE_QUOTATION",
+  "email_recipients": {
+    "to": ["customer@example.com"]
+  },
+  "customer": {
+    "customer_first_name": "John",
+    "customer_last_name": "Doe"
+  },
+  "agent_data": {
+    "agent_email": "agent@partner.com"
+  }
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="cm-docs">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Document upload</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+            <hr class="divider">
+            <div style="font-size:13px;line-height:1.8">Uploads documents (e.g. medical questionnaires, signed forms) as multipart/form-data and associates them with policies or persons via a correlations array.<br><br>Header: <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">X-Sisu-Request-ID</code> (UUID) — idempotency key.<br><br>Returns document_id per uploaded file, plus success/failure status per document.</div>
+          </div>
+          <div class="card">
+            <div class="section-label">Correlation types</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>correlation.type</th><th>Use case</th></tr></thead>
+              <tbody>
+                <tr><td>PERSON_ID</td><td>Associate doc with insured person</td></tr>
+                <tr><td>POLICY_NUMBER</td><td>Associate with policy directly</td></tr>
+              </tbody>
+            </table>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Primary usage: medical screening documents in Fox UK / Rush/Hays flows (Verisk integration)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 9 — CLAIMS
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s9">
+    <div class="slide-body">
+      <div class="h2">Claims Endpoint — Deep Dive</div>
+      <p class="lead">CIL acts as a pass-through layer between the frontend and the Allianz OE Backend. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
+
+      <div class="g2 mt16">
+        <div>
+          <div class="card">
+            <div class="section-label">Architecture</div>
+            <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px;padding:8px 0">
+              <div class="flow-node"><div class="fn-type">Frontend (Global App)</div><div class="fn-name">Customer selects contract</div></div>
+              <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /claims/v1/submission/channels?policy_number=…</div>
+              <div class="flow-node cil"><div class="fn-type">CIL — pass-through</div><div class="fn-name" style="color:#fff">No transformation</div></div>
+              <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /secure/policies/{id}/claims (CH OE v0.3.4)</div>
+              <div class="flow-node"><div class="fn-type">Backend</div><div class="fn-name">CH OE Backend</div><div class="fn-sub">Allianz Switzerland</div></div>
+            </div>
+          </div>
+
+          <div class="card mt14">
+            <div class="section-label">CIL responsibilities</div>
+            <ul style="font-size:13px;line-height:2;padding-left:16px">
+              <li>Consume CH OE API and expose via SISU endpoint</li>
+              <li>Pass through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">journey_contacts</code> values without transformation</li>
+              <li>Support multiple channels per claim type</li>
+              <li>Handle optional/missing fields gracefully</li>
+            </ul>
+            <div class="mt10 section-label">Out of scope for CIL</div>
+            <ul style="font-size:13px;line-height:1.8;padding-left:16px;color:var(--muted)">
+              <li>Rendering the claims page (frontend)</li>
+              <li>Claim submission processing (OE Backend)</li>
+              <li>Enrichment or transformation of OE values</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="section-label">Travel claim types (CH / Global App)</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>Type</th><th>Channel</th><th>Condition</th></tr></thead>
+              <tbody>
+                <tr><td>Annulation</td><td>LINK → web form</td><td>All travel policies</td></tr>
+                <tr><td>Luggage</td><td>LINK → web form</td><td>All travel policies</td></tr>
+                <tr><td>Assistance &amp; Rental</td><td>PHONE</td><td>All travel policies</td></tr>
+                <tr><td>Motor – FNOL</td><td>LINK → web FNOL</td><td>All motor policies</td></tr>
+                <tr><td>Motor – RSA</td><td>PHONE</td><td>classProductType = AS</td></tr>
+                <tr><td>Home – Household</td><td>LINK → web form</td><td>classProductType ≠ HP</td></tr>
+                <tr><td>Legal</td><td>LINK → CAP</td><td>All legal policies</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card mt14">
+            <div class="section-label">Status &amp; geographic reach</div>
+            <div class="gap-row mt8">
+              <span class="badge b-prog">◑ In Progress</span>
+              <span style="font-size:13px">Switzerland (CH) — Global App pilot market</span>
+            </div>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Fast followers: AU · IT · NL (Global App roll-out plan)</div>
+            <hr class="divider">
+            <div style="font-size:12px;color:var(--muted)">Implementation ticket: CIL-4301 — [CHOE] e2e: Claims journey (provide a channel for claim submission)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SLIDE 10 — COUNTRY × ENDPOINT MATRIX
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s10">
+    <div class="slide-body">
+      <div class="h2">Geographic Coverage Matrix</div>
+      <p class="lead">Which endpoint families are live, in progress, or planned per country. Combined view across Travel + travel-relevant xLob endpoints.</p>
+
+      <div class="matrix-wrap mt16">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th style="text-align:left;min-width:110px">Country</th>
+              <th>Travel<br>Quote/Buy</th>
+              <th>Beneficiaries<br>(Travel)</th>
+              <th>Contract<br>Mgmt</th>
+              <th>Claims<br>(IL)</th>
+              <th>Key Partners</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-hdr">🇬🇧 UK</td><td class="m-yes">✓ LIVE</td><td class="m-yes">✓ LIVE</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Rush/Hays · Santander · Coverwise · Fox (IP) · Clara (IP)</td></tr>
+            <tr><td class="row-hdr">🇩🇪 Germany</td><td class="m-yes">✓ LIVE</td><td class="m-yes">✓ LIVE</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Miles&amp;More · Coverwise · AgentMax (IP)</td></tr>
+            <tr><td class="row-hdr">🇮🇹 Italy</td><td class="m-prog">◑ IP</td><td class="m-yes">✓ LIVE</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Coverwise · Bolttech · Global App (IP)</td></tr>
+            <tr><td class="row-hdr">🇭🇺 Hungary</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz HU</td></tr>
+            <tr><td class="row-hdr">🇨🇭 Switzerland</td><td class="m-prog">◑ IP</td><td class="m-yes">✓ LIVE</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">AgentMax (IP) · Global App (IP)</td></tr>
+            <tr><td class="row-hdr">🇦🇹 Austria</td><td class="m-prog">◑ IP</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">AgentMax (IP) · Bolttech</td></tr>
+            <tr><td class="row-hdr">🇪🇸 Spain</td><td class="m-prog">◑ IP</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">AgentMax (IP) · Bolttech</td></tr>
+            <tr><td class="row-hdr">🇨🇿 Czechia</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">AgentMax (IP)</td></tr>
+            <tr><td class="row-hdr">🇳🇱 Netherlands</td><td class="m-prog">◑ IP</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">Bolttech · Global App (IP)</td></tr>
+            <tr><td class="row-hdr">🇧🇪 Belgium</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇱🇺 Luxembourg</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇫🇷 France</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇵🇹 Portugal</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇵🇱 Poland</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇷🇴 Romania</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇦🇺 Australia</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">Westpac (NAC 2.0) · Global App (IP) · Midas + FPE backends</td></tr>
+            <tr><td class="row-hdr">🇳🇿 New Zealand</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz NZ B2C · Midas + FPE backends</td></tr>
+            <tr><td class="row-hdr">🇺🇸 United States</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Fusion US — new backend (alongside eMagin)</td></tr>
+            <tr><td class="row-hdr">🇨🇦 Canada</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz Canada · Magnesium backend · Contract commit solution</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="gap-row mt14">
+        <span style="font-size:12px;color:var(--muted);font-weight:600">Legend:</span>
+        <span style="font-size:12px;color:#10b981;background:rgba(16,185,129,.1);padding:2px 9px;border-radius:4px;border:1px solid rgba(16,185,129,.3)">✓ LIVE — production</span>
+        <span style="font-size:12px;color:#60a5fa;background:rgba(59,130,246,.1);padding:2px 9px;border-radius:4px;border:1px solid rgba(59,130,246,.3)">◑ IP — in progress / not live yet</span>
+        <span style="font-size:12px;color:var(--border);padding:2px 9px">— not covered</span>
+        <span style="font-size:12px;color:var(--muted);margin-left:auto">Sources: Confluence PROD space · Partners page · Architecture pages · Jul 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-bar">
+    <div class="dots" id="dotsContainer"></div>
+    <span class="hint">← → arrow keys to navigate</span>
+    <div class="btns">
+      <button class="btn" id="btnPrev" onclick="goSlide(-1)" disabled>← Prev</button>
+      <button class="btn" id="btnNext" onclick="goSlide(1)">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SLIDES = [
+  { id:'s1', title:'Title', label:'Overview' },
+  { id:'s2', title:'What is the Integration Layer?', label:'IL Overview' },
+  { id:'s3', title:'Travel Endpoint — Architecture', label:'Travel Arch' },
+  { id:'s4', title:'Travel Endpoint — Geographic Reach', label:'Map' },
+  { id:'s5', title:'Travel Partners — Full Overview', label:'Partners' },
+  { id:'s6', title:'xLob Endpoint Families', label:'xLob' },
+  { id:'s7', title:'Beneficiaries — Deep Dive', label:'Beneficiaries' },
+  { id:'s8', title:'Contract Management — Deep Dive', label:'Contract Mgmt' },
+  { id:'s9', title:'Claims — Deep Dive', label:'Claims' },
+  { id:'s10', title:'Geographic Coverage Matrix', label:'Matrix' },
+];
+
+let cur = 0;
+
+// Build dots
+const dotsEl = document.getElementById('dotsContainer');
+SLIDES.forEach((s, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' on':'');
+  d.title = s.label;
+  d.onclick = () => showSlide(i);
+  dotsEl.appendChild(d);
+});
+
+function showSlide(n) {
+  document.getElementById(SLIDES[cur].id).classList.remove('active');
+  cur = Math.max(0, Math.min(n, SLIDES.length - 1));
+  document.getElementById(SLIDES[cur].id).classList.add('active');
+  document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('on', i===cur));
+  document.getElementById('barTitle').textContent = SLIDES[cur].title;
+  document.getElementById('barCounter').textContent = (cur+1) + ' / ' + SLIDES.length;
+  document.getElementById('btnPrev').disabled = cur===0;
+  document.getElementById('btnNext').disabled = cur===SLIDES.length-1;
+}
+
+function goSlide(d) { showSlide(cur + d); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goSlide(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goSlide(-1);
+});
+
+// Tab switching
+function switchTab(group, panel) {
+  document.querySelectorAll(`#s8 .tb`).forEach(b => b.classList.remove('on'));
+  document.querySelectorAll(`#s8 .panel`).forEach(p => p.classList.remove('on'));
+  event.target.classList.add('on');
+  document.getElementById(group + '-' + panel).classList.add('on');
+}
+
+// Partner filter
+function filterPartners(type) {
+  document.querySelectorAll('#partnerTable tbody tr').forEach(tr => {
+    const s = tr.dataset.status;
+    tr.style.display = (type==='all' || s===type || (type==='progress' && s==='progress')) ? '' : 'none';
+  });
+  ['filterAll','filterLive','filterProg'].forEach(id => document.getElementById(id).style.borderColor = '');
+  document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1)).style.borderColor = 'var(--blue-light)';
+}
+
+// ── WORLD MAP ──────────────────────────────────────────────────────────────
+// Simplified country polygons (approximate outlines, good enough for a
+// presentation map at 960×500 using a rough Mercator-like projection).
+// Coordinates are [lon, lat] pairs; projection: x=lon*2.6+480, y=250-lat*2.9
+function proj(lon, lat){ return [lon*2.6+480, 250-lat*2.9]; }
+function poly(pts){ return pts.map(p=>proj(p[0],p[1]).join(',')).join(' '); }
+
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('worldMap');
+
+function addEl(tag, attrs){
+  const el = document.createElementNS(NS, tag);
+  for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,v);
+  return el;
+}
+
+// Land fill
+const landColor = '#1a2d45';
+const COUNTRIES = [
+  // [id, fill, [polygon pts as [lon,lat],...]]
+  // Europe
+  ['UK',    [[[-3,50],[-5,54],[-3,58],[0,58],[2,54],[1,51],[-3,50]]],                     'UK'],
+  ['IE',    [[[-10,51],[-10,55],[-6,55],[-6,51],[-10,51]]],                               'IE'],
+  ['FR',    [[[-5,43],[3,43],[8,44],[7,48],[2,51],[-2,49],[-5,48],[-5,43]]],              'FR'],
+  ['ES',    [[[-9,36],[-9,44],[3,44],[3,36],[-9,36]]],                                   'ES'],
+  ['PT',    [[[-9,37],[-9,42],[-7,42],[-7,37],[-9,37]]],                                 'PT'],
+  ['DE',    [[[6,47],[15,47],[15,55],[6,55],[6,47]]],                                    'DE'],
+  ['NL',    [[[3,51],[7,51],[7,54],[3,54],[3,51]]],                                      'NL'],
+  ['BE',    [[[2,49],[6,49],[6,51],[2,51],[2,49]]],                                      'BE'],
+  ['LU',    [[[5,49],[6,49],[6,50],[5,50],[5,49]]],                                      'LU'],
+  ['CH',    [[[6,46],[10,46],[10,48],[6,48],[6,46]]],                                    'CH'],
+  ['AT',    [[[10,46],[17,46],[17,49],[10,49],[10,46]]],                                 'AT'],
+  ['IT',    [[[7,38],[16,38],[14,44],[12,46],[8,46],[7,44],[7,38]]],                     'IT'],
+  ['PL',    [[[14,49],[24,49],[24,55],[14,55],[14,49]]],                                 'PL'],
+  ['CZ',    [[[12,49],[19,49],[19,51],[12,51],[12,49]]],                                 'CZ'],
+  ['HU',    [[[16,45],[23,45],[23,48],[16,48],[16,45]]],                                 'HU'],
+  ['RO',    [[[22,43],[30,43],[30,48],[22,48],[22,43]]],                                 'RO'],
+  ['NO',    [[[5,57],[31,57],[31,71],[5,71],[5,57]]],                                    'NO'],
+  ['SE',    [[[11,55],[25,55],[25,69],[11,69],[11,55]]],                                 'SE'],
+  ['DK',    [[[8,54],[13,54],[13,58],[8,58],[8,54]]],                                    'DK'],
+  // Americas
+  ['US',    [[[-125,24],[-66,24],[-66,50],[-125,50],[-125,24]]],                        'US'],
+  ['CA',    [[[-140,48],[-52,48],[-52,70],[-140,70],[-140,48]]],                        'CA'],
+  ['MX',    [[[-117,15],[-87,15],[-87,32],[-117,32],[-117,15]]],                        'MX'],
+  ['BR',    [[[-74,-35],[-35,-35],[-35,5],[-74,5],[-74,-35]]],                          'BR'],
+  // APAC
+  ['AU',    [[[114,-40],[154,-40],[154,-11],[114,-11],[114,-40]]],                       'AU'],
+  ['NZ',    [[[166,-47],[178,-47],[178,-34],[166,-34],[166,-47]]],                       'NZ'],
+  ['JP',    [[[130,30],[146,30],[146,45],[130,45],[130,30]]],                            'JP'],
+  ['CN',    [[[73,18],[135,18],[135,53],[73,53],[73,18]]],                               'CN'],
+  ['IN',    [[[68,8],[97,8],[97,36],[68,36],[68,8]]],                                   'IN'],
+  // Africa
+  ['ZA',    [[[16,-35],[33,-35],[33,-22],[16,-22],[16,-35]]],                           'ZA'],
+  ['NG',    [[[3,4],[15,4],[15,14],[3,14],[3,4]]],                                      'NG'],
+];
+
+// Draw land polygons
+COUNTRIES.forEach(([id, polys]) => {
+  polys.forEach(pts => {
+    const p = addEl('polygon', { points: poly(pts), fill: landColor, stroke:'#253650', 'stroke-width':'0.5' });
+    p.dataset.cid = id;
+    svg.appendChild(p);
+  });
+});
+
+// Country markers data: [id, lon, lat, status, displayName, info]
+const MARKERS = [
+  ['UK',  -2,  53, 'live',     'United Kingdom',   'Live: Rush/Hays UK, Santander UK, Coverwise\nIn Progress: Fox UK (LV), Clara/Last Mile (Lloyds, NatWest), AgentMax UK'],
+  ['DE',  10,  51, 'live',     'Germany',           'Live: Deutsche Bank / Miles&More, Coverwise DE\nIn Progress: AgentMax Retail Portal Wave 1'],
+  ['HU',  19,  47, 'live',     'Hungary',           'Live: Allyz Hungary — Travel Beneficiaries'],
+  ['IT',  12,  42, 'progress', 'Italy',             'In Progress: Coverwise IT, Global App, AgentMax Wave 2\nBackend: SysteMA'],
+  ['ES',  -4,  40, 'progress', 'Spain',             'In Progress: AgentMax Retail Portal Wave 2\nBackend: SysteMA'],
+  ['AT',  14,  47, 'progress', 'Austria',           'In Progress: AgentMax Retail Portal Wave 1\nBackend: AHS/HRD'],
+  ['CH',   8,  47, 'progress', 'Switzerland',       'In Progress: AgentMax Wave 1, Global App (pilot — friends & family Jun 2026)\nClaims: CH OE Backend'],
+  ['CZ',  15,  50, 'progress', 'Czechia',           'In Progress: AgentMax Retail Portal Wave 2'],
+  ['NL',   5,  52, 'progress', 'Netherlands',       'In Progress: Global App fast follower\nLive (Beneficiaries): Bolttech NL'],
+  ['FR',   2,  46, 'planned',  'France',            'Planned via AgentMax / SysteMA backend\nLive (Beneficiaries): Bolttech FR'],
+  ['PT',  -8,  39, 'planned',  'Portugal',          'Planned via SysteMA backend\nLive (Beneficiaries): Bolttech PT'],
+  ['BE',   4,  50, 'planned',  'Belgium',           'Beneficiaries via ABS backend (Bolttech BE)'],
+  ['LU',   6,  49, 'planned',  'Luxembourg',        'Beneficiaries via ABS backend'],
+  ['PL',  19,  52, 'planned',  'Poland',            'Beneficiaries via Bolttech PL'],
+  ['RO',  25,  46, 'planned',  'Romania',           'Beneficiaries via Bolttech RO'],
+  ['AU', 134, -25, 'progress', 'Australia',         'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)\nGlobal App fast follower'],
+  ['NZ', 172, -41, 'progress', 'New Zealand',       'In Progress: B2C Travel (Allyz NZ)\nBackends: eMagin + Midas (AU/NZ) + FPE (Flexible Pricing Engine)'],
+  ['US', -98,  39, 'progress', 'United States',     'In Progress: Fusion US — new backend integration alongside eMagin\nAllyz US / contract commit solution'],
+  ['CA', -96,  60, 'progress', 'Canada',            'In Progress: Allyz Canada — Magnesium backend\nContract commit / contract creation solution'],
+];
+
+const statusColor = { live:'#10b981', progress:'#3b82f6', planned:'#f59e0b' };
+
+MARKERS.forEach(([id, lon, lat, status, name, info]) => {
+  const [cx, cy] = proj(lon, lat);
+  const col = statusColor[status];
+  const r = (status==='live') ? 10 : 9;
+
+  const g = addEl('g', { class:'cnode', style:'cursor:pointer' });
+  g.dataset.country = name;
+  g.dataset.status = status;
+  g.dataset.info = info;
+
+  const circle = addEl('circle', { cx, cy, r, fill: col, opacity:'0.85', stroke:'#fff', 'stroke-width':'1.2' });
+  g.appendChild(circle);
+
+  // 2-char label
+  const lbl = addEl('text', { x:cx, y:cy+3.5, 'text-anchor':'middle', fill:'#fff', 'font-size':'7', 'font-weight':'700', 'pointer-events':'none' });
+  lbl.textContent = id.slice(0,2);
+  g.appendChild(lbl);
+  svg.appendChild(g);
+});
+
+// tooltip
+document.querySelectorAll('.cnode').forEach(g => {
+  g.addEventListener('mouseenter', () => {
+    const tt = document.getElementById('mapTooltip');
+    const status = g.dataset.status;
+    const statusLabel = status==='live'?'🟢 Live':status==='progress'?'🔵 In Progress':'🟡 Planned';
+    document.getElementById('ttCountry').textContent = g.dataset.country + '  ' + statusLabel;
+    document.getElementById('ttInfo').innerHTML = g.dataset.info.replace(/\n/g,'<br>');
+    tt.style.display = 'block';
+  });
+  g.addEventListener('mousemove', e => {
+    const tt = document.getElementById('mapTooltip');
+    tt.style.left = (e.clientX+14)+'px';
+    tt.style.top  = (e.clientY-10)+'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    document.getElementById('mapTooltip').style.display = 'none';
+  });
+});
+</script>
+</body>
+</html>
