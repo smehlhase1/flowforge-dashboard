@@ -89,7 +89,8 @@
   .ticket-table th:nth-child(4), .ticket-table td:nth-child(4) { width: 120px; }
   .ticket-table th:nth-child(5), .ticket-table td:nth-child(5) { width: 152px; }
   .ticket-table th:nth-child(6), .ticket-table td:nth-child(6) { width: 82px; }
-  .ticket-table th:nth-child(7), .ticket-table td:nth-child(7) { width: 78px; }
+  .ticket-table th:nth-child(7), .ticket-table td:nth-child(7) { width: 74px; }
+  .ticket-table th:nth-child(8), .ticket-table td:nth-child(8) { width: 74px; }
   .ticket-table tr:last-child td { border-bottom: none; }
   .ticket-table tr:hover td { background: #faf5ff; }
   .ticket-table .t-key { font-family: monospace; font-size: 11px; white-space: nowrap; }
@@ -98,6 +99,9 @@
   .ticket-table .t-date { color: var(--muted); white-space: nowrap; font-size: 11px; }
   .ticket-table .t-done { color: var(--done); white-space: nowrap; font-size: 11px; }
   .ticket-table .t-done-na { color: #d1d5db; font-size: 11px; }
+  .ticket-table .t-cost { color: #6d28d9; white-space: nowrap; font-size: 11px; font-weight: 600; }
+  .ticket-table .t-cost-na { color: #d1d5db; font-size: 11px; }
+  .badge-cost { background: #ede9fe; color: #6d28d9; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
 
   /* Author section */
   .author-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
@@ -232,15 +236,15 @@
           <span class="eg-count">7 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5861" target="_blank">CIL-5861</a></td><td class="t-summary">[FOX] EAPI breaking change: contractUpgrades moved to root level in ViewBaseContractAndUpgrades</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-03</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5849" target="_blank">CIL-5849</a></td><td class="t-summary">[FOX] Saved quotes remain on Dashboard after successful policy purchase</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5940" target="_blank">CIL-5940</a></td><td class="t-summary">[FOX] Purchase confirmation email not sent to customer after successful policy purchase</td><td class="t-who">Anzhelika Chylikina</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5820" target="_blank">CIL-5820</a></td><td class="t-summary">[Investigation FOX] Error message when disabling main Auto-Renew</td><td class="t-who">Makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-07-01</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5840" target="_blank">CIL-5840</a></td><td class="t-summary">[FOX] Medical add-on not returned in quote response when only non-hold-cover add-ons</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-07-02</td><td class="t-done">2026-07-09</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5848" target="_blank">CIL-5848</a></td><td class="t-summary">[FOX] Medical screening status missing in Get Quote by ID response</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5824" target="_blank">CIL-5824</a></td><td class="t-summary">[Investigation FOX] Error message displayed when purchasing any type of policy</td><td class="t-who">Ozlam Tahirli</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-07-01</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5861" target="_blank">CIL-5861</a></td><td class="t-summary">[FOX] EAPI breaking change: contractUpgrades moved to root level in ViewBaseContractAndUpgrades</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-03</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5849" target="_blank">CIL-5849</a></td><td class="t-summary">[FOX] Saved quotes remain on Dashboard after successful policy purchase</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5940" target="_blank">CIL-5940</a></td><td class="t-summary">[FOX] Purchase confirmation email not sent to customer after successful policy purchase</td><td class="t-who">Anzhelika Chylikina</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5820" target="_blank">CIL-5820</a></td><td class="t-summary">[Investigation FOX] Error message when disabling main Auto-Renew</td><td class="t-who">Makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-07-01</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5840" target="_blank">CIL-5840</a></td><td class="t-summary">[FOX] Medical add-on not returned in quote response when only non-hold-cover add-ons</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done">2026-07-09</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5848" target="_blank">CIL-5848</a></td><td class="t-summary">[FOX] Medical screening status missing in Get Quote by ID response</td><td class="t-who">sergei.makarov</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5824" target="_blank">CIL-5824</a></td><td class="t-summary">[Investigation FOX] Error message displayed when purchasing any type of policy</td><td class="t-who">Ozlam Tahirli</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-07-01</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -252,9 +256,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5571" target="_blank">CIL-5571</a></td><td class="t-summary">[Fox UK] Main Quote Not Returned in List Quotes Endpoint When Only Basic Cover</td><td class="t-who">Mario Pinderi</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5571" target="_blank">CIL-5571</a></td><td class="t-summary">[Fox UK] Main Quote Not Returned in List Quotes Endpoint When Only Basic Cover</td><td class="t-who">Mario Pinderi</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -266,9 +270,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a></td><td class="t-summary">[travel-service] Webhook Endpoint not writing Logzilla Logs</td><td class="t-who">Mario Pinderi</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a></td><td class="t-summary">[travel-service] Webhook Endpoint not writing Logzilla Logs</td><td class="t-who">Mario Pinderi</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -280,9 +284,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5941" target="_blank">CIL-5941</a></td><td class="t-summary">[Fox UK] Affiliate SSO broken — partner unable to authenticate via affiliate SSO flow</td><td class="t-who">Boris Stupar</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-wip">Waiting For Merge</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5941" target="_blank">CIL-5941</a></td><td class="t-summary">[Fox UK] Affiliate SSO broken — partner unable to authenticate via affiliate SSO flow</td><td class="t-who">Boris Stupar</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-wip">Waiting For Merge</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -295,7 +299,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12933" target="_blank" style="color:inherit;text-decoration:none">PROD-12933</a></span>
-      <span class="ititle">Fusion B2C US (Phase 1)</span>
+      <span class="ititle">Fusion B2C US (Phase 1)</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15803]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
         <span class="badge badge-done">2 done</span>
@@ -311,10 +315,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5838" target="_blank">CIL-5838</a></td><td class="t-summary">[simplesurance-api + travel-service] Get Quote By ID: Return HTML in response</td><td class="t-who">Imre Marton</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5836" target="_blank">CIL-5836</a></td><td class="t-summary">[Spike] Investigate and implement storing raw Fusion HTML in Integration Service</td><td class="t-who">Imre Marton</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5838" target="_blank">CIL-5838</a></td><td class="t-summary">[simplesurance-api + travel-service] Get Quote By ID: Return HTML in response</td><td class="t-who">Imre Marton</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5836" target="_blank">CIL-5836</a></td><td class="t-summary">[Spike] Investigate and implement storing raw Fusion HTML in Integration Service</td><td class="t-who">Imre Marton</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -326,11 +330,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5630" target="_blank">CIL-5630</a></td><td class="t-summary">[Clara] Get Policy Details — Mapping w/ eAPI for open policies (beneficiary)</td><td class="t-who">Unassigned</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a></td><td class="t-summary">Clara — Create new provider Lib Home Assistance Contract Management</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a></td><td class="t-summary">Clara — Add client credentials + Product Code for Widget &amp; Metaportal</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5630" target="_blank">CIL-5630</a></td><td class="t-summary">[Clara] Get Policy Details — Mapping w/ eAPI for open policies (beneficiary)</td><td class="t-who">Unassigned</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a></td><td class="t-summary">Clara — Create new provider Lib Home Assistance Contract Management</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a></td><td class="t-summary">Clara — Add client credentials + Product Code for Widget &amp; Metaportal</td><td class="t-who">Jose Gil</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -342,9 +346,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5633" target="_blank">CIL-5633</a></td><td class="t-summary">[sisu-api: case mgmt] Create POST /cases/upload-documents endpoint</td><td class="t-who">Unassigned</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5633" target="_blank">CIL-5633</a></td><td class="t-summary">[sisu-api: case mgmt] Create POST /cases/upload-documents endpoint</td><td class="t-who">Unassigned</td><td class="t-who">Floriane Miletic</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -356,9 +360,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5912" target="_blank">CIL-5912</a></td><td class="t-summary">Analysis over CIL &lt;&gt; Braintree JK SDK integration to retrieve client_token</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5912" target="_blank">CIL-5912</a></td><td class="t-summary">Analysis over CIL &lt;&gt; Braintree JK SDK integration to retrieve client_token</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -370,10 +374,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5936" target="_blank">CIL-5936</a></td><td class="t-summary">[simplesurance-api] Add gadget object to PointOfSale in travel quote schema</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5937" target="_blank">CIL-5937</a></td><td class="t-summary">[CIL Library / travel-service] Pass gadget fields to Fusion POST /Optimizations</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5936" target="_blank">CIL-5936</a></td><td class="t-summary">[simplesurance-api] Add gadget object to PointOfSale in travel quote schema</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5937" target="_blank">CIL-5937</a></td><td class="t-summary">[CIL Library / travel-service] Pass gadget fields to Fusion POST /Optimizations</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -385,10 +389,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5999" target="_blank">CIL-5999</a></td><td class="t-summary">Save quote via Quote Actions endpoint — FR-09 Save &amp; Retrieve</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6001" target="_blank">CIL-6001</a></td><td class="t-summary">Send save-quote email via Emagin for USA B2C — FR-09 Save &amp; Retrieve</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5999" target="_blank">CIL-5999</a></td><td class="t-summary">Save quote via Quote Actions endpoint — FR-09 Save &amp; Retrieve</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6001" target="_blank">CIL-6001</a></td><td class="t-summary">Send save-quote email via Emagin for USA B2C — FR-09 Save &amp; Retrieve</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -401,7 +405,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12356" target="_blank" style="color:inherit;text-decoration:none">PROD-12356</a></span>
-      <span class="ititle">MDDR individual policies</span>
+      <span class="ititle">MDDR individual policies</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15044]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
         <span class="badge badge-todo">3 to do</span>
@@ -416,9 +420,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5651" target="_blank">CIL-5651</a></td><td class="t-summary">[MDDR]: Fix premium amount mapping</td><td class="t-who">Iskender Qasimov</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5651" target="_blank">CIL-5651</a></td><td class="t-summary">[MDDR]: Fix premium amount mapping</td><td class="t-who">Iskender Qasimov</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -430,9 +434,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5669" target="_blank">CIL-5669</a></td><td class="t-summary">[mddr-service] Integrate MDDR Cancel Policy with AZP eAPI (test-partner)</td><td class="t-who">Igor Mishin</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5669" target="_blank">CIL-5669</a></td><td class="t-summary">[mddr-service] Integrate MDDR Cancel Policy with AZP eAPI (test-partner)</td><td class="t-who">Igor Mishin</td><td class="t-who">Bekzat Mustafa</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-24</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -444,9 +448,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5708" target="_blank">CIL-5708</a></td><td class="t-summary">MDDR: Create beneficiary — forward risks[] device fields to eAPI</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5708" target="_blank">CIL-5708</a></td><td class="t-summary">MDDR: Create beneficiary — forward risks[] device fields to eAPI</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -458,9 +462,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5938" target="_blank">CIL-5938</a></td><td class="t-summary">MDDR: Replace `risk` with `risks[]` array — align beneficiary model for multi-device support</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5938" target="_blank">CIL-5938</a></td><td class="t-summary">MDDR: Replace `risk` with `risks[]` array — align beneficiary model for multi-device support</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -473,11 +477,12 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-13185" target="_blank" style="color:inherit;text-decoration:none">PROD-13185</a></span>
-      <span class="ititle">NBG Motor</span>
+      <span class="ititle">NBG Motor</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15045]</span>
       <div class="icounts">
         <span class="badge badge-wip">8 active</span>
         <span class="badge badge-done">3 done</span>
         <span class="badge badge-todo">10 to do</span>
+        <span class="badge-cost">✦ $7,403</span>
       </div>
     </div>
     <div class="initiative-body">
@@ -489,9 +494,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a></td><td class="t-summary">[NBG Motor] motor service: Accept an endorsement and immediately issue new policy</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a></td><td class="t-summary">[NBG Motor] motor service: Accept an endorsement and immediately issue new policy</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -503,11 +508,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /policies for issuance</td><td class="t-who">Mert Akman</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-26</td><td class="t-done">2026-07-09</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /quote request</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-22</td><td class="t-done">2026-07-09</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a></td><td class="t-summary">[NBG Property] sisu api: Introduce endpoint for Issuance of Property policy</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-24</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /policies for issuance</td><td class="t-who">Mert Akman</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-26</td><td class="t-cost">$327.18</td><td class="t-done">2026-07-09</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a></td><td class="t-summary">[NBG Property] sisu api: Extend fields to Property POST /quote request</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-22</td><td class="t-cost-na">—</td><td class="t-done">2026-07-09</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a></td><td class="t-summary">[NBG Property] sisu api: Introduce endpoint for Issuance of Property policy</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-24</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -519,9 +524,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5653" target="_blank">CIL-5653</a></td><td class="t-summary">[NBG Property] property service: Integrate Quote with AZ GR /Offers (Motor)</td><td class="t-who">Marcin Kaminski</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5653" target="_blank">CIL-5653</a></td><td class="t-summary">[NBG Property] property service: Integrate Quote with AZ GR /Offers (Motor)</td><td class="t-who">Marcin Kaminski</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-cost">$242.86</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -533,11 +538,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-wip">In Validation</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5725" target="_blank">CIL-5725</a></td><td class="t-summary">[NBG Property] property service: Integrate POST Policy upload document</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Danylo Lubenets</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Mehdi Makki</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-wip">In Validation</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5725" target="_blank">CIL-5725</a></td><td class="t-summary">[NBG Property] property service: Integrate POST Policy upload document</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a></td><td class="t-summary">[NBG Property] property service: Integrate Get Policy Document with AZ GR</td><td class="t-who">Danylo Lubenets</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-24</td><td class="t-cost">$6,088.24</td><td class="t-done-na">—</td></tr>
 
           </tbody>
         </table>
@@ -550,9 +555,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5680" target="_blank">CIL-5680</a></td><td class="t-summary">[NBG Property] property service: Integrate Policy with AZ GR /application</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-24</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5680" target="_blank">CIL-5680</a></td><td class="t-summary">[NBG Property] property service: Integrate Policy with AZ GR /application</td><td class="t-who">Mert Akman</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-24</td><td class="t-cost">$727.93</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -564,11 +569,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5692" target="_blank">CIL-5692</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Apply for Policy endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">AI-Generation In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Quote endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5900" target="_blank">CIL-5900</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Issuance endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5692" target="_blank">CIL-5692</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Apply for Policy endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">AI-Generation In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Quote endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-22</td><td class="t-cost">$17.08</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5900" target="_blank">CIL-5900</a></td><td class="t-summary">[NBG UL] sisu api: Introduce Issuance endpoint in new Life Insurance API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -580,9 +585,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5883" target="_blank">CIL-5883</a></td><td class="t-summary">[NBG UL] life service: Integrate Apply for Policy endpoint with AZ GR Applications API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5883" target="_blank">CIL-5883</a></td><td class="t-summary">[NBG UL] life service: Integrate Apply for Policy endpoint with AZ GR Applications API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -594,12 +599,12 @@
           <span class="eg-count">4 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5894" target="_blank">CIL-5894</a></td><td class="t-summary">[NBG UL] life service: Integrate Offer Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5897" target="_blank">CIL-5897</a></td><td class="t-summary">[NBG UL] life service: Integrate Application Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5898" target="_blank">CIL-5898</a></td><td class="t-summary">[NBG UL] life service: Integrate Policy Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5901" target="_blank">CIL-5901</a></td><td class="t-summary">[NBG UL] life service: Integrate Application Document Upload with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5894" target="_blank">CIL-5894</a></td><td class="t-summary">[NBG UL] life service: Integrate Offer Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5897" target="_blank">CIL-5897</a></td><td class="t-summary">[NBG UL] life service: Integrate Application Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5898" target="_blank">CIL-5898</a></td><td class="t-summary">[NBG UL] life service: Integrate Policy Document Retrieval with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5901" target="_blank">CIL-5901</a></td><td class="t-summary">[NBG UL] life service: Integrate Application Document Upload with AZ GR Docs API</td><td class="t-who">Unassigned</td><td class="t-who">Andrii Gatsaniuk</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -611,10 +616,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5903" target="_blank">CIL-5903</a></td><td class="t-summary">[NBG Property] sisu api: Introduce Amend Policy endpoint for Property (cancellation)</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5904" target="_blank">CIL-5904</a></td><td class="t-summary">[NBG Property] sisu api: Introduce Accept Policy Amendment endpoint for Property</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5903" target="_blank">CIL-5903</a></td><td class="t-summary">[NBG Property] sisu api: Introduce Amend Policy endpoint for Property (cancellation)</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5904" target="_blank">CIL-5904</a></td><td class="t-summary">[NBG Property] sisu api: Introduce Accept Policy Amendment endpoint for Property</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -626,10 +631,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5933" target="_blank">CIL-5933</a></td><td class="t-summary">[NBG Motor] Fix missing field mappings in POST /quotes/prices integration</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5934" target="_blank">CIL-5934</a></td><td class="t-summary">[NBG Motor] Fix missing field mappings in POST /offers integration</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5933" target="_blank">CIL-5933</a></td><td class="t-summary">[NBG Motor] Fix missing field mappings in POST /quotes/prices integration</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5934" target="_blank">CIL-5934</a></td><td class="t-summary">[NBG Motor] Fix missing field mappings in POST /offers integration</td><td class="t-who">Unassigned</td><td class="t-who">Neetu Verma</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -642,7 +647,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-13287" target="_blank" style="color:inherit;text-decoration:none">PROD-13287</a></span>
-      <span class="ititle">NBG Financial Services (Payments, Commissions)</span>
+      <span class="ititle">NBG Financial Services (Payments, Commissions)</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15045]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
         <span class="badge badge-todo">1 to do</span>
@@ -657,9 +662,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5943" target="_blank">CIL-5943</a></td><td class="t-summary">[NBG Standing Order] Register Standing Order for AZ/Europisti</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5943" target="_blank">CIL-5943</a></td><td class="t-summary">[NBG Standing Order] Register Standing Order for AZ/Europisti</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -671,9 +676,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5985" target="_blank">CIL-5985</a></td><td class="t-summary">payments service: integrate POST payments standing-order endpoint for NBG</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5985" target="_blank">CIL-5985</a></td><td class="t-summary">payments service: integrate POST payments standing-order endpoint for NBG</td><td class="t-who">Unassigned</td><td class="t-who">Raisat Ramazanova</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -686,10 +691,11 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-13092" target="_blank" style="color:inherit;text-decoration:none">PROD-13092</a></span>
-      <span class="ititle">Clara EHA Beneficiary Management and MP Access</span>
+      <span class="ititle">Clara EHA Beneficiary Management and MP Access</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15044]</span>
       <div class="icounts">
         <span class="badge badge-done">1 done</span>
         <span class="badge badge-todo">8 to do</span>
+        <span class="badge-cost">✦ $60</span>
       </div>
     </div>
     <div class="initiative-body">
@@ -701,16 +707,16 @@
           <span class="eg-count">8 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13314" target="_blank">PROD-13314</a></td><td class="t-summary">Extend CIL data model: add EHA beneficiary fields</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5588" target="_blank">CIL-5588</a></td><td class="t-summary">Cancel EHA beneficiary contract via portal</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5587" target="_blank">CIL-5587</a></td><td class="t-summary">Link EHA beneficiary to individual add-on policy when customer purchases</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5586" target="_blank">CIL-5586</a></td><td class="t-summary">CIL: Create EHA beneficiary — eAPI Beneficiary Management API v3 integration</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5584" target="_blank">CIL-5584</a></td><td class="t-summary">Create partner flow for Clara EHA</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5582" target="_blank">CIL-5582</a></td><td class="t-summary">Prepare CIL webhook endpoint for one-time EHA beneficiary import</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5581" target="_blank">CIL-5581</a></td><td class="t-summary">Consume EHA beneficiary lifecycle events from BIOS via webhook</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5583" target="_blank">CIL-5583</a></td><td class="t-summary">Extend create and update beneficiary endpoints with EHA home-specific fields</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/PROD-13314" target="_blank">PROD-13314</a></td><td class="t-summary">Extend CIL data model: add EHA beneficiary fields</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5588" target="_blank">CIL-5588</a></td><td class="t-summary">Cancel EHA beneficiary contract via portal</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost">$13.88</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5587" target="_blank">CIL-5587</a></td><td class="t-summary">Link EHA beneficiary to individual add-on policy when customer purchases</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost">$21.61</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5586" target="_blank">CIL-5586</a></td><td class="t-summary">CIL: Create EHA beneficiary — eAPI Beneficiary Management API v3 integration</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost">$24.48</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5584" target="_blank">CIL-5584</a></td><td class="t-summary">Create partner flow for Clara EHA</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5582" target="_blank">CIL-5582</a></td><td class="t-summary">Prepare CIL webhook endpoint for one-time EHA beneficiary import</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5581" target="_blank">CIL-5581</a></td><td class="t-summary">Consume EHA beneficiary lifecycle events from BIOS via webhook</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5583" target="_blank">CIL-5583</a></td><td class="t-summary">Extend create and update beneficiary endpoints with EHA home-specific fields</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -722,9 +728,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5709" target="_blank">CIL-5709</a></td><td class="t-summary">MDDR: Update beneficiary — forward risks[] device fields to eAPI</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5709" target="_blank">CIL-5709</a></td><td class="t-summary">MDDR: Update beneficiary — forward risks[] device fields to eAPI</td><td class="t-who">Igor Mishin</td><td class="t-who">Igor Mishin</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -737,7 +743,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12331" target="_blank" style="color:inherit;text-decoration:none">PROD-12331</a></span>
-      <span class="ititle">Global App CH Switzerland</span>
+      <span class="ititle">Global App CH Switzerland</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[18201]</span>
       <div class="icounts">
         <span class="badge badge-wip">3 active</span>
         <span class="badge badge-todo">10 to do</span>
@@ -752,10 +758,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5695" target="_blank">CIL-5695</a></td><td class="t-summary">[CHOE] API draft: Add care_of_type and care_of fields to InsuredPersonRequestAddress schema</td><td class="t-who">Daniele Vasselli</td><td class="t-who">Judit Papp</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5694" target="_blank">CIL-5694</a></td><td class="t-summary">[CHOE] e2e: Support care_of_type and care_of fields in Update Insured Person address update</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5695" target="_blank">CIL-5695</a></td><td class="t-summary">[CHOE] API draft: Add care_of_type and care_of fields to InsuredPersonRequestAddress schema</td><td class="t-who">Daniele Vasselli</td><td class="t-who">Judit Papp</td><td><span class="badge badge-wip">IN PREVALIDATION</span></td><td class="t-date">2026-06-25</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5694" target="_blank">CIL-5694</a></td><td class="t-summary">[CHOE] e2e: Support care_of_type and care_of fields in Update Insured Person address update</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-25</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -767,10 +773,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4348" target="_blank">CIL-4348</a></td><td class="t-summary">[CHOE] provider: List Mailbox Items</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-03-13</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5604" target="_blank">CIL-5604</a></td><td class="t-summary">[CHOE] discovery: List Mailbox Items</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4348" target="_blank">CIL-4348</a></td><td class="t-summary">[CHOE] provider: List Mailbox Items</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-03-13</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5604" target="_blank">CIL-5604</a></td><td class="t-summary">[CHOE] discovery: List Mailbox Items</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-22</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -782,15 +788,15 @@
           <span class="eg-count">6 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5835" target="_blank">CIL-5835</a></td><td class="t-summary">[CHOE] API Draft: Download Document</td><td class="t-who">ivan.sotnikov.ext</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-review">In Code Review</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4864" target="_blank">CIL-4864</a></td><td class="t-summary">[CHOE] provider: Get Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5231" target="_blank">CIL-5231</a></td><td class="t-summary">[CHOE] discovery: Get Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-05-27</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4866" target="_blank">CIL-4866</a></td><td class="t-summary">[CHOE] provider: Update Mailbox Item (Single &amp; Batch)</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4633" target="_blank">CIL-4633</a></td><td class="t-summary">[CHOE] discovery: Update Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4867" target="_blank">CIL-4867</a></td><td class="t-summary">[CHOE] provider: Get Document Content</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5395" target="_blank">CIL-5395</a></td><td class="t-summary">[CHOE] discovery: Download Document</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-08</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5835" target="_blank">CIL-5835</a></td><td class="t-summary">[CHOE] API Draft: Download Document</td><td class="t-who">ivan.sotnikov.ext</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-review">In Code Review</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4864" target="_blank">CIL-4864</a></td><td class="t-summary">[CHOE] provider: Get Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5231" target="_blank">CIL-5231</a></td><td class="t-summary">[CHOE] discovery: Get Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-05-27</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4866" target="_blank">CIL-4866</a></td><td class="t-summary">[CHOE] provider: Update Mailbox Item (Single &amp; Batch)</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4633" target="_blank">CIL-4633</a></td><td class="t-summary">[CHOE] discovery: Update Mailbox Item</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-4867" target="_blank">CIL-4867</a></td><td class="t-summary">[CHOE] provider: Get Document Content</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-04-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5395" target="_blank">CIL-5395</a></td><td class="t-summary">[CHOE] discovery: Download Document</td><td class="t-who">Unassigned</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-08</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -802,9 +808,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5646" target="_blank">CIL-5646</a></td><td class="t-summary">[CHOE] providers: handle async 202 responses and integrate job eligibility (Motor)</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5646" target="_blank">CIL-5646</a></td><td class="t-summary">[CHOE] providers: handle async 202 responses and integrate job eligibility (Motor)</td><td class="t-who">Unassigned</td><td class="t-who">Judit Papp</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-23</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -816,9 +822,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5720" target="_blank">CIL-5720</a></td><td class="t-summary">[CHOE] API draft: Extend product_type enum on API Get Policy endpoint</td><td class="t-who">Judit Papp</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5720" target="_blank">CIL-5720</a></td><td class="t-summary">[CHOE] API draft: Extend product_type enum on API Get Policy endpoint</td><td class="t-who">Judit Papp</td><td class="t-who">Judit Papp</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -831,7 +837,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12339" target="_blank" style="color:inherit;text-decoration:none">PROD-12339</a></span>
-      <span class="ititle">Global App AzD - Allianz Direct NL</span>
+      <span class="ititle">Global App AzD - Allianz Direct NL</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[18202]</span>
       <div class="icounts">
         <span class="badge badge-wip">2 active</span>
         <span class="badge badge-done">3 done</span>
@@ -847,11 +853,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5597" target="_blank">CIL-5597</a></td><td class="t-summary">Global App AzD NL — e2e: List Policies, Get Policy — Product title re-mapping</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-wip">In Validation</span></td><td class="t-date">2026-06-19</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5734" target="_blank">CIL-5734</a></td><td class="t-summary">Global App AzD — List Policies, Get Policies: Ensure stable integration with updated spec</td><td class="t-who">Safiko Papkhadze</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-29</td><td class="t-done">2026-07-09</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5573" target="_blank">CIL-5573</a></td><td class="t-summary">Global App AzD — API draft: Add product_name to Travel and LegalAid</td><td class="t-who">Alex Yaroshenko</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5597" target="_blank">CIL-5597</a></td><td class="t-summary">Global App AzD NL — e2e: List Policies, Get Policy — Product title re-mapping</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-wip">In Validation</span></td><td class="t-date">2026-06-19</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5734" target="_blank">CIL-5734</a></td><td class="t-summary">Global App AzD — List Policies, Get Policies: Ensure stable integration with updated spec</td><td class="t-who">Safiko Papkhadze</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done">2026-07-09</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5573" target="_blank">CIL-5573</a></td><td class="t-summary">Global App AzD — API draft: Add product_name to Travel and LegalAid</td><td class="t-who">Alex Yaroshenko</td><td class="t-who">Safiko Papkhadze</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -863,11 +869,11 @@
           <span class="eg-count">3 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5845" target="_blank">CIL-5845</a></td><td class="t-summary">Global App AzD — Update mock responses for Get Policy Details and Policy Capabilities</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5844" target="_blank">CIL-5844</a></td><td class="t-summary">Global App AzD — Investigation: missing mapping for Insured Object + IBAN enrichment</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5574" target="_blank">CIL-5574</a></td><td class="t-summary">Global App AzD — API Draft: Status Notification Info</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5845" target="_blank">CIL-5845</a></td><td class="t-summary">Global App AzD — Update mock responses for Get Policy Details and Policy Capabilities</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5844" target="_blank">CIL-5844</a></td><td class="t-summary">Global App AzD — Investigation: missing mapping for Insured Object + IBAN enrichment</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-02</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5574" target="_blank">CIL-5574</a></td><td class="t-summary">Global App AzD — API Draft: Status Notification Info</td><td class="t-who">Mahmoud Mohamed</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-18</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -879,9 +885,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5701" target="_blank">CIL-5701</a></td><td class="t-summary">Global App AzD — Claims integration: incomplete mapping</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5701" target="_blank">CIL-5701</a></td><td class="t-summary">Global App AzD — Claims integration: incomplete mapping</td><td class="t-who">Unassigned</td><td class="t-who">Maria Bezrukova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -893,9 +899,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5717" target="_blank">CIL-5717</a></td><td class="t-summary">Global App: Implement FlowForge skill for Data Model documentation update</td><td class="t-who">Unassigned</td><td class="t-who">Julia Kuznietsova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5717" target="_blank">CIL-5717</a></td><td class="t-summary">Global App: Implement FlowForge skill for Data Model documentation update</td><td class="t-who">Unassigned</td><td class="t-who">Julia Kuznietsova</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-06-26</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -908,7 +914,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12514" target="_blank" style="color:inherit;text-decoration:none">PROD-12514</a></span>
-      <span class="ititle">Global App - AUS Az Partners</span>
+      <span class="ititle">Global App - AUS Az Partners</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[18204]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
         <span class="badge badge-todo">2 to do</span>
@@ -924,9 +930,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-19" target="_blank">AGB-19</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Emergency Numbers</td><td class="t-who">Unassigned</td><td class="t-who">Sarah Martins</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-17</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-19" target="_blank">AGB-19</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Emergency Numbers</td><td class="t-who">Unassigned</td><td class="t-who">Sarah Martins</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-17</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -938,10 +944,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-22" target="_blank">AGB-22</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Hospital Finder</td><td class="t-who">Sarah Martins</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-review">Review</span></td><td class="t-date">2026-06-17</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-36" target="_blank">AGB-36</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Doctor Finder</td><td class="t-who">Yulia Tsybanova</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-hold">Paused / On hold</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-22" target="_blank">AGB-22</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Hospital Finder</td><td class="t-who">Sarah Martins</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-review">Review</span></td><td class="t-date">2026-06-17</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-36" target="_blank">AGB-36</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Doctor Finder</td><td class="t-who">Yulia Tsybanova</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-hold">Paused / On hold</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -953,9 +959,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-34" target="_blank">AGB-34</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Lounge Zone QR Code Management</td><td class="t-who">Yulia Tsybanova</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-hold">Paused / On Hold</span></td><td class="t-date">2026-06-25</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/AGB-34" target="_blank">AGB-34</a></td><td class="t-summary">[API RFC] Global App: Post-Sales Services API: Lounge Zone QR Code Management</td><td class="t-who">Yulia Tsybanova</td><td class="t-who">Yulia Tsybanova</td><td><span class="badge badge-hold">Paused / On Hold</span></td><td class="t-date">2026-06-25</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -968,7 +974,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12344" target="_blank" style="color:inherit;text-decoration:none">PROD-12344</a></span>
-      <span class="ititle">Travel Beneficiaries - Wave 1 - (ON/OFF Boarding) TOP VIAGGI (Italy)</span>
+      <span class="ititle">Travel Beneficiaries - Wave 1 - (ON/OFF Boarding) TOP VIAGGI (Italy)</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15041]</span>
       <div class="icounts">
         <span class="badge badge-done">1 done</span>
       </div>
@@ -981,9 +987,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a></td><td class="t-summary">[CIL-topviaggi-crosslob] Fix Top Viaggi routing: change InsuranceType for CROSS_LOB</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Sascha Mehlhase</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-29</td><td class="t-done">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a></td><td class="t-summary">[CIL-topviaggi-crosslob] Fix Top Viaggi routing: change InsuranceType for CROSS_LOB</td><td class="t-who">Dmitry Kudryashov</td><td class="t-who">Sascha Mehlhase</td><td><span class="badge badge-done">Done</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -994,7 +1000,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-11253" target="_blank" style="color:inherit;text-decoration:none">PROD-11253</a></span>
-      <span class="ititle">[Westpac] Post-sales data flows: Policy, Claim and credit card cancellations</span>
+      <span class="ititle">[Westpac] Post-sales data flows: Policy, Claim and credit card cancellations</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15017]</span>
       <div class="icounts">
         <span class="badge badge-wip">2 active</span>
         <span class="badge badge-todo">2 to do</span>
@@ -1009,9 +1015,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5888" target="_blank">CIL-5888</a></td><td class="t-summary">[Westpac] Map "personType" field to insured_persons in Policy Details Response</td><td class="t-who">Unassigned</td><td class="t-who">Nihad Aliyev</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5888" target="_blank">CIL-5888</a></td><td class="t-summary">[Westpac] Map "personType" field to insured_persons in Policy Details Response</td><td class="t-who">Unassigned</td><td class="t-who">Nihad Aliyev</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1023,9 +1029,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5889" target="_blank">CIL-5889</a></td><td class="t-summary">[Westpac] E2E Testing: Batch cancellation of gifted policies</td><td class="t-who">Unassigned</td><td class="t-who">Nihad Aliyev</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5889" target="_blank">CIL-5889</a></td><td class="t-summary">[Westpac] E2E Testing: Batch cancellation of gifted policies</td><td class="t-who">Unassigned</td><td class="t-who">Nihad Aliyev</td><td><span class="badge badge-wip">QA In Progress</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1037,9 +1043,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6003" target="_blank">CIL-6003</a></td><td class="t-summary">[Westpac AU] Update SSO encrypted token claim mappings</td><td class="t-who">Unassigned</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6003" target="_blank">CIL-6003</a></td><td class="t-summary">[Westpac AU] Update SSO encrypted token claim mappings</td><td class="t-who">Unassigned</td><td class="t-who">Ozlam Tahirli</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1051,9 +1057,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6079" target="_blank">CIL-6079</a></td><td class="t-summary">Investigation-[Westpac AU] Card type (offer type) not stored in MIDAS for any policy created via Metaportal</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6079" target="_blank">CIL-6079</a></td><td class="t-summary">Investigation-[Westpac AU] Card type (offer type) not stored in MIDAS for any policy created via Metaportal</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1066,7 +1072,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-13100" target="_blank" style="color:inherit;text-decoration:none">PROD-13100</a></span>
-      <span class="ititle">Allyz Canada</span>
+      <span class="ititle">Allyz Canada</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[60999]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
         <span class="badge badge-ai">1 AI-gen</span>
@@ -1080,10 +1086,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5865" target="_blank">CIL-5865</a></td><td class="t-summary">[allyz] Implement GetPolicy with mock response for Allyz CA</td><td class="t-who">Unassigned</td><td class="t-who">Mirkamol Xamidov</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-03</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5935" target="_blank">CIL-5935</a></td><td class="t-summary">[allyz] Create Allyz CA product code &amp; credentials</td><td class="t-who">Unassigned</td><td class="t-who">Mirkamol Xamidov</td><td><span class="badge badge-ai">AI-Generation Done</span></td><td class="t-date">2026-07-07</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5865" target="_blank">CIL-5865</a></td><td class="t-summary">[allyz] Implement GetPolicy with mock response for Allyz CA</td><td class="t-who">Unassigned</td><td class="t-who">Mirkamol Xamidov</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-07-03</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5935" target="_blank">CIL-5935</a></td><td class="t-summary">[allyz] Create Allyz CA product code &amp; credentials</td><td class="t-who">Unassigned</td><td class="t-who">Mirkamol Xamidov</td><td><span class="badge badge-ai">AI-Generation Done</span></td><td class="t-date">2026-07-07</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1095,7 +1101,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12115" target="_blank" style="color:inherit;text-decoration:none">PROD-12115</a></span>
-      <span class="ititle">Coverwise - post go live</span>
+      <span class="ititle">Coverwise - post go live</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15005]</span>
       <div class="icounts">
         <span class="badge badge-wip">1 active</span>
       </div>
@@ -1108,9 +1114,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5737" target="_blank">CIL-5737</a></td><td class="t-summary">[Coverwise] PROD Error thrown to partner yet policy created</td><td class="t-who">Unassigned</td><td class="t-who">Tamás Joó</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-29</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5737" target="_blank">CIL-5737</a></td><td class="t-summary">[Coverwise] PROD Error thrown to partner yet policy created</td><td class="t-who">Unassigned</td><td class="t-who">Tamás Joó</td><td><span class="badge badge-wip">In Progress</span></td><td class="t-date">2026-06-29</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1134,9 +1140,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6089" target="_blank">CIL-6089</a></td><td class="t-summary">[Netrisk] Grafana: Create Grafana board for Netrisk project</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6089" target="_blank">CIL-6089</a></td><td class="t-summary">[Netrisk] Grafana: Create Grafana board for Netrisk project</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1160,9 +1166,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6091" target="_blank">CIL-6091</a></td><td class="t-summary">[BBVA] Grafana: Create Grafana board for BBVA project</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6091" target="_blank">CIL-6091</a></td><td class="t-summary">[BBVA] Grafana: Create Grafana board for BBVA project</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1174,7 +1180,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-13653" target="_blank" style="color:inherit;text-decoration:none">PROD-13653</a></span>
-      <span class="ititle">Globus Threat Model Remediation</span>
+      <span class="ititle">Globus Threat Model Remediation</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[18200]</span>
       <div class="icounts">
         <span class="badge badge-todo">2 to do</span>
       </div>
@@ -1187,10 +1193,10 @@
           <span class="eg-count">2 tickets</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6094" target="_blank">CIL-6094</a></td><td class="t-summary">Global App: Mitigate Threat T7: Lambda Function URL abuse by routing Global App Lambdas behind ALB and Akamai</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-done-na">—</td></tr>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6109" target="_blank">CIL-6109</a></td><td class="t-summary">Global App: Mitigate Threat : Rate limiting not endpoint-specific</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6094" target="_blank">CIL-6094</a></td><td class="t-summary">Global App: Mitigate Threat T7: Lambda Function URL abuse by routing Global App Lambdas behind ALB and Akamai</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-6109" target="_blank">CIL-6109</a></td><td class="t-summary">Global App: Mitigate Threat : Rate limiting not endpoint-specific</td><td class="t-who">Unassigned</td><td class="t-who">Unassigned</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-09</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
@@ -1202,7 +1208,7 @@
     <div class="initiative-head" onclick="toggleInit(this)">
       <span class="iarrow">▶</span>
       <span class="ikey"><a href="https://sisu-agile.atlassian.net/browse/PROD-12933" target="_blank" style="color:inherit;text-decoration:none">PROD-12933</a></span>
-      <span class="ititle">Fusion B2C US (Phase 1)</span>
+      <span class="ititle">Fusion B2C US (Phase 1)</span><span style="font-size:10px;color:var(--muted);font-weight:400;margin-left:6px">[15803]</span>
       <div class="icounts">
         <span class="badge badge-todo">1 to do</span>
       </div>
@@ -1215,9 +1221,9 @@
           <span class="eg-count">1 ticket</span>
         </div>
         <table class="ticket-table">
-          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>Done</th></tr></thead>
+          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th><th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>
           <tbody>
-            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5906" target="_blank">CIL-5906</a></td><td class="t-summary">[CIL Library] Create provider package for USPG API</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-done-na">—</td></tr>
+            <tr><td class="t-key"><a href="https://sisu-agile.atlassian.net/browse/CIL-5906" target="_blank">CIL-5906</a></td><td class="t-summary">[CIL Library] Create provider package for USPG API</td><td class="t-who">Unassigned</td><td class="t-who">Rehma Saeed</td><td><span class="badge badge-todo">To Do</span></td><td class="t-date">2026-07-06</td><td class="t-cost-na">—</td><td class="t-done-na">—</td></tr>
           </tbody>
         </table>
       </div>
