@@ -201,7 +201,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">EU Core</div><div class="fn-name" style="font-size:12px">BIOS</div><div class="fn-sub" style="font-size:9px">Beneficiaries</div></div>
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">AU/NZ</div><div class="fn-name" style="font-size:12px">Midas</div><div class="fn-sub" style="font-size:9px">Westpac · NZ B2C</div></div>
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">AU/NZ Pricing</div><div class="fn-name" style="font-size:12px">FPE</div><div class="fn-sub" style="font-size:9px">Flexible Pricing Engine</div></div>
-              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">US</div><div class="fn-name" style="font-size:12px">Fusion</div><div class="fn-sub" style="font-size:9px">Fusion US</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">US · CA</div><div class="fn-name" style="font-size:12px">Fusion</div><div class="fn-sub" style="font-size:9px">US + Canada</div></div>
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">CA</div><div class="fn-name" style="font-size:12px">Magnesium</div><div class="fn-sub" style="font-size:9px">Allyz Canada</div></div>
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">GR Claims</div><div class="fn-name" style="font-size:12px">Greek OE</div><div class="fn-sub" style="font-size:9px">NBG</div></div>
               <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">CH Claims</div><div class="fn-name" style="font-size:12px">CH OE</div><div class="fn-sub" style="font-size:9px">Allianz Switzerland</div></div>
@@ -251,7 +251,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">BIOS</div><div class="fn-sub">Beneficiaries</div></div>
             <div class="flow-node"><div class="fn-type">AU/NZ backend</div><div class="fn-name">Midas</div><div class="fn-sub">Westpac · NZ B2C</div></div>
             <div class="flow-node"><div class="fn-type">AU/NZ pricing</div><div class="fn-name">FPE</div><div class="fn-sub">Flexible Pricing Engine</div></div>
-            <div class="flow-node"><div class="fn-type">US backend</div><div class="fn-name">Fusion</div><div class="fn-sub">Fusion US (alongside eMagin)</div></div>
+            <div class="flow-node"><div class="fn-type">US · CA backend</div><div class="fn-name">Fusion</div><div class="fn-sub">US + Canada (alongside eMagin)</div></div>
             <div class="flow-node"><div class="fn-type">CA backend</div><div class="fn-name">Magnesium</div><div class="fn-sub">Allyz Canada · Contract creation</div></div>
           </div>
           <div class="arrow">→</div>
@@ -287,7 +287,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <li><strong>Save &amp; retrieve quote</strong> — email to customer</li>
             <li><strong>Geo zones</strong> — EU, ER, R1(UK), R2(WW-ex-US), R3(AU/NZ), WW, IL(domestic)</li>
             <li><strong>AU/NZ backends</strong> — Midas + FPE (Flexible Pricing Engine) for Westpac &amp; NZ B2C</li>
-            <li><strong>Americas expansion</strong> — Fusion US (alongside eMagin) · Allyz Canada (Magnesium backend)</li>
+            <li><strong>Americas expansion</strong> — Fusion US + Canada (alongside eMagin) · Allyz Canada (Magnesium backend)</li>
             <li><strong>Travel types</strong> — Single Trip (ST) &amp; Annual Multi-Trip (AMT)</li>
             <li><strong>Beneficiary integration</strong> — BIOS + ABS linkage</li>
             <li><strong>Partner isolation</strong> — each BP has isolated flow config</li>
@@ -784,8 +784,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <tr><td class="row-hdr">🇬🇷 Greece</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">NBG (National Bank of Greece) · Greek OE Backend</td></tr>
             <tr><td class="row-hdr">🇦🇺 Australia</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">Westpac (NAC 2.0) · Global App (IP) · Midas + FPE backends</td></tr>
             <tr><td class="row-hdr">🇳🇿 New Zealand</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz NZ B2C · Midas + FPE backends</td></tr>
-            <tr><td class="row-hdr">🇺🇸 United States</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Fusion US — new backend (alongside eMagin)</td></tr>
-            <tr><td class="row-hdr">🇨🇦 Canada</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz Canada · Magnesium backend · Contract commit solution</td></tr>
+            <tr><td class="row-hdr">🇺🇸 United States</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Fusion US + Canada (alongside eMagin)</td></tr>
+            <tr><td class="row-hdr">🇨🇦 Canada</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz Canada · Magnesium + Fusion backends · Contract commit solution</td></tr>
           </tbody>
         </table>
       </div>
@@ -959,8 +959,8 @@ const MARKERS = [
   ['GR',  22,  39, 'progress', 'Greece',            'In Progress: NBG (National Bank of Greece)\nClaims via Greek OE Backend · Travel'],
   ['AU', 134, -25, 'progress', 'Australia',         'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)\nGlobal App fast follower'],
   ['NZ', 172, -41, 'progress', 'New Zealand',       'In Progress: B2C Travel (Allyz NZ)\nBackends: eMagin + Midas (AU/NZ) + FPE (Flexible Pricing Engine)'],
-  ['US', -98,  39, 'progress', 'United States',     'In Progress: Fusion US — new backend integration alongside eMagin\nAllyz US / contract commit solution'],
-  ['CA', -96,  60, 'progress', 'Canada',            'In Progress: Allyz Canada — Magnesium backend\nContract commit / contract creation solution'],
+  ['US', -98,  39, 'progress', 'United States',     'In Progress: Fusion US + Canada — new backend integration alongside eMagin\nAllyz US / contract commit solution'],
+  ['CA', -96,  60, 'progress', 'Canada',            'In Progress: Allyz Canada — Magnesium backend + Fusion\nContract commit / contract creation solution'],
 ];
 
 const statusColor = { live:'#10b981', progress:'#3b82f6', planned:'#f59e0b' };
