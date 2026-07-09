@@ -228,8 +228,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <div class="flow" style="justify-content:center">
           <div class="flow-col">
             <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
-            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">Retail Portal</div><div class="fn-sub">Agent UI</div></div>
-            <div class="flow-node"><div class="fn-type">Partner App</div><div class="fn-name">Direct API</div><div class="fn-sub">BBVA · Fox · Rush · Coverwise…</div></div>
+            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">Retail Portal</div><div class="fn-sub">Agent / broker UI</div></div>
+            <div class="flow-node"><div class="fn-type">Business Partner</div><div class="fn-name">Direct API</div><div class="fn-sub">Fox · Rush · Westpac · Coverwise · Santander · Allyz…</div></div>
           </div>
           <div class="arrow">→</div>
           <div class="flow-node cil">
@@ -239,11 +239,13 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           </div>
           <div class="arrow">→</div>
           <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">eMagin (EQS v3)</div><div class="fn-sub">Quote · Policy · Pricing</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">BIOS</div><div class="fn-sub">Open-policy admin</div></div>
+            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">eMagin (EQS v3)</div><div class="fn-sub">Quote · Policy · Pricing</div></div>
+            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims</div></div>
+            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">BIOS</div><div class="fn-sub">Beneficiaries</div></div>
             <div class="flow-node"><div class="fn-type">AU/NZ backend</div><div class="fn-name">Midas</div><div class="fn-sub">Westpac · NZ B2C</div></div>
             <div class="flow-node"><div class="fn-type">AU/NZ pricing</div><div class="fn-name">FPE</div><div class="fn-sub">Flexible Pricing Engine</div></div>
+            <div class="flow-node"><div class="fn-type">US backend</div><div class="fn-name">Fusion</div><div class="fn-sub">Fusion US (alongside eMagin)</div></div>
+            <div class="flow-node"><div class="fn-type">CA backend</div><div class="fn-name">Magnesium</div><div class="fn-sub">Allyz Canada · Contract creation</div></div>
           </div>
           <div class="arrow">→</div>
           <div class="flow-col">
@@ -377,6 +379,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <td><span class="badge b-live">● Live</span></td>
             </tr>
             <tr data-status="progress">
+              <td><strong>NBG — National Bank of Greece</strong></td>
+              <td>Travel · Claims</td>
+              <td><span class="cc cc-prog">GR</span></td>
+              <td><span class="badge b-prog">◑ In Progress</span></td>
+            </tr>
+            <tr data-status="progress">
               <td><strong>Fox UK (LV)</strong></td>
               <td>Travel (+ Medical screening Verisk)</td>
               <td><span class="cc cc-prog">UK</span></td>
@@ -444,7 +452,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="h3">Beneficiaries</div>
           <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract in the Allianz backend. Originally built for Santander, reusable across travel partners.</p>
           <div class="ep"><span class="method m-post">POST</span>/beneficiaries</div>
-          <div class="mt12" style="font-size:12px;color:var(--muted)">Backends: ABS · AHS/HRD · SysteMA</div>
+          <div class="mt12" style="font-size:12px;color:var(--muted)">Backend: BIOS</div>
           <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Santander, Deutsche Bank, Allyz HU, Bolttech</span></div>
         </div>
 
@@ -467,9 +475,9 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="h3">Claims</div>
           <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Pass-through claims channel retrieval. CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend.</p>
           <div class="ep"><span class="method m-get">GET</span>/claims/v1/submission/channels?policy_number=…</div>
-          <div class="mt12" style="font-size:12px;color:var(--muted)">Backend: CH OE Backend (Allianz Switzerland) v0.3.4</div>
-          <div class="mt8"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">CH (Global App) · Clara architecture TBD</span></div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">Travel claim types: Annulation · Luggage · Assistance &amp; Rental Vehicle</div>
+          <div class="mt12" style="font-size:12px;color:var(--muted)">Backends: CH OE Backend · Greek OE Backend (NBG) · ABS</div>
+          <div class="mt8"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">CH (Global App) · GR (NBG)</span></div>
+          <div class="mt8" style="font-size:12px;color:var(--muted)">Travel claim types: Annulation · Luggage</div>
         </div>
       </div>
     </div>
@@ -481,7 +489,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s7">
     <div class="slide-body">
       <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
-      <p class="lead">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract in the Allianz backend. CIL acts as middleware, routing requests to the correct backend by country. Not a system of record.</p>
+      <p class="lead">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract via BIOS, the Allianz open-policy admin backend. CIL acts as middleware; BIOS is the single system of record for beneficiary data across all markets.</p>
 
       <div class="g2 mt16">
         <div>
@@ -497,9 +505,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
                 <span style="color:var(--muted);font-size:12px">validates · routes by product_code · transforms</span>
               </div>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:40px">
-                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">BE/NL/LU/CH</div><div class="fn-name" style="font-size:11px">ABS</div></div>
-                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">DE/AT</div><div class="fn-name" style="font-size:11px">AHS/HRD</div></div>
-                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">ES/FR/IT/PT</div><div class="fn-name" style="font-size:11px">SysteMA</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">All markets</div><div class="fn-name" style="font-size:11px">BIOS</div></div>
               </div>
             </div>
             <div class="mt12" style="font-size:12px;color:var(--amber)">⚠ All calls are <strong>asynchronous</strong> — requests pending backend approval</div>
@@ -509,28 +515,19 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div class="section-label">Create beneficiaries endpoint</div>
             <div class="ep"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">→ create one or more beneficiaries</span></div>
             <div class="mt12" style="font-size:13px;line-height:1.8">Links insured persons to an existing travel policy and contract. Payload includes <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">policy_number</code>, contract details, and an array of beneficiaries with personal data and contact info.<br><br>Returns <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">201 Created</code> — no body. All calls are asynchronous.</div>
-            <div class="mt12 section-label">Routing key</div>
-            <div style="font-size:13px;color:var(--text)"><code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:12px">product_code</code> determines which backend receives the request</div>
+            <div class="mt12 section-label">Routing</div>
+            <div style="font-size:13px;color:var(--text)">All requests route to <strong>BIOS</strong>. <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:12px">product_code</code> identifies the market/product context within BIOS.</div>
           </div>
         </div>
 
         <div>
           <div class="card">
-            <div class="section-label">Backend coverage by country</div>
-            <div class="mt8">
-              <div style="margin-bottom:10px">
-                <div style="font-size:12px;color:var(--blue-light);font-weight:600;margin-bottom:4px">ABS — Belgium · Netherlands · Luxembourg · Switzerland</div>
-                <span class="cc cc-live">BE</span><span class="cc cc-live">NL</span><span class="cc cc-live">LU</span><span class="cc cc-live">CH</span>
-              </div>
-              <div style="margin-bottom:10px">
-                <div style="font-size:12px;color:var(--green);font-weight:600;margin-bottom:4px">AHS / HRD — Germany · Austria</div>
-                <span class="cc cc-live">DE</span><span class="cc cc-live">AT</span>
-              </div>
-              <div>
-                <div style="font-size:12px;color:var(--purple);font-weight:600;margin-bottom:4px">SysteMA — Spain · France · Italy · Portugal</div>
-                <span class="cc cc-live">ES</span><span class="cc cc-live">FR</span><span class="cc cc-live">IT</span><span class="cc cc-live">PT</span>
-              </div>
+            <div class="section-label">Backend: BIOS</div>
+            <div class="mt8" style="font-size:13px;line-height:1.8;color:var(--text)">
+              Beneficiaries are managed through <strong>BIOS</strong> — the Allianz open-policy admin backend that handles beneficiary records across all markets.<br><br>
+              BIOS is the single system of record for beneficiary data. CIL translates the incoming request and routes it to BIOS regardless of country.
             </div>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Markets covered: UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT · AU (IP)</div>
           </div>
 
           <div class="card mt14">
@@ -674,7 +671,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s9">
     <div class="slide-body">
       <div class="h2">Claims Endpoint — Deep Dive</div>
-      <p class="lead">CIL acts as a pass-through layer between the frontend and the Allianz OE Backend. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
+      <p class="lead">CIL acts as a pass-through layer between the frontend and the Allianz OE Backends. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
 
       <div class="g2 mt16">
         <div>
@@ -684,8 +681,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <div class="flow-node"><div class="fn-type">Frontend (Global App)</div><div class="fn-name">Customer selects contract</div></div>
               <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /claims/v1/submission/channels?policy_number=…</div>
               <div class="flow-node cil"><div class="fn-type">CIL — pass-through</div><div class="fn-name" style="color:#fff">No transformation</div></div>
-              <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /secure/policies/{id}/claims (CH OE v0.3.4)</div>
-              <div class="flow-node"><div class="fn-type">Backend</div><div class="fn-name">CH OE Backend</div><div class="fn-sub">Allianz Switzerland</div></div>
+              <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ routes to OE Backend by market</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <div class="flow-node"><div class="fn-type">CH OE Backend</div><div class="fn-name">Allianz Switzerland</div><div class="fn-sub">v0.3.4 · Global App pilot</div></div>
+                <div class="flow-node"><div class="fn-type">GR OE Backend</div><div class="fn-name">Greek OE</div><div class="fn-sub">NBG (National Bank of Greece)</div></div>
+                <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims data</div></div>
+              </div>
             </div>
           </div>
 
@@ -708,17 +709,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 
         <div>
           <div class="card">
-            <div class="section-label">Travel claim types (CH / Global App)</div>
+            <div class="section-label">Travel claim types</div>
             <table class="tbl" style="font-size:12px">
-              <thead><tr><th>Type</th><th>Channel</th><th>Condition</th></tr></thead>
+              <thead><tr><th>Type</th><th>Channel</th><th>Markets</th></tr></thead>
               <tbody>
-                <tr><td>Annulation</td><td>LINK → web form</td><td>All travel policies</td></tr>
-                <tr><td>Luggage</td><td>LINK → web form</td><td>All travel policies</td></tr>
-                <tr><td>Assistance &amp; Rental</td><td>PHONE</td><td>All travel policies</td></tr>
-                <tr><td>Motor – FNOL</td><td>LINK → web FNOL</td><td>All motor policies</td></tr>
-                <tr><td>Motor – RSA</td><td>PHONE</td><td>classProductType = AS</td></tr>
-                <tr><td>Home – Household</td><td>LINK → web form</td><td>classProductType ≠ HP</td></tr>
-                <tr><td>Legal</td><td>LINK → CAP</td><td>All legal policies</td></tr>
+                <tr><td>Annulation</td><td>LINK → web form</td><td>CH · GR</td></tr>
+                <tr><td>Luggage</td><td>LINK → web form</td><td>CH · GR</td></tr>
               </tbody>
             </table>
           </div>
@@ -727,7 +723,11 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div class="section-label">Status &amp; geographic reach</div>
             <div class="gap-row mt8">
               <span class="badge b-prog">◑ In Progress</span>
-              <span style="font-size:13px">Switzerland (CH) — Global App pilot market</span>
+              <span style="font-size:13px">Switzerland (CH) — Global App pilot · via CH OE Backend</span>
+            </div>
+            <div class="gap-row mt8">
+              <span class="badge b-prog">◑ In Progress</span>
+              <span style="font-size:13px">Greece (GR) — NBG (National Bank of Greece) · via Greek OE Backend</span>
             </div>
             <div class="mt12" style="font-size:12px;color:var(--muted)">Fast followers: AU · IT · NL (Global App roll-out plan)</div>
             <hr class="divider">
@@ -774,6 +774,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <tr><td class="row-hdr">🇵🇹 Portugal</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
             <tr><td class="row-hdr">🇵🇱 Poland</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
             <tr><td class="row-hdr">🇷🇴 Romania</td><td class="m-no">—</td><td class="m-yes">✓ LIVE</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Bolttech</td></tr>
+            <tr><td class="row-hdr">🇬🇷 Greece</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">NBG (National Bank of Greece) · Greek OE Backend</td></tr>
             <tr><td class="row-hdr">🇦🇺 Australia</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td class="m-prog">◑ IP</td><td style="text-align:left;font-size:11px">Westpac (NAC 2.0) · Global App (IP) · Midas + FPE backends</td></tr>
             <tr><td class="row-hdr">🇳🇿 New Zealand</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Allyz NZ B2C · Midas + FPE backends</td></tr>
             <tr><td class="row-hdr">🇺🇸 United States</td><td class="m-prog">◑ IP</td><td class="m-no">—</td><td class="m-no">—</td><td class="m-no">—</td><td style="text-align:left;font-size:11px">Fusion US — new backend (alongside eMagin)</td></tr>
@@ -902,6 +903,7 @@ const COUNTRIES = [
   ['CZ',    [[[12,49],[19,49],[19,51],[12,51],[12,49]]],                                 'CZ'],
   ['HU',    [[[16,45],[23,45],[23,48],[16,48],[16,45]]],                                 'HU'],
   ['RO',    [[[22,43],[30,43],[30,48],[22,48],[22,43]]],                                 'RO'],
+  ['GR',    [[[20,36],[27,36],[27,42],[20,42],[20,36]]],                                 'GR'],
   ['NO',    [[[5,57],[31,57],[31,71],[5,71],[5,57]]],                                    'NO'],
   ['SE',    [[[11,55],[25,55],[25,69],[11,69],[11,55]]],                                 'SE'],
   ['DK',    [[[8,54],[13,54],[13,58],[8,58],[8,54]]],                                    'DK'],
@@ -947,6 +949,7 @@ const MARKERS = [
   ['LU',   6,  49, 'planned',  'Luxembourg',        'Beneficiaries via ABS backend'],
   ['PL',  19,  52, 'planned',  'Poland',            'Beneficiaries via Bolttech PL'],
   ['RO',  25,  46, 'planned',  'Romania',           'Beneficiaries via Bolttech RO'],
+  ['GR',  22,  39, 'progress', 'Greece',            'In Progress: NBG (National Bank of Greece)\nClaims via Greek OE Backend · Travel'],
   ['AU', 134, -25, 'progress', 'Australia',         'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)\nGlobal App fast follower'],
   ['NZ', 172, -41, 'progress', 'New Zealand',       'In Progress: B2C Travel (Allyz NZ)\nBackends: eMagin + Midas (AU/NZ) + FPE (Flexible Pricing Engine)'],
   ['US', -98,  39, 'progress', 'United States',     'In Progress: Fusion US — new backend integration alongside eMagin\nAllyz US / contract commit solution'],
