@@ -137,7 +137,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <span class="logo-badge">simplesurance · IL</span>
       <span class="slide-title-bar" id="barTitle">Travel &amp; xLob Endpoint Coverage</span>
     </div>
-    <span class="slide-counter" id="barCounter">1 / 10</span>
+    <span class="slide-counter" id="barCounter">1 / 9</span>
   </div>
 
   <!-- ════════════════════════════════════════
@@ -223,84 +223,9 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   </div>
 
   <!-- ════════════════════════════════════════
-       SLIDE 3 — TRAVEL ENDPOINT ARCHITECTURE
+       SLIDE 3 — GEOGRAPHIC REACH (MAP)
   ════════════════════════════════════════ -->
   <div class="slide" id="s3">
-    <div class="slide-body">
-      <div class="h2">Travel Endpoint — Architecture</div>
-      <p class="lead">The IL travel endpoint is the primary integration point for quote, buy, policy lifecycle, and medical screening. Frontends and partner apps call a single travel API; CIL orchestrates all downstream complexity.</p>
-
-      <div class="card mt16">
-        <div class="section-label">End-to-end flow</div>
-        <div class="flow" style="justify-content:center">
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
-            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">Retail Portal</div><div class="fn-sub">Agent / broker UI</div></div>
-            <div class="flow-node"><div class="fn-type">Business Partner</div><div class="fn-name">Direct API</div><div class="fn-sub">Fox · Rush · Westpac · Coverwise · Santander · Allyz…</div></div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-node cil">
-            <div class="fn-type">Integration Layer</div>
-            <div class="fn-name" style="color:#fff;font-size:16px">CIL / IL</div>
-            <div class="fn-sub">travel-service<br>sisu-api<br>Temporal orchestration</div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">eMagin (EQS v3)</div><div class="fn-sub">Quote · Policy · Pricing</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">BIOS</div><div class="fn-sub">Beneficiaries</div></div>
-            <div class="flow-node"><div class="fn-type">AU/NZ backend</div><div class="fn-name">Midas</div><div class="fn-sub">Westpac · NZ B2C</div></div>
-            <div class="flow-node"><div class="fn-type">AU/NZ pricing</div><div class="fn-name">FPE</div><div class="fn-sub">Flexible Pricing Engine</div></div>
-            <div class="flow-node"><div class="fn-type">US · CA backend</div><div class="fn-name">Fusion</div><div class="fn-sub">US + Canada (alongside eMagin)</div></div>
-            <div class="flow-node"><div class="fn-type">CA backend</div><div class="fn-name">Magnesium</div><div class="fn-sub">Allyz Canada · Contract creation</div></div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Payment</div><div class="fn-name">OnePay</div><div class="fn-sub">Session · Status</div></div>
-            <div class="flow-node"><div class="fn-type">3rd party</div><div class="fn-name">Verisk</div><div class="fn-sub">Medical screening</div></div>
-            <div class="flow-node"><div class="fn-type">Enterprise API</div><div class="fn-name">Imagine</div><div class="fn-sub">Contract management</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="g2 mt14">
-        <div class="card">
-          <div class="section-label">Travel API endpoints exposed by IL</div>
-          <div class="ep"><span class="method m-post">POST</span>/travel/quote</div>
-          <div class="ep"><span class="method m-post">POST</span>/travel/policies — create policy</div>
-          <div class="ep"><span class="method m-get">GET</span>/travel/policies — list policies</div>
-          <div class="ep"><span class="method m-get">GET</span>/policies/{id} — policy detail</div>
-          <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person — update</div>
-          <div class="ep"><span class="method m-delete">DELETE</span>/policies/{id}/insured-person/{pid}</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
-          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} — retrieve saved quote</div>
-          <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions — email/resume</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
-        </div>
-        <div class="card">
-          <div class="section-label">Key capabilities</div>
-          <ul style="font-size:13px;line-height:2;padding-left:16px">
-            <li><strong>Quote &amp; Buy</strong> — real-time via eMagin EQS v3</li>
-            <li><strong>Medical screening</strong> — Verisk (Fox UK, Rush/Hays)</li>
-            <li><strong>Payment</strong> — OnePay session / status polling</li>
-            <li><strong>Policy lifecycle</strong> — amend, cancel, upgrade, renew</li>
-            <li><strong>Save &amp; retrieve quote</strong> — email to customer</li>
-            <li><strong>Geo zones</strong> — EU, ER, R1(UK), R2(WW-ex-US), R3(AU/NZ), WW, IL(domestic)</li>
-            <li><strong>AU/NZ backends</strong> — Midas + FPE (Flexible Pricing Engine) for Westpac &amp; NZ B2C</li>
-            <li><strong>Americas expansion</strong> — Fusion US + Canada (alongside eMagin) · Allyz Canada (Magnesium backend)</li>
-            <li><strong>Travel types</strong> — Single Trip (ST) &amp; Annual Multi-Trip (AMT)</li>
-            <li><strong>Beneficiary integration</strong> — BIOS + ABS linkage</li>
-            <li><strong>Partner isolation</strong> — each BP has isolated flow config</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       SLIDE 4 — GEOGRAPHIC REACH (MAP)
-  ════════════════════════════════════════ -->
-  <div class="slide" id="s4">
     <div class="slide-body" style="padding-bottom:16px">
       <div class="h2">Travel Endpoint — Geographic Reach</div>
       <p class="lead">Countries where IL Travel is live, in progress, or planned as of July 2026 — including Americas and Pacific expansion. AgentMax Retail Portal covers 6 European markets across two waves.</p>
@@ -332,7 +257,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 5 — PARTNERS TABLE
   ════════════════════════════════════════ -->
-  <div class="slide" id="s5">
+  <div class="slide" id="s4">
     <div class="slide-body">
       <div class="h2">Travel Partners — Full Overview</div>
       <p class="lead">All partners using the Travel endpoint (or planning to), their status and countries.</p>
@@ -449,7 +374,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 6 — xLob OVERVIEW
   ════════════════════════════════════════ -->
-  <div class="slide" id="s6">
+  <div class="slide" id="s4">
     <div class="slide-body">
       <div class="h2">xLob Travel-Relevant Endpoints</div>
       <p class="lead">Beyond the core Travel Quote &amp; Buy, CIL exposes three xLob endpoint families critical to the full travel insurance lifecycle. Each operates across multiple markets and connects to specific Allianz backends.</p>
@@ -494,7 +419,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 7 — BENEFICIARIES DEEP DIVE
   ════════════════════════════════════════ -->
-  <div class="slide" id="s7">
+  <div class="slide" id="s6">
     <div class="slide-body">
       <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
       <p class="lead">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract via BIOS, the Allianz open-policy admin backend. CIL acts as middleware; BIOS is the single system of record for beneficiary data across all markets.</p>
@@ -559,7 +484,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 8 — CONTRACT MANAGEMENT
   ════════════════════════════════════════ -->
-  <div class="slide" id="s8">
+  <div class="slide" id="s6">
     <div class="slide-body">
       <div class="h2">Contract Management Endpoint — Deep Dive</div>
       <p class="lead">Standardized post-sale policy lifecycle API. Product-agnostic: operates on core entities like policy_number and quote_id, applicable across Travel, Motor, Health — any LoB integrated with CIL.</p>
@@ -676,7 +601,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 9 — CLAIMS
   ════════════════════════════════════════ -->
-  <div class="slide" id="s9">
+  <div class="slide" id="s8">
     <div class="slide-body">
       <div class="h2">Claims Endpoint — Deep Dive</div>
       <p class="lead">CIL acts as a pass-through layer between the frontend and the Allianz OE Backends. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
@@ -749,7 +674,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <!-- ════════════════════════════════════════
        SLIDE 10 — COUNTRY × ENDPOINT MATRIX
   ════════════════════════════════════════ -->
-  <div class="slide" id="s10">
+  <div class="slide" id="s8">
     <div class="slide-body">
       <div class="h2">Geographic Coverage Matrix</div>
       <p class="lead">Which endpoint families are live, in progress, or planned per country. Combined view across Travel + travel-relevant xLob endpoints.</p>
@@ -816,16 +741,15 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
 const SLIDES = [
-  { id:'s1', title:'Title', label:'Overview' },
-  { id:'s2', title:'What is the Integration Layer?', label:'IL Overview' },
-  { id:'s3', title:'Travel Endpoint — Architecture', label:'Travel Arch' },
-  { id:'s4', title:'Travel Endpoint — Geographic Reach', label:'Map' },
-  { id:'s5', title:'Travel Partners — Full Overview', label:'Partners' },
-  { id:'s6', title:'xLob Endpoint Families', label:'xLob' },
-  { id:'s7', title:'Beneficiaries — Deep Dive', label:'Beneficiaries' },
-  { id:'s8', title:'Contract Management — Deep Dive', label:'Contract Mgmt' },
-  { id:'s9', title:'Claims — Deep Dive', label:'Claims' },
-  { id:'s10', title:'Geographic Coverage Matrix', label:'Matrix' },
+  { id:'s1',  title:'Title', label:'Overview' },
+  { id:'s2',  title:'What is the Integration Layer?', label:'IL Overview' },
+  { id:'s3',  title:'Travel Endpoint — Geographic Reach', label:'Map' },
+  { id:'s4',  title:'Travel Partners — Full Overview', label:'Partners' },
+  { id:'s5',  title:'xLob Endpoint Families', label:'xLob' },
+  { id:'s6',  title:'Beneficiaries — Deep Dive', label:'Beneficiaries' },
+  { id:'s7',  title:'Contract Management — Deep Dive', label:'Contract Mgmt' },
+  { id:'s8',  title:'Claims — Deep Dive', label:'Claims' },
+  { id:'s9',  title:'Geographic Coverage Matrix', label:'Matrix' },
 ];
 
 let cur = 0;
@@ -860,8 +784,8 @@ document.addEventListener('keydown', e => {
 
 // Tab switching
 function switchTab(group, panel) {
-  document.querySelectorAll(`#s8 .tb`).forEach(b => b.classList.remove('on'));
-  document.querySelectorAll(`#s8 .panel`).forEach(p => p.classList.remove('on'));
+  document.querySelectorAll(`#s7 .tb`).forEach(b => b.classList.remove('on'));
+  document.querySelectorAll(`#s7 .panel`).forEach(p => p.classList.remove('on'));
   event.target.classList.add('on');
   document.getElementById(group + '-' + panel).classList.add('on');
 }
