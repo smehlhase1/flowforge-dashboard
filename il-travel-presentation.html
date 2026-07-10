@@ -305,12 +305,18 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <div class="h2">Travel Endpoint — Geographic Reach</div>
       <p class="lead">Countries where IL Travel is live, in progress, or planned as of July 2026 — including Americas and Pacific expansion. AgentMax Retail Portal covers 6 European markets across two waves.</p>
 
-      <div class="map-wrap mt16">
-        <svg id="worldMap" viewBox="0 0 960 500" style="width:100%;display:block;background:#0d1b2e"></svg>
-        <div class="map-legend">
-          <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div><span><strong>Live</strong> (Travel on IL)</span></div>
+      <div class="map-wrap mt16" style="display:grid;grid-template-columns:1fr 260px;gap:0">
+        <!-- World map -->
+        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e;min-height:340px"></svg>
+        <!-- Europe inset -->
+        <div style="border-left:1px solid var(--border);display:flex;flex-direction:column">
+          <div style="padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Europe — detail</div>
+          <svg id="europeInset" style="width:100%;flex:1;background:#0d1b2e"></svg>
+        </div>
+        <div class="map-legend" style="grid-column:1/-1">
+          <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div><span><strong>Live</strong></span></div>
           <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div><span><strong>In Progress</strong></span></div>
-          <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div><span><strong>Planned / xLob backend only</strong></span></div>
+          <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div><span><strong>Planned / xLob only</strong></span></div>
           <div style="margin-left:auto;font-size:11px;color:var(--muted)">Hover a country for details</div>
         </div>
       </div>
@@ -805,6 +811,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
 const SLIDES = [
   { id:'s1', title:'Title', label:'Overview' },
@@ -867,137 +875,193 @@ function filterPartners(type) {
   document.getElementById('filter' + type.charAt(0).toUpperCase() + type.slice(1)).style.borderColor = 'var(--blue-light)';
 }
 
-// ── WORLD MAP ──────────────────────────────────────────────────────────────
-// Simplified country polygons (approximate outlines, good enough for a
-// presentation map at 960×500 using a rough Mercator-like projection).
-// Coordinates are [lon, lat] pairs; projection: x=lon*2.6+480, y=250-lat*2.9
-function proj(lon, lat){ return [lon*2.6+480, 250-lat*2.9]; }
-function poly(pts){ return pts.map(p=>proj(p[0],p[1]).join(',')).join(' '); }
+// ── WORLD MAP (D3 + Natural Earth TopoJSON) ────────────────────────────────
+const STATUS_COLOR = { live:'#10b981', progress:'#3b82f6', planned:'#f59e0b' };
 
-const NS = 'http://www.w3.org/2000/svg';
-const svg = document.getElementById('worldMap');
+// ISO-3166-1 alpha-3 → status + display info
+const COUNTRY_DATA = {
+  GBR: { status:'live',     name:'United Kingdom',  info:'Live: Rush/Hays UK, Santander UK, Coverwise\nIn Progress: Fox UK, AgentMax UK' },
+  DEU: { status:'live',     name:'Germany',          info:'Live: Deutsche Bank / Miles&More, Coverwise DE\nIn Progress: AgentMax Retail Portal Wave 1' },
+  HUN: { status:'live',     name:'Hungary',          info:'Live: Allyz Hungary — Travel Beneficiaries' },
+  ITA: { status:'progress', name:'Italy',            info:'In Progress: Coverwise IT, Global App, AgentMax Wave 2' },
+  ESP: { status:'progress', name:'Spain',            info:'In Progress: AgentMax Retail Portal Wave 2' },
+  AUT: { status:'progress', name:'Austria',          info:'In Progress: AgentMax Retail Portal Wave 1' },
+  CHE: { status:'progress', name:'Switzerland',      info:'In Progress: AgentMax Wave 1, Global App pilot\nClaims: CH OE Backend' },
+  CZE: { status:'progress', name:'Czechia',          info:'In Progress: AgentMax Retail Portal Wave 2' },
+  NLD: { status:'progress', name:'Netherlands',      info:'In Progress: Global App fast follower\nLive (Beneficiaries): Bolttech NL' },
+  FRA: { status:'planned',  name:'France',           info:'Planned via AgentMax / SysteMA backend\nLive (Beneficiaries): Bolttech FR' },
+  PRT: { status:'planned',  name:'Portugal',         info:'Planned via SysteMA backend\nLive (Beneficiaries): Bolttech PT' },
+  BEL: { status:'planned',  name:'Belgium',          info:'Beneficiaries via ABS backend (Bolttech BE)' },
+  LUX: { status:'planned',  name:'Luxembourg',       info:'Beneficiaries via ABS backend' },
+  POL: { status:'planned',  name:'Poland',           info:'Beneficiaries via Bolttech PL' },
+  ROU: { status:'planned',  name:'Romania',          info:'Beneficiaries via Bolttech RO' },
+  GRC: { status:'progress', name:'Greece',           info:'In Progress: NBG (National Bank of Greece)\nClaims via Greek OE Backend' },
+  AUS: { status:'progress', name:'Australia',        info:'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)' },
+  NZL: { status:'progress', name:'New Zealand',      info:'In Progress: Allyz NZ B2C\nBackends: eMagin + Midas + FPE' },
+  USA: { status:'progress', name:'United States',    info:'In Progress: Fusion US + Canada alongside eMagin' },
+  CAN: { status:'progress', name:'Canada',           info:'In Progress: Allyz Canada — Magnesium + Fusion\nContract commit solution' },
+};
 
-function addEl(tag, attrs){
-  const el = document.createElementNS(NS, tag);
-  for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,v);
-  return el;
+function showTooltip(name, status, info, e) {
+  const tt = document.getElementById('mapTooltip');
+  const lbl = status==='live'?'🟢 Live':status==='progress'?'🔵 In Progress':'🟡 Planned';
+  document.getElementById('ttCountry').textContent = name + '  ' + lbl;
+  document.getElementById('ttInfo').innerHTML = info.replace(/\n/g,'<br>');
+  tt.style.display = 'block';
+  tt.style.left = (e.clientX+14)+'px';
+  tt.style.top  = (e.clientY-10)+'px';
+}
+function moveTooltip(e) {
+  const tt = document.getElementById('mapTooltip');
+  tt.style.left = (e.clientX+14)+'px';
+  tt.style.top  = (e.clientY-10)+'px';
+}
+function hideTooltip() {
+  document.getElementById('mapTooltip').style.display = 'none';
 }
 
-// Land fill
-const landColor = '#1a2d45';
-const COUNTRIES = [
-  // [id, fill, [polygon pts as [lon,lat],...]]
-  // Europe
-  ['UK',    [[[-3,50],[-5,54],[-3,58],[0,58],[2,54],[1,51],[-3,50]]],                     'UK'],
-  ['IE',    [[[-10,51],[-10,55],[-6,55],[-6,51],[-10,51]]],                               'IE'],
-  ['FR',    [[[-5,43],[3,43],[8,44],[7,48],[2,51],[-2,49],[-5,48],[-5,43]]],              'FR'],
-  ['ES',    [[[-9,36],[-9,44],[3,44],[3,36],[-9,36]]],                                   'ES'],
-  ['PT',    [[[-9,37],[-9,42],[-7,42],[-7,37],[-9,37]]],                                 'PT'],
-  ['DE',    [[[6,47],[15,47],[15,55],[6,55],[6,47]]],                                    'DE'],
-  ['NL',    [[[3,51],[7,51],[7,54],[3,54],[3,51]]],                                      'NL'],
-  ['BE',    [[[2,49],[6,49],[6,51],[2,51],[2,49]]],                                      'BE'],
-  ['LU',    [[[5,49],[6,49],[6,50],[5,50],[5,49]]],                                      'LU'],
-  ['CH',    [[[6,46],[10,46],[10,48],[6,48],[6,46]]],                                    'CH'],
-  ['AT',    [[[10,46],[17,46],[17,49],[10,49],[10,46]]],                                 'AT'],
-  ['IT',    [[[7,38],[16,38],[14,44],[12,46],[8,46],[7,44],[7,38]]],                     'IT'],
-  ['PL',    [[[14,49],[24,49],[24,55],[14,55],[14,49]]],                                 'PL'],
-  ['CZ',    [[[12,49],[19,49],[19,51],[12,51],[12,49]]],                                 'CZ'],
-  ['HU',    [[[16,45],[23,45],[23,48],[16,48],[16,45]]],                                 'HU'],
-  ['RO',    [[[22,43],[30,43],[30,48],[22,48],[22,43]]],                                 'RO'],
-  ['GR',    [[[20,36],[27,36],[27,42],[20,42],[20,36]]],                                 'GR'],
-  ['NO',    [[[5,57],[31,57],[31,71],[5,71],[5,57]]],                                    'NO'],
-  ['SE',    [[[11,55],[25,55],[25,69],[11,69],[11,55]]],                                 'SE'],
-  ['DK',    [[[8,54],[13,54],[13,58],[8,58],[8,54]]],                                    'DK'],
-  // Americas
-  ['US',    [[[-125,24],[-66,24],[-66,50],[-125,50],[-125,24]]],                        'US'],
-  ['CA',    [[[-140,48],[-52,48],[-52,70],[-140,70],[-140,48]]],                        'CA'],
-  ['MX',    [[[-117,15],[-87,15],[-87,32],[-117,32],[-117,15]]],                        'MX'],
-  ['BR',    [[[-74,-35],[-35,-35],[-35,5],[-74,5],[-74,-35]]],                          'BR'],
-  // APAC
-  ['AU',    [[[114,-40],[154,-40],[154,-11],[114,-11],[114,-40]]],                       'AU'],
-  ['NZ',    [[[166,-47],[178,-47],[178,-34],[166,-34],[166,-47]]],                       'NZ'],
-  ['JP',    [[[130,30],[146,30],[146,45],[130,45],[130,30]]],                            'JP'],
-  ['CN',    [[[73,18],[135,18],[135,53],[73,53],[73,18]]],                               'CN'],
-  ['IN',    [[[68,8],[97,8],[97,36],[68,36],[68,8]]],                                   'IN'],
-  // Africa
-  ['ZA',    [[[16,-35],[33,-35],[33,-22],[16,-22],[16,-35]]],                           'ZA'],
-  ['NG',    [[[3,4],[15,4],[15,14],[3,14],[3,4]]],                                      'NG'],
-];
+function attachTip(el, d) {
+  const iso = d.properties && d.properties.iso_a3;
+  const cd = COUNTRY_DATA[iso];
+  if (!cd) return;
+  el.style.cursor = 'pointer';
+  el.addEventListener('mouseenter', e => showTooltip(cd.name, cd.status, cd.info, e));
+  el.addEventListener('mousemove',  moveTooltip);
+  el.addEventListener('mouseleave', hideTooltip);
+}
 
-// Draw land polygons
-COUNTRIES.forEach(([id, polys]) => {
-  polys.forEach(pts => {
-    const p = addEl('polygon', { points: poly(pts), fill: landColor, stroke:'#253650', 'stroke-width':'0.5' });
-    p.dataset.cid = id;
-    svg.appendChild(p);
+// world-atlas numeric ID (ISO 3166-1 numeric) → iso_a3
+const NUM_TO_ISO = {
+  826:'GBR',276:'DEU',348:'HUN',380:'ITA',724:'ESP',40:'AUT',756:'CHE',
+  203:'CZE',528:'NLD',250:'FRA',620:'PRT',56:'BEL',442:'LUX',616:'POL',
+  642:'ROU',300:'GRC',36:'AUS',554:'NZL',840:'USA',124:'CAN',
+  578:'NOR',752:'SWE',208:'DK',246:'FIN',372:'IRL',703:'SVK',705:'SVN',
+  191:'HRV',688:'SRB',100:'BGR',8:'ALB',807:'MKD',70:'BIH',499:'MNE',
+  804:'UKR',112:'BLR',440:'LTU',428:'LVA',233:'EST',498:'MDA',
+  643:'RUS',792:'TUR',12:'DZA',818:'EGY',710:'ZAF',566:'NGA',
+  356:'IND',156:'CHN',392:'JPN',76:'BRA',484:'MEX',360:'IDN',
+};
+
+// Load Natural Earth 110m TopoJSON from CDN
+fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  .then(r => r.json())
+  .then(world => {
+    const countries = topojson.feature(world, world.objects.countries);
+    // Attach iso_a3 from numeric id
+    countries.features.forEach(f => {
+      f.properties = f.properties || {};
+      f.properties.iso_a3 = NUM_TO_ISO[+f.id] || null;
+    });
+
+    // ── World map ──────────────────────────────────────────────────────────
+    const svgW = document.getElementById('worldMap');
+    const wRect = svgW.getBoundingClientRect();
+    const W = wRect.width || 680, H = Math.round(W * 0.52);
+    svgW.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svgW.setAttribute('height', H);
+
+    const projW = d3.geoNaturalEarth1()
+      .scale(W / 6.3)
+      .translate([W / 2, H / 2]);
+    const pathW = d3.geoPath().projection(projW);
+
+    const svgWd3 = d3.select(svgW);
+
+    // graticule
+    svgWd3.append('path')
+      .datum(d3.geoGraticule()())
+      .attr('d', pathW)
+      .attr('fill','none')
+      .attr('stroke','#1e2d45')
+      .attr('stroke-width','0.4');
+
+    // countries
+    svgWd3.selectAll('path.country')
+      .data(countries.features)
+      .join('path')
+      .attr('class','country')
+      .attr('d', pathW)
+      .attr('fill', d => {
+        const cd = COUNTRY_DATA[d.properties.iso_a3];
+        return cd ? STATUS_COLOR[cd.status] : '#1a2d45';
+      })
+      .attr('stroke', '#253650')
+      .attr('stroke-width', d => COUNTRY_DATA[d.properties.iso_a3] ? '0.8' : '0.4')
+      .attr('opacity', d => COUNTRY_DATA[d.properties.iso_a3] ? 0.9 : 1)
+      .each(function(d) { attachTip(this, d); });
+
+    // country borders
+    svgWd3.append('path')
+      .datum(topojson.mesh(world, world.objects.countries, (a,b) => a !== b))
+      .attr('d', pathW)
+      .attr('fill','none')
+      .attr('stroke','#253650')
+      .attr('stroke-width','0.4');
+
+    // ── Europe inset ───────────────────────────────────────────────────────
+    const svgE = document.getElementById('europeInset');
+    const eRect = svgE.getBoundingClientRect();
+    const EW = eRect.width || 260, EH = eRect.height || 340;
+    svgE.setAttribute('viewBox', `0 0 ${EW} ${EH}`);
+    svgE.setAttribute('height', EH);
+
+    const projE = d3.geoMercator()
+      .center([13, 51])
+      .scale(EW * 2.2)
+      .translate([EW / 2, EH / 2]);
+    const pathE = d3.geoPath().projection(projE);
+
+    const svgEd3 = d3.select(svgE);
+
+    const EURO_ISO = new Set(['GBR','DEU','HUN','ITA','ESP','AUT','CHE','CZE','NLD','FRA','PRT','BEL','LUX','POL','ROU','GRC',
+      'NOR','SWE','DNK','FIN','IRL','SVK','SVN','HRV','SRB','BGR','ALB','MKD','BIH','MNE','UKR','BLR','LTU','LVA','EST','MDA']);
+
+    svgEd3.selectAll('path.ecountry')
+      .data(countries.features.filter(d => {
+        const c = d3.geoCentroid(d);
+        if (!isFinite(c[0]) || !isFinite(c[1])) return false;
+        const [cx, cy] = projE(c);
+        return cx > -20 && cx < EW+20 && cy > -20 && cy < EH+40;
+      }))
+      .join('path')
+      .attr('class','ecountry')
+      .attr('d', pathE)
+      .attr('fill', d => {
+        const cd = COUNTRY_DATA[d.properties.iso_a3];
+        return cd ? STATUS_COLOR[cd.status] : '#1a2d45';
+      })
+      .attr('stroke', '#253650')
+      .attr('stroke-width', d => COUNTRY_DATA[d.properties.iso_a3] ? '1' : '0.5')
+      .attr('opacity', d => COUNTRY_DATA[d.properties.iso_a3] ? 0.9 : 1)
+      .each(function(d) { attachTip(this, d); });
+
+    // country labels on inset
+    svgEd3.selectAll('text.elabel')
+      .data(countries.features.filter(d => {
+        if (!COUNTRY_DATA[d.properties.iso_a3]) return false;
+        const c = d3.geoCentroid(d);
+        if (!isFinite(c[0]) || !isFinite(c[1])) return false;
+        const [cx, cy] = projE(c);
+        return cx > 5 && cx < EW-5 && cy > 5 && cy < EH-5;
+      }))
+      .join('text')
+      .attr('class','elabel')
+      .attr('x', d => projE(d3.geoCentroid(d))[0] || 0)
+      .attr('y', d => (projE(d3.geoCentroid(d))[1] || 0) + 3)
+      .attr('text-anchor','middle')
+      .attr('fill','#fff')
+      .attr('font-size','7')
+      .attr('font-weight','700')
+      .attr('pointer-events','none')
+      .text(d => {
+        const m = {GBR:'UK',DEU:'DE',HUN:'HU',ITA:'IT',ESP:'ES',AUT:'AT',CHE:'CH',CZE:'CZ',NLD:'NL',FRA:'FR',PRT:'PT',BEL:'BE',LUX:'LU',POL:'PL',ROU:'RO',GRC:'GR'};
+        return m[d.properties.iso_a3] || d.properties.iso_a3.slice(0,2);
+      });
+  })
+  .catch(() => {
+    // fallback if CDN unavailable
+    document.getElementById('worldMap').innerHTML = '<text x="50%" y="50%" fill="#94a3b8" text-anchor="middle" font-size="13">Map unavailable — check network connection</text>';
   });
-});
-
-// Country markers data: [id, lon, lat, status, displayName, info]
-const MARKERS = [
-  ['UK',  -2,  53, 'live',     'United Kingdom',   'Live: Rush/Hays UK, Santander UK, Coverwise\nIn Progress: Fox UK (LV), AgentMax UK'],
-  ['DE',  10,  51, 'live',     'Germany',           'Live: Deutsche Bank / Miles&More, Coverwise DE\nIn Progress: AgentMax Retail Portal Wave 1'],
-  ['HU',  19,  47, 'live',     'Hungary',           'Live: Allyz Hungary — Travel Beneficiaries'],
-  ['IT',  12,  42, 'progress', 'Italy',             'In Progress: Coverwise IT, Global App, AgentMax Wave 2\nBackend: SysteMA'],
-  ['ES',  -4,  40, 'progress', 'Spain',             'In Progress: AgentMax Retail Portal Wave 2\nBackend: SysteMA'],
-  ['AT',  14,  47, 'progress', 'Austria',           'In Progress: AgentMax Retail Portal Wave 1\nBackend: AHS/HRD'],
-  ['CH',   8,  47, 'progress', 'Switzerland',       'In Progress: AgentMax Wave 1, Global App (pilot — friends & family Jun 2026)\nClaims: CH OE Backend'],
-  ['CZ',  15,  50, 'progress', 'Czechia',           'In Progress: AgentMax Retail Portal Wave 2'],
-  ['NL',   5,  52, 'progress', 'Netherlands',       'In Progress: Global App fast follower\nLive (Beneficiaries): Bolttech NL'],
-  ['FR',   2,  46, 'planned',  'France',            'Planned via AgentMax / SysteMA backend\nLive (Beneficiaries): Bolttech FR'],
-  ['PT',  -8,  39, 'planned',  'Portugal',          'Planned via SysteMA backend\nLive (Beneficiaries): Bolttech PT'],
-  ['BE',   4,  50, 'planned',  'Belgium',           'Beneficiaries via ABS backend (Bolttech BE)'],
-  ['LU',   6,  49, 'planned',  'Luxembourg',        'Beneficiaries via ABS backend'],
-  ['PL',  19,  52, 'planned',  'Poland',            'Beneficiaries via Bolttech PL'],
-  ['RO',  25,  46, 'planned',  'Romania',           'Beneficiaries via Bolttech RO'],
-  ['GR',  22,  39, 'progress', 'Greece',            'In Progress: NBG (National Bank of Greece)\nClaims via Greek OE Backend · Travel'],
-  ['AU', 134, -25, 'progress', 'Australia',         'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)\nGlobal App fast follower'],
-  ['NZ', 172, -41, 'progress', 'New Zealand',       'In Progress: B2C Travel (Allyz NZ)\nBackends: eMagin + Midas (AU/NZ) + FPE (Flexible Pricing Engine)'],
-  ['US', -98,  39, 'progress', 'United States',     'In Progress: Fusion US + Canada — new backend integration alongside eMagin\nAllyz US / contract commit solution'],
-  ['CA', -96,  60, 'progress', 'Canada',            'In Progress: Allyz Canada — Magnesium backend + Fusion\nContract commit / contract creation solution'],
-];
-
-const statusColor = { live:'#10b981', progress:'#3b82f6', planned:'#f59e0b' };
-
-MARKERS.forEach(([id, lon, lat, status, name, info]) => {
-  const [cx, cy] = proj(lon, lat);
-  const col = statusColor[status];
-  const r = (status==='live') ? 10 : 9;
-
-  const g = addEl('g', { class:'cnode', style:'cursor:pointer' });
-  g.dataset.country = name;
-  g.dataset.status = status;
-  g.dataset.info = info;
-
-  const circle = addEl('circle', { cx, cy, r, fill: col, opacity:'0.85', stroke:'#fff', 'stroke-width':'1.2' });
-  g.appendChild(circle);
-
-  // 2-char label
-  const lbl = addEl('text', { x:cx, y:cy+3.5, 'text-anchor':'middle', fill:'#fff', 'font-size':'7', 'font-weight':'700', 'pointer-events':'none' });
-  lbl.textContent = id.slice(0,2);
-  g.appendChild(lbl);
-  svg.appendChild(g);
-});
-
-// tooltip
-document.querySelectorAll('.cnode').forEach(g => {
-  g.addEventListener('mouseenter', () => {
-    const tt = document.getElementById('mapTooltip');
-    const status = g.dataset.status;
-    const statusLabel = status==='live'?'🟢 Live':status==='progress'?'🔵 In Progress':'🟡 Planned';
-    document.getElementById('ttCountry').textContent = g.dataset.country + '  ' + statusLabel;
-    document.getElementById('ttInfo').innerHTML = g.dataset.info.replace(/\n/g,'<br>');
-    tt.style.display = 'block';
-  });
-  g.addEventListener('mousemove', e => {
-    const tt = document.getElementById('mapTooltip');
-    tt.style.left = (e.clientX+14)+'px';
-    tt.style.top  = (e.clientY-10)+'px';
-  });
-  g.addEventListener('mouseleave', () => {
-    document.getElementById('mapTooltip').style.display = 'none';
-  });
-});
 </script>
 </body>
 </html>
