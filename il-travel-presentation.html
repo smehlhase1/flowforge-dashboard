@@ -503,33 +503,71 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s7">
     <div class="slide-body">
       <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
-      <p class="lead">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract via BIOS, the Allianz open-policy admin backend. CIL acts as middleware; BIOS is the single system of record for beneficiary data across all markets.</p>
+      <p class="lead">Manages the full beneficiary lifecycle for travel insurance policies — onboarding, modification, and offboarding — via BIOS, the Allianz open-policy admin backend. CIL acts as middleware; BIOS is the single system of record for beneficiary data across all markets.</p>
 
       <div class="g2 mt16">
         <div>
           <div class="card">
-            <div class="section-label">Data flow</div>
-            <div style="font-size:13px;line-height:2">
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px">Partner / Frontend</div>
-                <span style="color:var(--blue-light)">→ POST /beneficiaries</span>
+            <div class="section-label">Data flow — all scenarios</div>
+            <div style="font-size:13px;line-height:1.8">
+
+              <!-- Onboarding -->
+              <div style="margin-bottom:10px">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:4px">Onboarding</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+                  <span style="color:var(--blue-light);font-size:12px">→ POST /beneficiaries</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+                  <span style="color:var(--muted);font-size:11px">validates · routes by product_code · transforms</span>
+                </div>
+                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: creates beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">201 Created</code></div>
               </div>
-              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding-left:20px">
-                <div class="flow-node cil" style="padding:6px 14px;min-width:0;font-size:12px"><div class="fn-name" style="color:#fff;font-size:12px">CIL</div></div>
-                <span style="color:var(--muted);font-size:12px">validates · routes by product_code · transforms</span>
+
+              <hr class="divider">
+
+              <!-- Modification -->
+              <div style="margin-bottom:10px">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);margin-bottom:4px">Modification</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+                  <span style="color:var(--blue-light);font-size:12px">→ PUT /beneficiaries/{id}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+                  <span style="color:var(--muted);font-size:11px">validates beneficiary_id · routes · updates payload</span>
+                </div>
+                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: updates personal data / contact info · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">200 OK</code></div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-left:40px">
-                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">All markets</div><div class="fn-name" style="font-size:11px">BIOS</div></div>
+
+              <hr class="divider">
+
+              <!-- Offboarding -->
+              <div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red);margin-bottom:4px">Offboarding</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+                  <span style="color:var(--blue-light);font-size:12px">→ DELETE /beneficiaries/{id}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+                  <span style="color:var(--muted);font-size:11px">validates · routes beneficiary removal</span>
+                </div>
+                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: removes beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code></div>
               </div>
+
             </div>
             <div class="mt12" style="font-size:12px;color:var(--amber)">⚠ All calls are <strong>asynchronous</strong> — requests pending backend approval</div>
           </div>
 
           <div class="card mt14">
-            <div class="section-label">Create beneficiaries endpoint</div>
-            <div class="ep"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">→ create one or more beneficiaries</span></div>
-            <div class="mt12" style="font-size:13px;line-height:1.8">Links insured persons to an existing travel policy and contract. Payload includes <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">policy_number</code>, contract details, and an array of beneficiaries with personal data and contact info.<br><br>Returns <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">201 Created</code> — no body. All calls are asynchronous.</div>
-            <div class="mt12 section-label">Routing</div>
+            <div class="section-label">Endpoints</div>
+            <div class="ep"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">→ onboard one or more beneficiaries</span></div>
+            <div class="ep"><span class="method m-put">PUT</span>/beneficiaries/{id} <span style="color:var(--muted)">→ modify beneficiary data</span></div>
+            <div class="ep"><span class="method m-delete">DELETE</span>/beneficiaries/{id} <span style="color:var(--muted)">→ offboard beneficiary</span></div>
+            <div class="mt12" style="font-size:13px;line-height:1.8">Payload includes <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">policy_number</code>, contract details, and beneficiary personal data &amp; contact info.</div>
+            <div class="mt10 section-label">Routing</div>
             <div style="font-size:13px;color:var(--text)">All requests route to <strong>BIOS</strong>. <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:12px">product_code</code> identifies the market/product context within BIOS.</div>
           </div>
         </div>
