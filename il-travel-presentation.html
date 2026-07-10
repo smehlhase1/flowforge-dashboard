@@ -606,7 +606,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s8">
     <div class="slide-body">
       <div class="h2">Contract Management Endpoint — Deep Dive</div>
-      <p class="lead">Post-sale policy lifecycle API. Routes through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">public-apis/simplesurance</code> → <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">travel-service</code> (gRPC) → carrier adapters. Allianz EAPI (APIGEE) is the primary backend for EU/AZP markets.</p>
+      <p class="lead">Post-sale policy lifecycle API. Routes through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">public-apis/simplesurance</code> → <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">travel-service</code> (gRPC) → carrier adapters.</p>
 
       <div class="tabs mt16">
         <button class="tb on" onclick="switchTab('cm','policy')">Policy Administration</button>
@@ -630,7 +630,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div style="font-size:12px;line-height:1.8;color:var(--muted)">
               <strong style="color:var(--text)">Cancellation eligibility</strong> — request body: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">cancellation_reason</code> + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">refund_type</code> (PRORATED / FULL / NO_REFUND). Response: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">eligible</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">cancellation_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">message</code>.<br><br>
               <strong style="color:var(--text)">PATCH /policies</strong> — updatable fields: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">end_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">holder</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">additional_data</code> (beneficiaries, trip details, auto_renewal, refund_type), <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">effective_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">contract_status</code>.<br><br>
-              <strong style="color:var(--text)">Amendments</strong> — POST creates amendment (Motor only today; Travel returns 503). Accept routes to <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">travelService.AcceptPolicyAmendment()</code> → EAPI <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">POST /modifications/{id}/confirmation</code>. Response: 200 AWAITING_PAYMENT (returns session_id) or 202 CONFIRMATION_ACCEPTED.
+              <strong style="color:var(--text)">Amendments</strong> — POST creates amendment. Accept routes to <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">travelService.AcceptPolicyAmendment()</code> → EAPI <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">POST /modifications/{id}/confirmation</code>. Response: 200 AWAITING_PAYMENT (returns session_id) or 202 CONFIRMATION_ACCEPTED.
             </div>
           </div>
           <div class="card">
@@ -646,7 +646,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
                 <tr><td>Request modification</td><td><code style="font-size:10px">POST /modifications</code></td></tr>
               </tbody>
             </table>
-            <div class="mt12" style="font-size:12px;color:var(--muted)">APIGEE product: <strong>Travel_Contracts_Modification_1.0</strong><br>Errors surfaced as <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">fault.errors[]</code> JSON — 503 responses remapped to descriptive messages</div>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">APIGEE product: <strong>Travel_Contracts_Modification_1.0</strong></div>
           </div>
         </div>
       </div>
