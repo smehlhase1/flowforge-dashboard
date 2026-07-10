@@ -470,24 +470,24 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <div class="card" style="border-left:3px solid #3b82f6">
           <div style="font-size:22px;margin-bottom:8px">👤</div>
           <div class="h3">Beneficiaries</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Creates beneficiaries for travel insurance policies — linking insured persons to a policy and contract in the Allianz backend. Originally built for Santander, reusable across travel partners.</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Full beneficiary lifecycle — onboarding, modification, and offboarding — via BIOS, the Allianz open-policy admin backend. CIL is middleware; BIOS is the single system of record.</p>
           <div class="ep"><span class="method m-post">POST</span>/beneficiaries</div>
-          <div class="mt12" style="font-size:12px;color:var(--muted)">Backend: BIOS</div>
-          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Santander, Deutsche Bank, Allyz HU, Bolttech</span></div>
+          <div class="mt8" style="font-size:12px;color:var(--muted)">Backend: BIOS · Markets: UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
+          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Santander · Deutsche Bank · Allyz HU · Bolttech</span></div>
+          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">TopViaggi (IT)</span></div>
         </div>
 
         <div class="card" style="border-left:3px solid #a78bfa">
           <div style="font-size:22px;margin-bottom:8px">📋</div>
           <div class="h3">Contract Management</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Post-sale travel policy lifecycle: add/update/remove insured persons, cancellation eligibility checks, quote management, and document uploads.</p>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Post-sale policy lifecycle: insured persons, cancellation eligibility, amendments, quote management, and document uploads. Routes via Allianz EAPI (APIGEE) for EU/AZP markets.</p>
+          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
           <div class="ep"><span class="method m-post">POST</span>/policies/{id}/insured-person</div>
           <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
-          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id}</div>
-          <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions</div>
+          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} · <span class="method m-post">POST</span>/quotes/{id}/quote-actions</div>
           <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
-          <div class="mt12" style="font-size:12px;color:var(--muted)">Product-agnostic · Any market configured in CIL</div>
-          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays, Fox UK, Santander, AgentMax</span></div>
+          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays · Santander · UK</span></div>
+          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">Fox UK · AgentMax · Westpac AU · Global App (CH · AU · IT · NL)</span></div>
         </div>
 
         <div class="card" style="border-left:3px solid #f97316">
@@ -495,9 +495,9 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="h3">Claims</div>
           <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Pass-through claims channel retrieval. CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend.</p>
           <div class="ep"><span class="method m-get">GET</span>/claims/v1/submission/channels?policy_number=…</div>
-          <div class="mt12" style="font-size:12px;color:var(--muted)">Backends: CH OE Backend · Greek OE Backend (NBG) · ABS</div>
-          <div class="mt8"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">CH (Global App) · GR (NBG)</span></div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">Travel claim types: Annulation · Luggage</div>
+          <div class="mt8" style="font-size:12px;color:var(--muted)">Backends: IT OE · CH OE · AU OE · AzD OE (IT/NL) · AzP (AU) · ABS</div>
+          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays · Santander (UK) · Miles&amp;More (DE)</span></div>
+          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">Fox (UK) · Westpac (AU) · Global App (IT · CH · AU · NL)</span></div>
         </div>
       </div>
     </div>
@@ -1145,7 +1145,7 @@ const COUNTRY_DATA = {
   BEL: { status:'planned',  name:'Belgium',          info:'Beneficiaries via ABS backend (Bolttech BE)' },
   LUX: { status:'planned',  name:'Luxembourg',       info:'Beneficiaries via ABS backend' },
   POL: { status:'planned',  name:'Poland',           info:'Beneficiaries via Bolttech PL' },
-  ROU: { status:'planned',  name:'Romania',          info:'Beneficiaries via Bolttech RO' },
+  ROU: { status:'live',     name:'Romania',           info:'Live: Bolttech (Beneficiaries)' },
   AUS: { status:'progress', name:'Australia',        info:'In Progress: Westpac (NAC 2.0) — Travel, RSA, EHA\nBackends: eMagin + Midas (AU/NZ)' },
   NZL: { status:'progress', name:'New Zealand',      info:'In Progress: Allyz NZ B2C\nBackends: eMagin + Midas + FPE' },
   USA: { status:'progress', name:'United States',    info:'In Progress: Fusion US + Canada alongside eMagin' },
