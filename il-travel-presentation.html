@@ -223,81 +223,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   </div>
 
   <!-- ════════════════════════════════════════
-       SLIDE 3 — TRAVEL ENDPOINT ARCHITECTURE
-  ════════════════════════════════════════ -->
-  <div class="slide" id="s3">
-    <div class="slide-body">
-      <div class="h2">Travel Endpoint — Architecture</div>
-      <p class="lead">The IL travel endpoint is the primary integration point for quote, buy, policy lifecycle, and medical screening. Frontends and partner apps call a single travel API; CIL orchestrates all downstream complexity.</p>
-
-      <div class="card mt16">
-        <div class="section-label">End-to-end flow</div>
-        <div class="flow" style="justify-content:center">
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
-            <div class="flow-node"><div class="fn-type">Frontend</div><div class="fn-name">Retail Portal</div><div class="fn-sub">Agent / broker UI</div></div>
-            <div class="flow-node"><div class="fn-type">Business Partner</div><div class="fn-name">Direct API</div><div class="fn-sub">Fox · Rush · Westpac · Coverwise · Santander · Allyz…</div></div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-node cil">
-            <div class="fn-type">Integration Layer</div>
-            <div class="fn-name" style="color:#fff;font-size:16px">CIL / IL</div>
-            <div class="fn-sub">travel-service<br>sisu-api<br>Temporal orchestration</div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">eMagin (EQS v3)</div><div class="fn-sub">Quote · Policy · Pricing</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims</div></div>
-            <div class="flow-node"><div class="fn-type">Core backend (EU)</div><div class="fn-name">BIOS</div><div class="fn-sub">Beneficiaries</div></div>
-            <div class="flow-node"><div class="fn-type">AU/NZ backend</div><div class="fn-name">Midas</div><div class="fn-sub">Westpac · NZ B2C</div></div>
-            <div class="flow-node"><div class="fn-type">AU/NZ pricing</div><div class="fn-name">FPE</div><div class="fn-sub">Flexible Pricing Engine</div></div>
-            <div class="flow-node"><div class="fn-type">US · CA backend</div><div class="fn-name">Fusion</div><div class="fn-sub">US + Canada (alongside eMagin)</div></div>
-            <div class="flow-node"><div class="fn-type">CA backend</div><div class="fn-name">Magnesium</div><div class="fn-sub">Allyz Canada · Contract creation</div></div>
-          </div>
-          <div class="arrow">→</div>
-          <div class="flow-col">
-            <div class="flow-node"><div class="fn-type">Payment</div><div class="fn-name">OnePay</div><div class="fn-sub">Session · Status</div></div>
-            <div class="flow-node"><div class="fn-type">3rd party</div><div class="fn-name">Verisk</div><div class="fn-sub">Medical screening</div></div>
-            <div class="flow-node"><div class="fn-type">Enterprise API</div><div class="fn-name">Imagine</div><div class="fn-sub">Contract management</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="g2 mt14">
-        <div class="card">
-          <div class="section-label">Travel API endpoints exposed by IL</div>
-          <div class="ep"><span class="method m-post">POST</span>/travel/quote</div>
-          <div class="ep"><span class="method m-post">POST</span>/travel/policies — create policy</div>
-          <div class="ep"><span class="method m-get">GET</span>/travel/policies — list policies</div>
-          <div class="ep"><span class="method m-get">GET</span>/policies/{id} — policy detail</div>
-          <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person — update</div>
-          <div class="ep"><span class="method m-delete">DELETE</span>/policies/{id}/insured-person/{pid}</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
-          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} — retrieve saved quote</div>
-          <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions — email/resume</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
-        </div>
-        <div class="card">
-          <div class="section-label">Key capabilities</div>
-          <ul style="font-size:13px;line-height:2;padding-left:16px">
-            <li><strong>Quote &amp; Buy</strong> — real-time via eMagin EQS v3</li>
-            <li><strong>Medical screening</strong> — Verisk (Fox UK, Rush/Hays)</li>
-            <li><strong>Payment</strong> — OnePay session / status polling</li>
-            <li><strong>Policy lifecycle</strong> — amend, cancel, upgrade, renew</li>
-            <li><strong>Save &amp; retrieve quote</strong> — email to customer</li>
-            <li><strong>Geo zones</strong> — EU, ER, R1(UK), R2(WW-ex-US), R3(AU/NZ), WW, IL(domestic)</li>
-            <li><strong>AU/NZ backends</strong> — Midas + FPE (Flexible Pricing Engine) for Westpac &amp; NZ B2C</li>
-            <li><strong>Americas expansion</strong> — Fusion US + Canada (alongside eMagin) · Allyz Canada (Magnesium backend)</li>
-            <li><strong>Travel types</strong> — Single Trip (ST) &amp; Annual Multi-Trip (AMT)</li>
-            <li><strong>Beneficiary integration</strong> — BIOS + ABS linkage</li>
-            <li><strong>Partner isolation</strong> — each BP has isolated flow config</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
        SLIDE 4 — GEOGRAPHIC REACH (MAP)
   ════════════════════════════════════════ -->
   <div class="slide" id="s4">
@@ -1084,7 +1009,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 const SLIDES = [
   { id:'s1', title:'Title', label:'Overview' },
   { id:'s2', title:'What is the Integration Layer?', label:'IL Overview' },
-  { id:'s3', title:'Travel Endpoint — Architecture', label:'Travel Arch' },
   { id:'s11', title:'Travel Endpoint — Deep Dive', label:'Travel Deep Dive' },
   { id:'s4', title:'Travel Endpoint — Geographic Reach', label:'Map' },
   { id:'s5', title:'Travel Partners — Full Overview', label:'Partners' },
