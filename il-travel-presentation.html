@@ -167,55 +167,47 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
        SLIDE 2 — WHAT IS THE IL
   ════════════════════════════════════════ -->
   <div class="slide" id="s2">
-    <div class="slide-body" style="display:flex;flex-direction:column;justify-content:space-between;height:100%">
+    <div class="slide-body" style="display:flex;flex-direction:column;height:100%;gap:0">
 
       <!-- Header -->
-      <div>
+      <div style="margin-bottom:6px">
         <div class="h2" style="margin-bottom:4px">What is the Integration Layer?</div>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0">Allianz's single, stable integration front door — partners and channels integrate <strong style="color:var(--text)">once</strong> and reach every market, every product, every LoB.</p>
+        <p style="font-size:13px;color:var(--muted);margin:0">Allianz's single, stable integration front door — partners integrate <strong style="color:var(--text)">once</strong> and reach every market, every product, every LoB.</p>
       </div>
 
-      <!-- With IL highlight -->
-      <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 20px;margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
-        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">OE changes absorbed internally — upstream contracts stay <strong style="color:var(--text)">permanently stable</strong></div>
-        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">Single call per screen — IL <strong style="color:var(--text)">aggregates, composites &amp; transforms</strong> all backends</div>
-        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">Consistent error models, <strong style="color:var(--text)">normalised DTOs</strong> &amp; auth flows across all channels</div>
-        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">One audited security boundary — centralised <strong style="color:var(--text)">JWT, audit logs &amp; GDPR</strong></div>
-      </div>
+      <!-- Three pillars — grow to fill available space -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;margin-top:14px">
 
-      <!-- Three pillars -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;margin-top:14px;align-items:stretch">
-
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #10b981;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
-          <div style="font-size:22px">🚀</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#10b981">SPEED &amp; SCALE</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">Integrate Once.<br>Scale Globally.</div>
-          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">One REST API replaces dozens of per-country integrations. New markets ship without re-platforming.</div>
-          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:4px solid #10b981;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:28px">🚀</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;color:#10b981">SPEED &amp; SCALE</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.3">Integrate Once.<br>Scale Globally.</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.7;flex:1">One REST API replaces dozens of per-country integrations. New markets ship without re-platforming the channel.</div>
+          <div style="font-size:12px;line-height:2;border-top:1px solid var(--border);padding-top:10px">
             <div style="color:var(--text)">→ <strong>30–50%</strong> less duplicated integration logic</div>
-            <div style="color:var(--text)">→ Ship UI improvements <strong>weekly</strong></div>
-            <div style="color:var(--text)">→ <strong>Zero breaking</strong> upstream changes</div>
+            <div style="color:var(--text)">→ Ship UI improvements <strong>weekly</strong>, not quarterly</div>
+            <div style="color:var(--text)">→ <strong>Zero breaking</strong> upstream API changes</div>
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
-          <div style="font-size:22px">🛡️</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#3b82f6">RESILIENCE &amp; STABILITY</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">Absorb Backend Churn.<br>Ship Without Fear.</div>
-          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">IL absorbs OE API volatility internally — upstream contracts stay stable regardless of what changes downstream.</div>
-          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:4px solid #3b82f6;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:28px">🛡️</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;color:#3b82f6">RESILIENCE &amp; STABILITY</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.3">Absorb Backend Churn.<br>Ship Without Fear.</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.7;flex:1">IL absorbs OE API volatility internally. Upstream contracts stay permanently stable — regardless of what changes downstream.</div>
+          <div style="font-size:12px;line-height:2;border-top:1px solid var(--border);padding-top:10px">
             <div style="color:var(--text)">→ OE outage ≠ app outage — <strong>graceful degradation</strong></div>
-            <div style="color:var(--text)">→ Independent release cycles for apps <strong>and</strong> backends</div>
-            <div style="color:var(--text)">→ <strong>≤2 API calls per screen</strong></div>
+            <div style="color:var(--text)">→ Independent release cycles for <strong>apps and backends</strong></div>
+            <div style="color:var(--text)">→ <strong>≤2 API calls</strong> per screen</div>
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #a855f7;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
-          <div style="font-size:22px">🔐</div>
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#a855f7">SECURITY &amp; COMPLIANCE</div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">One Audited Boundary.<br>Enforced Everywhere.</div>
-          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">Single entry point for auth, PII handling, and compliance — not scattered across OE integrations.</div>
-          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:4px solid #a855f7;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:28px">🔐</div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:.12em;color:#a855f7">SECURITY &amp; COMPLIANCE</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.3">One Audited Boundary.<br>Enforced Everywhere.</div>
+          <div style="font-size:12.5px;color:var(--muted);line-height:1.7;flex:1">Single entry point for auth, PII handling, and compliance — not scattered across individual OE integrations.</div>
+          <div style="font-size:12px;line-height:2;border-top:1px solid var(--border);padding-top:10px">
             <div style="color:var(--text)">→ JWT / OIDC, scopes &amp; <strong>audit trails</strong> centralised</div>
             <div style="color:var(--text)">→ <strong>GDPR</strong> purpose limitation per API call</div>
             <div style="color:var(--text)">→ IL routes — <strong>never stores</strong> master data</div>
@@ -226,21 +218,21 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 
       <!-- Stat strip -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px">
-        <div style="text-align:center;padding:10px 8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px">
-          <div style="font-size:22px;font-weight:800;color:#10b981">&lt;300ms</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">p95 latency target</div>
+        <div style="text-align:center;padding:12px 8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px">
+          <div style="font-size:24px;font-weight:800;color:#10b981">&lt;300ms</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">p95 latency target</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px">
-          <div style="font-size:22px;font-weight:800;color:var(--blue-light)">20+</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Partners live &amp; in progress</div>
+        <div style="text-align:center;padding:12px 8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px">
+          <div style="font-size:24px;font-weight:800;color:var(--blue-light)">20+</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Partners live &amp; in progress</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px">
-          <div style="font-size:22px;font-weight:800;color:var(--amber)">14+</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Countries via one API</div>
+        <div style="text-align:center;padding:12px 8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px">
+          <div style="font-size:24px;font-weight:800;color:var(--amber)">14+</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Countries via one API</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:8px">
-          <div style="font-size:22px;font-weight:800;color:#a855f7">4</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Endpoint families</div>
+        <div style="text-align:center;padding:12px 8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:8px">
+          <div style="font-size:24px;font-weight:800;color:#a855f7">4</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Endpoint families</div>
         </div>
       </div>
 
