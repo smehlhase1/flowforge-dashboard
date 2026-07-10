@@ -1051,8 +1051,9 @@ document.addEventListener('keydown', e => {
 
 // Tab switching
 function switchTab(group, panel) {
-  document.querySelectorAll(`#s8 .tb`).forEach(b => b.classList.remove('on'));
-  document.querySelectorAll(`#s8 .panel`).forEach(p => p.classList.remove('on'));
+  const slide = event.target.closest('.slide');
+  slide.querySelectorAll('.tb').forEach(b => b.classList.remove('on'));
+  slide.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   event.target.classList.add('on');
   document.getElementById(group + '-' + panel).classList.add('on');
 }
