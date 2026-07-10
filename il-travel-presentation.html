@@ -307,7 +307,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
 
       <div class="map-wrap mt16" style="display:grid;grid-template-columns:58fr 42fr;grid-template-rows:1fr auto;gap:0">
         <!-- World map — left 58% -->
-        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e;grid-row:1"></svg>
+        <svg id="worldMap" viewBox="0 0 900 500" preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%;display:block;background:#0d1b2e;grid-row:1"></svg>
         <!-- Europe panel — right 42%, full height -->
         <div style="grid-row:1;border-left:1px solid var(--border);display:flex;flex-direction:column;background:#0d1b2e">
           <div style="padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);flex-shrink:0">Europe — detail</div>
@@ -955,11 +955,9 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     });
 
     // ── World map ──────────────────────────────────────────────────────────
+    // Fixed internal coordinate space — CSS/viewBox handles scaling to fill the column
     const svgW = document.getElementById('worldMap');
-    const wRect = svgW.getBoundingClientRect();
-    const W = wRect.width || 560, H = Math.round(W * 0.52);
-    svgW.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svgW.setAttribute('height', H);
+    const W = 900, H = 500;
 
     const projW = d3.geoNaturalEarth1()
       .fitSize([W, H], {type:'Sphere'});
