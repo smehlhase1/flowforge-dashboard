@@ -1016,16 +1016,16 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
     const euroCollection = { type:'FeatureCollection', features: euroFeatures };
 
-    // fitExtent only on the core coverage countries — excludes large/peripheral ones
-    // that would zoom the view out too far (Scandinavia, Russia, Ukraine, etc.)
-    const FIT_ISO = new Set([
-      'GBR','IRL','FRA','ESP','PRT','BEL','NLD','LUX','DEU','CHE','AUT',
-      'ITA','CZE','POL','SVK','HUN','ROU','HRV','SVN','SRB','BGR','GRC','ALB','MKD','BIH','MNE'
-    ]);
-    const projE = d3.geoMercator().fitExtent([[8,8],[EW-8,EH-8]], {
-      type: 'FeatureCollection',
-      features: countries.features.filter(d => FIT_ISO.has(d.properties.iso_a3))
-    });
+    // Fit to a mainland-Europe bounding box (lon -11→33, lat 34→62)
+    // Using a bbox polygon avoids French Guiana pulling France's feature far SW
+    const europeBBox = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[[-11,34],[33,34],[33,62],[-11,62],[-11,34]]]
+      }
+    };
+    const projE = d3.geoMercator().fitExtent([[8,8],[EW-8,EH-8]], europeBBox);
     const pathE = d3.geoPath().projection(projE);
 
     const svgEd3 = d3.select(svgE);
