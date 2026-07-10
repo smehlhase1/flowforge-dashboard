@@ -470,43 +470,82 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
        SLIDE 6 — xLob OVERVIEW
   ════════════════════════════════════════ -->
   <div class="slide" id="s6">
-    <div class="slide-body">
+    <div class="slide-body" style="display:flex;flex-direction:column;height:100%">
       <div class="h2">xLob Travel-Relevant Endpoints</div>
-      <p class="lead">Beyond the core Travel Quote &amp; Buy, CIL exposes three xLob endpoint families critical to the full travel insurance lifecycle. Each operates across multiple markets and connects to specific Allianz backends.</p>
+      <p class="lead">Beyond Travel Quote &amp; Buy, CIL exposes three xLob endpoint families covering the full post-sale lifecycle. Each has a dedicated deep-dive slide.</p>
 
-      <div class="g3 mt16">
-        <div class="card" style="border-left:3px solid #3b82f6">
-          <div style="font-size:22px;margin-bottom:8px">👤</div>
-          <div class="h3">Beneficiaries</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Full beneficiary lifecycle — onboarding, modification, and offboarding — via BIOS, the Allianz open-policy admin backend. CIL is middleware; BIOS is the single system of record.</p>
-          <div class="ep"><span class="method m-post">POST</span>/beneficiaries</div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">Backend: BIOS · Markets: UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
-          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Santander · Deutsche Bank · Allyz HU · Bolttech</span></div>
-          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">TopViaggi (IT)</span></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1;margin-top:18px;align-items:stretch">
+
+        <!-- Beneficiaries -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:24px">👤</div>
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#3b82f6">BENEFICIARIES</div>
+              <div style="font-size:15px;font-weight:700;color:var(--text)">Full Lifecycle via BIOS</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Onboard, modify, and offboard beneficiaries for travel policies. BIOS is the single system of record — CIL translates and routes regardless of country.</div>
+          <div style="border-top:1px solid var(--border);padding-top:10px">
+            <div class="ep" style="margin-bottom:4px"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">onboard</span></div>
+            <div class="ep" style="margin-bottom:4px"><span class="method m-put">PUT</span>/beneficiaries/{id} <span style="color:var(--muted)">modify</span></div>
+            <div class="ep"><span class="method m-delete">DELETE</span>/beneficiaries/{id} <span style="color:var(--muted)">offboard</span></div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7">
+            <div>Backend: <strong style="color:var(--text)">BIOS</strong> · All calls async</div>
+            <div>Markets: UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div><span class="badge b-live">● Live</span> <span style="font-size:11px;color:var(--muted)">Santander · Deutsche Bank · Allyz HU · Bolttech</span></div>
+            <div><span class="badge b-prog">◑ In Progress</span> <span style="font-size:11px;color:var(--muted)">TopViaggi (IT)</span></div>
+          </div>
         </div>
 
-        <div class="card" style="border-left:3px solid #a78bfa">
-          <div style="font-size:22px;margin-bottom:8px">📋</div>
-          <div class="h3">Contract Management</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Post-sale policy lifecycle: insured persons, cancellation eligibility, amendments, quote management, and document uploads. Routes via Allianz EAPI (APIGEE) for EU/AZP markets.</p>
-          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/{id}/insured-person</div>
-          <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person</div>
-          <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} · <span class="method m-post">POST</span>/quotes/{id}/quote-actions</div>
-          <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
-          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays · Santander · UK</span></div>
-          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">Fox UK · AgentMax · Westpac AU · Global App (CH · AU · IT · NL)</span></div>
+        <!-- Contract Management -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #a78bfa;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:24px">📋</div>
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#a78bfa">CONTRACT MANAGEMENT</div>
+              <div style="font-size:15px;font-weight:700;color:var(--text)">Post-Sale Policy Lifecycle</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Insured persons, cancellation eligibility, amendments, quote management, and document uploads. Routes via Allianz EAPI (APIGEE) for EU/AZP markets.</div>
+          <div style="border-top:1px solid var(--border);padding-top:10px">
+            <div class="ep" style="margin-bottom:4px"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
+            <div class="ep" style="margin-bottom:4px"><span class="method m-post">POST</span> · <span class="method m-put">PUT</span> · <span class="method m-delete">DELETE</span> /policies/{id}/insured-person</div>
+            <div class="ep" style="margin-bottom:4px"><span class="method m-get">GET</span>/quotes/{id} · <span class="method m-post">POST</span>/quotes/{id}/quote-actions</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted)">Backend: <strong style="color:var(--text)">Allianz EAPI (APIGEE)</strong> · Quote data from local DB</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div><span class="badge b-live">● Live</span> <span style="font-size:11px;color:var(--muted)">Rush/Hays · Santander (UK)</span></div>
+            <div><span class="badge b-prog">◑ In Progress</span> <span style="font-size:11px;color:var(--muted)">Fox · AgentMax · Westpac AU · Global App (CH · AU · IT · NL)</span></div>
+          </div>
         </div>
 
-        <div class="card" style="border-left:3px solid #f97316">
-          <div style="font-size:22px;margin-bottom:8px">⚠️</div>
-          <div class="h3">Claims</div>
-          <p style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px">Pass-through claims channel retrieval. CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend.</p>
-          <div class="ep"><span class="method m-get">GET</span>/claims/v1/submission/channels?policy_number=…</div>
-          <div class="mt8" style="font-size:12px;color:var(--muted)">Backends: IT OE · CH OE · AU OE · AzD OE (IT/NL) · AzP (AU) · ABS</div>
-          <div class="mt8"><span class="badge b-live">● Live</span> <span style="font-size:12px;color:var(--muted)">Rush/Hays · Santander (UK) · Miles&amp;More (DE)</span></div>
-          <div class="mt6"><span class="badge b-prog">◑ In Progress</span> <span style="font-size:12px;color:var(--muted)">Fox (UK) · Westpac (AU) · Global App (IT · CH · AU · NL)</span></div>
+        <!-- Claims -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #f97316;border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:24px">⚠️</div>
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#f97316">CLAIMS</div>
+              <div style="font-size:15px;font-weight:700;color:var(--text)">Channel Retrieval Pass-Through</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend. CIL does not process claims.</div>
+          <div style="border-top:1px solid var(--border);padding-top:10px">
+            <div class="ep"><span class="method m-get">GET</span>/claims/v1/submission/channels?policy_number=…</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.7">
+            <div>Backends: <strong style="color:var(--text)">IT OE · CH OE · AU OE · AzD OE (IT/NL) · AzP/AU · ABS</strong></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div><span class="badge b-live">● Live</span> <span style="font-size:11px;color:var(--muted)">Rush/Hays · Santander (UK) · Miles&amp;More (DE)</span></div>
+            <div><span class="badge b-prog">◑ In Progress</span> <span style="font-size:11px;color:var(--muted)">Fox (UK) · Westpac (AU) · Global App (IT · CH · AU · NL)</span></div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
