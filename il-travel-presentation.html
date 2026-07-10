@@ -175,39 +175,61 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0">Allianz's single, stable integration front door — partners and channels integrate <strong style="color:var(--text)">once</strong> and reach every market, every product, every LoB.</p>
       </div>
 
-      <!-- Three pillars -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;margin-top:20px;align-items:stretch">
+      <!-- Without / With contrast -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+        <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px 16px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#f87171;margin-bottom:8px">✗ WITHOUT IL</div>
+          <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">
+            <div>App team rebuilds integrations per country &amp; backend — becomes a shadow integration layer</div>
+            <div>Every OE API change forces app re-releases — weeks of delay on mobile stores</div>
+            <div>Inconsistent payloads per country accumulate <code style="background:var(--surface2);padding:0 3px;border-radius:2px;font-size:10px">if-logic</code> in app code</div>
+            <div>Security &amp; compliance enforced separately across every OE</div>
+          </div>
+        </div>
+        <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 16px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#10b981;margin-bottom:8px">✓ WITH IL</div>
+          <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">
+            <div>OE changes absorbed internally — upstream contracts stay <strong style="color:var(--text)">permanently stable</strong></div>
+            <div>Single call per screen — IL aggregates, composites &amp; transforms all backends</div>
+            <div>Consistent error models, normalised DTOs &amp; auth flows across all channels</div>
+            <div>One audited security boundary with centralised JWT, audit logs &amp; GDPR enforcement</div>
+          </div>
+        </div>
+      </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #10b981;border-radius:10px;padding:20px 18px;display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:26px">🚀</div>
+      <!-- Three pillars -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;margin-top:14px;align-items:stretch">
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #10b981;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:22px">🚀</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#10b981">SPEED &amp; SCALE</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.3">Integrate Once.<br>Scale Globally.</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;flex:1">A single REST API replaces dozens of per-country, per-backend integrations. New markets ship without re-platforming.</div>
-          <div style="font-size:11.5px;line-height:1.9;border-top:1px solid var(--border);padding-top:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">Integrate Once.<br>Scale Globally.</div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">One REST API replaces dozens of per-country integrations. New markets ship without re-platforming.</div>
+          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
             <div style="color:var(--text)">→ <strong>30–50%</strong> less duplicated integration logic</div>
             <div style="color:var(--text)">→ Ship UI improvements <strong>weekly</strong></div>
             <div style="color:var(--text)">→ <strong>Zero breaking</strong> upstream changes</div>
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:10px;padding:20px 18px;display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:26px">🛡️</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:22px">🛡️</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#3b82f6">RESILIENCE &amp; STABILITY</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.3">Absorb Backend Churn.<br>Ship Without Fear.</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;flex:1">IL absorbs OE API volatility internally — upstream contracts stay stable regardless of what changes downstream.</div>
-          <div style="font-size:11.5px;line-height:1.9;border-top:1px solid var(--border);padding-top:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">Absorb Backend Churn.<br>Ship Without Fear.</div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">IL absorbs OE API volatility internally — upstream contracts stay stable regardless of what changes downstream.</div>
+          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
             <div style="color:var(--text)">→ OE outage ≠ app outage — <strong>graceful degradation</strong></div>
             <div style="color:var(--text)">→ Independent release cycles for apps <strong>and</strong> backends</div>
             <div style="color:var(--text)">→ <strong>≤2 API calls per screen</strong></div>
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #a855f7;border-radius:10px;padding:20px 18px;display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:26px">🔐</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #a855f7;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:22px">🔐</div>
           <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#a855f7">SECURITY &amp; COMPLIANCE</div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.3">One Audited Boundary.<br>Enforced Everywhere.</div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.6;flex:1">IL is the single entry point for auth, PII handling, and compliance — not scattered across dozens of OE integrations.</div>
-          <div style="font-size:11.5px;line-height:1.9;border-top:1px solid var(--border);padding-top:10px">
+          <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1.3">One Audited Boundary.<br>Enforced Everywhere.</div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.6;flex:1">Single entry point for auth, PII handling, and compliance — not scattered across OE integrations.</div>
+          <div style="font-size:11px;line-height:1.8;border-top:1px solid var(--border);padding-top:8px">
             <div style="color:var(--text)">→ JWT / OIDC, scopes &amp; <strong>audit trails</strong> centralised</div>
             <div style="color:var(--text)">→ <strong>GDPR</strong> purpose limitation per API call</div>
             <div style="color:var(--text)">→ IL routes — <strong>never stores</strong> master data</div>
