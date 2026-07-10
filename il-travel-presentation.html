@@ -957,13 +957,12 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     // ── World map ──────────────────────────────────────────────────────────
     const svgW = document.getElementById('worldMap');
     const wRect = svgW.getBoundingClientRect();
-    const W = wRect.width || 560, H = Math.round(W * 0.60);
+    const W = wRect.width || 560, H = Math.round(W * 0.52);
     svgW.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svgW.setAttribute('height', H);
 
     const projW = d3.geoNaturalEarth1()
-      .scale(W / 4.6)
-      .translate([W / 2.2, H / 1.85]);
+      .fitSize([W, H], {type:'Sphere'});
     const pathW = d3.geoPath().projection(projW);
 
     const svgWd3 = d3.select(svgW);
