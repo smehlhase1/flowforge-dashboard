@@ -175,26 +175,12 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
         <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0">Allianz's single, stable integration front door — partners and channels integrate <strong style="color:var(--text)">once</strong> and reach every market, every product, every LoB.</p>
       </div>
 
-      <!-- Without / With contrast -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
-        <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px 16px">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#f87171;margin-bottom:8px">✗ WITHOUT IL</div>
-          <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">
-            <div>App team rebuilds integrations per country &amp; backend — becomes a shadow integration layer</div>
-            <div>Every OE API change forces app re-releases — weeks of delay on mobile stores</div>
-            <div>Inconsistent payloads per country accumulate <code style="background:var(--surface2);padding:0 3px;border-radius:2px;font-size:10px">if-logic</code> in app code</div>
-            <div>Security &amp; compliance enforced separately across every OE</div>
-          </div>
-        </div>
-        <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 16px">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#10b981;margin-bottom:8px">✓ WITH IL</div>
-          <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">
-            <div>OE changes absorbed internally — upstream contracts stay <strong style="color:var(--text)">permanently stable</strong></div>
-            <div>Single call per screen — IL aggregates, composites &amp; transforms all backends</div>
-            <div>Consistent error models, normalised DTOs &amp; auth flows across all channels</div>
-            <div>One audited security boundary with centralised JWT, audit logs &amp; GDPR enforcement</div>
-          </div>
-        </div>
+      <!-- With IL highlight -->
+      <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:12px 20px;margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">OE changes absorbed internally — upstream contracts stay <strong style="color:var(--text)">permanently stable</strong></div>
+        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">Single call per screen — IL <strong style="color:var(--text)">aggregates, composites &amp; transforms</strong> all backends</div>
+        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">Consistent error models, <strong style="color:var(--text)">normalised DTOs</strong> &amp; auth flows across all channels</div>
+        <div style="font-size:11.5px;line-height:1.8;color:var(--muted)">One audited security boundary — centralised <strong style="color:var(--text)">JWT, audit logs &amp; GDPR</strong></div>
       </div>
 
       <!-- Three pillars -->
