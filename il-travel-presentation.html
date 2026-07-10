@@ -531,100 +531,108 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s7">
     <div class="slide-body">
       <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
-      <p class="lead">Manages the full beneficiary lifecycle for travel insurance policies — onboarding, modification, and offboarding — via BIOS, the Allianz open-policy admin backend. CIL acts as middleware; BIOS is the single system of record for beneficiary data across all markets.</p>
+      <p class="lead">Full beneficiary lifecycle for travel insurance policies — onboarding, modification, and offboarding — via BIOS. CIL acts as middleware; BIOS is the single system of record across all markets.</p>
 
-      <div class="g2 mt16">
-        <div>
+      <div class="tabs mt16">
+        <button class="tb on" onclick="switchTab('ben','flow')">Data Flow</button>
+        <button class="tb" onclick="switchTab('ben','endpoints')">Endpoints &amp; Routing</button>
+        <button class="tb" onclick="switchTab('ben','partners')">Partners</button>
+      </div>
+
+      <!-- TAB: DATA FLOW -->
+      <div class="panel on" id="ben-flow">
+        <div class="g2">
           <div class="card">
-            <div class="section-label">Data flow — all scenarios</div>
-            <div style="font-size:13px;line-height:1.8">
-
-              <!-- Onboarding -->
-              <div style="margin-bottom:10px">
-                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:4px">Onboarding</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
-                  <span style="color:var(--blue-light);font-size:12px">→ POST /beneficiaries</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
-                  <span style="color:var(--muted);font-size:11px">validates · routes by product_code · transforms</span>
-                </div>
-                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: creates beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">201 Created</code></div>
-              </div>
-
-              <hr class="divider">
-
-              <!-- Modification -->
-              <div style="margin-bottom:10px">
-                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);margin-bottom:4px">Modification</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
-                  <span style="color:var(--blue-light);font-size:12px">→ PUT /beneficiaries/{id}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
-                  <span style="color:var(--muted);font-size:11px">validates beneficiary_id · routes · updates payload</span>
-                </div>
-                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: updates personal data / contact info · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">200 OK</code></div>
-              </div>
-
-              <hr class="divider">
-
-              <!-- Offboarding -->
-              <div>
-                <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--red);margin-bottom:4px">Offboarding</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-                  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
-                  <span style="color:var(--blue-light);font-size:12px">→ DELETE /beneficiaries/{id}</span>
-                </div>
-                <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-                  <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
-                  <span style="color:var(--muted);font-size:11px">validates · routes beneficiary removal</span>
-                </div>
-                <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: removes beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code></div>
-              </div>
-
+            <div class="section-label">Onboarding</div>
+            <div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+              <span style="color:var(--blue-light);font-size:12px">→ POST /beneficiaries</span>
             </div>
-            <div class="mt12" style="font-size:12px;color:var(--amber)">⚠ All calls are <strong>asynchronous</strong> — requests pending backend approval</div>
+            <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <span style="color:var(--muted);font-size:11px">validates · routes by product_code · transforms</span>
+            </div>
+            <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: creates beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">201 Created</code></div>
           </div>
+          <div class="card">
+            <div class="section-label">Modification</div>
+            <div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+              <span style="color:var(--blue-light);font-size:12px">→ PUT /beneficiaries/{id}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <span style="color:var(--muted);font-size:11px">validates beneficiary_id · routes · updates payload</span>
+            </div>
+            <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: updates personal data / contact info · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">200 OK</code></div>
+          </div>
+          <div class="card">
+            <div class="section-label">Offboarding</div>
+            <div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px">
+              <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:12px;white-space:nowrap">Partner / Frontend</div>
+              <span style="color:var(--blue-light);font-size:12px">→ DELETE /beneficiaries/{id}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <span style="color:var(--muted);font-size:11px">validates · routes beneficiary removal</span>
+            </div>
+            <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: removes beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code></div>
+          </div>
+          <div class="card" style="background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.25)">
+            <div class="section-label">Key behaviour</div>
+            <div style="font-size:12px;line-height:1.9;color:var(--muted)">
+              <div>⚠ All calls are <strong style="color:var(--text)">asynchronous</strong> — requests pending backend approval</div>
+              <div>→ Backend: <strong style="color:var(--text)">BIOS</strong> — single system of record for all beneficiary data</div>
+              <div>→ <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">product_code</code> identifies market/product context within BIOS</div>
+              <div>→ CIL translates &amp; routes regardless of country — no market-specific logic in app</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <div class="card mt14">
+      <!-- TAB: ENDPOINTS & ROUTING -->
+      <div class="panel" id="ben-endpoints">
+        <div class="g2">
+          <div class="card">
             <div class="section-label">Endpoints</div>
             <div class="ep"><span class="method m-post">POST</span>/beneficiaries <span style="color:var(--muted)">→ onboard one or more beneficiaries</span></div>
             <div class="ep"><span class="method m-put">PUT</span>/beneficiaries/{id} <span style="color:var(--muted)">→ modify beneficiary data</span></div>
             <div class="ep"><span class="method m-delete">DELETE</span>/beneficiaries/{id} <span style="color:var(--muted)">→ offboard beneficiary</span></div>
-            <div class="mt12" style="font-size:13px;line-height:1.8">Payload includes <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">policy_number</code>, contract details, and beneficiary personal data &amp; contact info.</div>
-            <div class="mt10 section-label">Routing</div>
-            <div style="font-size:13px;color:var(--text)">All requests route to <strong>BIOS</strong>. <code style="background:var(--surface2);padding:2px 6px;border-radius:3px;font-size:12px">product_code</code> identifies the market/product context within BIOS.</div>
+            <hr class="divider">
+            <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+              Payload includes <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">product_code</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">policy_number</code>, contract details, and beneficiary personal data &amp; contact info.<br><br>
+              <strong style="color:var(--text)">POST</strong> — returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">201 Created</code> with beneficiary ID<br>
+              <strong style="color:var(--text)">PUT</strong> — returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">200 OK</code> · updatable: name, contact, address<br>
+              <strong style="color:var(--text)">DELETE</strong> — returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code>
+            </div>
           </div>
-        </div>
-
-        <div>
           <div class="card">
             <div class="section-label">Backend: BIOS</div>
-            <div class="mt8" style="font-size:13px;line-height:1.8;color:var(--text)">
-              Beneficiaries are managed through <strong>BIOS</strong> — the Allianz open-policy admin backend that handles beneficiary records across all markets.<br><br>
-              BIOS is the single system of record for beneficiary data. CIL translates the incoming request and routes it to BIOS regardless of country.
+            <div style="font-size:13px;line-height:1.8;color:var(--text);margin-bottom:12px">
+              <strong>BIOS</strong> — the Allianz open-policy admin backend — is the single system of record for all beneficiary data. CIL translates requests and routes to BIOS regardless of originating country.
             </div>
-            <div class="mt12" style="font-size:12px;color:var(--muted)">Markets covered: UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
-          </div>
-
-          <div class="card mt14">
-            <div class="section-label">Travel partners using Beneficiaries</div>
-            <table class="tbl">
-              <thead><tr><th>Partner</th><th>Country</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>Santander UK</td><td><span class="cc cc-live">UK</span></td><td><span class="badge b-live">● Live</span></td></tr>
-                <tr><td>Deutsche Bank / Miles&amp;More</td><td><span class="cc cc-live">DE</span></td><td><span class="badge b-live">● Live</span></td></tr>
-                <tr><td>Allyz Hungary</td><td><span class="cc cc-live">HU</span></td><td><span class="badge b-live">● Live</span></td></tr>
-                <tr><td>Bolttech</td><td><span class="cc cc-live">PL</span><span class="cc cc-live">NL</span><span class="cc cc-live">RO</span><span class="cc cc-live">BE</span><span class="cc cc-live">DE</span><span class="cc cc-live">ES</span><span class="cc cc-live">IT</span><span class="cc cc-live">AT</span></td><td><span class="badge b-live">● Live</span></td></tr>
-                <tr><td>TopViaggi</td><td><span class="cc cc-prog">IT</span></td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
-              </tbody>
-            </table>
+            <div class="section-label">Markets covered</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.8">UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
           </div>
         </div>
       </div>
+
+      <!-- TAB: PARTNERS -->
+      <div class="panel" id="ben-partners">
+        <div class="card">
+          <table class="tbl">
+            <thead><tr><th>Partner</th><th>Country</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Santander UK</td><td><span class="cc cc-live">UK</span></td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td>Deutsche Bank / Miles&amp;More</td><td><span class="cc cc-live">DE</span></td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td>Allyz Hungary</td><td><span class="cc cc-live">HU</span></td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td>Bolttech</td><td><span class="cc cc-live">PL</span><span class="cc cc-live">NL</span><span class="cc cc-live">RO</span><span class="cc cc-live">BE</span><span class="cc cc-live">DE</span><span class="cc cc-live">ES</span><span class="cc cc-live">IT</span><span class="cc cc-live">AT</span></td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td>TopViaggi</td><td><span class="cc cc-prog">IT</span></td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </div>
 
