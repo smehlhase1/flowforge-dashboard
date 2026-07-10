@@ -962,8 +962,8 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     svgW.setAttribute('height', H);
 
     const projW = d3.geoNaturalEarth1()
-      .scale(W / 6.1)
-      .translate([W / 2, H / 2]);
+      .scale(W / 4.6)
+      .translate([W / 2.2, H / 1.85]);
     const pathW = d3.geoPath().projection(projW);
 
     const svgWd3 = d3.select(svgW);
@@ -1017,16 +1017,15 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
     const euroCollection = { type:'FeatureCollection', features: euroFeatures };
 
-    // Crop Russia etc. so it doesn't blow the bounding box — clip to lon < 60
-    const projE = d3.geoMercator().fitExtent([[6,6],[EW-6,EH-6]], {
+    // fitExtent only on the core coverage countries — excludes large/peripheral ones
+    // that would zoom the view out too far (Scandinavia, Russia, Ukraine, etc.)
+    const FIT_ISO = new Set([
+      'GBR','IRL','FRA','ESP','PRT','BEL','NLD','LUX','DEU','CHE','AUT',
+      'ITA','CZE','POL','SVK','HUN','ROU','HRV','SVN','SRB','BGR','GRC','ALB','MKD','BIH','MNE'
+    ]);
+    const projE = d3.geoMercator().fitExtent([[8,8],[EW-8,EH-8]], {
       type: 'FeatureCollection',
-      features: countries.features.filter(d => {
-        // include only compact European countries by rough lon/lat bounds
-        const iso = d.properties.iso_a3;
-        if (!EURO_ISO.has(iso)) return false;
-        if (['RUS','UKR','BLR'].includes(iso)) return false; // too large, excluded from fit calc
-        return true;
-      })
+      features: countries.features.filter(d => FIT_ISO.has(d.properties.iso_a3))
     });
     const pathE = d3.geoPath().projection(projE);
 
