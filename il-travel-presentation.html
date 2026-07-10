@@ -606,111 +606,150 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s8">
     <div class="slide-body">
       <div class="h2">Contract Management Endpoint — Deep Dive</div>
-      <p class="lead">Standardized post-sale policy lifecycle API. Product-agnostic: operates on core entities like policy_number and quote_id, applicable across Travel, Motor, Health — any LoB integrated with CIL.</p>
+      <p class="lead">Post-sale policy lifecycle API. Routes through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">public-apis/simplesurance</code> → <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:12px">travel-service</code> (gRPC) → carrier adapters. Allianz EAPI (APIGEE) is the primary backend for EU/AZP markets.</p>
 
       <div class="tabs mt16">
-        <button class="tb on" onclick="switchTab('cm','insured')">Insured Persons</button>
-        <button class="tb" onclick="switchTab('cm','cancel')">Cancellation Eligibility</button>
+        <button class="tb on" onclick="switchTab('cm','policy')">Policy Administration</button>
+        <button class="tb" onclick="switchTab('cm','insured')">Insured Parties</button>
         <button class="tb" onclick="switchTab('cm','quotes')">Quote Management</button>
-        <button class="tb" onclick="switchTab('cm','docs')">Document Upload</button>
+        <button class="tb" onclick="switchTab('cm','docs')">Documents</button>
       </div>
 
-      <div class="panel on" id="cm-insured">
+      <!-- TAB: POLICY ADMINISTRATION -->
+      <div class="panel on" id="cm-policy">
         <div class="g2">
           <div class="card">
-            <div class="section-label">Add / Update / Remove insured person</div>
-            <div class="ep"><span class="method m-post">POST</span>/policies/{policy_number}/insured-person</div>
-            <div class="ep"><span class="method m-put">PUT</span>/policies/{policy_number}/insured-person</div>
-            <div class="ep"><span class="method m-delete">DELETE</span>/policies/{policy_number}/insured-person/{person_id}</div>
-            <hr class="divider">
-            <div style="font-size:13px;line-height:1.8"><strong>Use cases:</strong><br>Add new member to health/travel policy · Update contact details · Remove a traveller from a policy<br><br><strong>Response:</strong> 200 OK with person_id (for POST) · 404 if policy/person not found</div>
-          </div>
-          <div class="card">
-            <div class="section-label">Key fields</div>
-            <table class="tbl" style="font-size:12px">
-              <thead><tr><th>Field</th><th>Notes</th></tr></thead>
-              <tbody>
-                <tr><td>policy_number</td><td>Path param — routes to backend</td></tr>
-                <tr><td>person_id</td><td>Returned on POST, required for PUT/DELETE</td></tr>
-                <tr><td>first/last_name, DOB</td><td>Core person data</td></tr>
-                <tr><td>address.country</td><td>ISO 3166-1 alpha-2</td></tr>
-                <tr><td>contact.email / phone</td><td>Either/both required for holder</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" id="cm-cancel">
-        <div class="g2">
-          <div class="card">
-            <div class="section-label">Cancellation eligibility check</div>
+            <div class="section-label">Endpoints</div>
             <div class="ep"><span class="method m-post">POST</span>/policies/{policy_number}/cancellation-eligibility</div>
+            <div class="ep"><span class="method m-patch">PATCH</span>/policies/{policy_number} <span style="color:var(--muted)">— update policy</span></div>
+            <div class="ep"><span class="method m-put">PUT</span>/policies/{policy_number}/replace</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/v1/{policy_number}/amendments</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/v1/{policy_number}/amendments/{id}/accept</div>
+            <div class="ep"><span class="method m-get">GET</span>/policies/v1/{policy_number}/capabilities</div>
             <hr class="divider">
-            <div style="font-size:13px;line-height:1.8">Checks whether a policy is eligible for cancellation based on refund type and cancellation reason. Returns eligible: true/false, cancellation_date, and a message.<br><br>Partners use this before offering a cancellation option in the UI — prevents invalid cancellation attempts and reduces backend errors.</div>
-          </div>
-          <div class="card">
-            <div class="section-label">Sample response</div>
-            <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.7;overflow-x:auto">{
-  "eligible": true,
-  "cancellation_date": "2025-11-03",
-  "message": "Cancellation is eligible."
-}</pre>
-            <div class="mt12" style="font-size:12px;color:var(--muted)">Request body: refund_type (PRORATED etc.) + cancellation_reason</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" id="cm-quotes">
-        <div class="g2">
-          <div class="card">
-            <div class="section-label">Get &amp; action a saved quote</div>
-            <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} — retrieve full quote</div>
-            <div class="ep"><span class="method m-post">POST</span>/quotes/{quote_id}/quote-actions</div>
-            <hr class="divider">
-            <div style="font-size:13px;line-height:1.8">
-              <strong>GET</strong>: Full quote including trip details, destinations, premium, product name, coverages, and purchasability status.<br><br>
-              <strong>Quote Actions</strong>: event_type SAVE_QUOTATION — sends the quote by email to the customer. Supports agent_email for agent-driven flows.<br><br>
-              Returns <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">204 No Content</code> on success.
+            <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+              <strong style="color:var(--text)">Cancellation eligibility</strong> — request body: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">cancellation_reason</code> + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">refund_type</code> (PRORATED / FULL / NO_REFUND). Response: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">eligible</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">cancellation_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">message</code>.<br><br>
+              <strong style="color:var(--text)">PATCH /policies</strong> — updatable fields: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">end_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">holder</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">additional_data</code> (beneficiaries, trip details, auto_renewal, refund_type), <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">effective_date</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">contract_status</code>.<br><br>
+              <strong style="color:var(--text)">Amendments</strong> — POST creates amendment (Motor only today; Travel returns 503). Accept routes to <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">travelService.AcceptPolicyAmendment()</code> → EAPI <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">POST /modifications/{id}/confirmation</code>. Response: 200 AWAITING_PAYMENT (returns session_id) or 202 CONFIRMATION_ACCEPTED.
             </div>
           </div>
           <div class="card">
-            <div class="section-label">Quote action payload</div>
-            <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:12px;line-height:1.7;overflow-x:auto">{
-  "event_type": "SAVE_QUOTATION",
-  "email_recipients": {
-    "to": ["customer@example.com"]
-  },
-  "customer": {
-    "customer_first_name": "John",
-    "customer_last_name": "Doe"
-  },
-  "agent_data": {
-    "agent_email": "agent@partner.com"
-  }
-}</pre>
+            <div class="section-label">Backend routing</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>Operation</th><th>Allianz EAPI path</th></tr></thead>
+              <tbody>
+                <tr><td>Verify cancellation</td><td><code style="font-size:10px">GET /contracts/{n}/cancellationeligibility</code></td></tr>
+                <tr><td>Cancel contract</td><td><code style="font-size:10px">POST /contracts/{n}/cancellation</code></td></tr>
+                <tr><td>Update holder</td><td><code style="font-size:10px">PATCH /contracts/{n}/contractholder</code></td></tr>
+                <tr><td>Update trip</td><td><code style="font-size:10px">PATCH /contracts/{n}/trips</code></td></tr>
+                <tr><td>Accept amendment</td><td><code style="font-size:10px">POST /modifications/{id}/confirmation</code></td></tr>
+                <tr><td>Request modification</td><td><code style="font-size:10px">POST /modifications</code></td></tr>
+              </tbody>
+            </table>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">APIGEE product: <strong>Travel_Contracts_Modification_1.0</strong><br>Errors surfaced as <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">fault.errors[]</code> JSON — 503 responses remapped to descriptive messages</div>
           </div>
         </div>
       </div>
 
+      <!-- TAB: INSURED PARTIES -->
+      <div class="panel" id="cm-insured">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Endpoints</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/{policy_number}/insured-person <span style="color:var(--muted)">→ 200 person_id / 202 async</span></div>
+            <div class="ep"><span class="method m-put">PUT</span>/policies/{policy_number}/insured-person <span style="color:var(--muted)">→ 200 / 202 / 409 conflict</span></div>
+            <div class="ep"><span class="method m-delete">DELETE</span>/policies/{policy_number}/insured-person/{person_id}</div>
+            <div class="ep"><span class="method m-post">POST</span>/insured-persons/memberships <span style="color:var(--muted)">— Global App only</span></div>
+            <hr class="divider">
+            <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+              <strong style="color:var(--text)">Add</strong> — key fields: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">first/last_name</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">date_of_birth</code> (YYYY-MM-DD) or <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">age</code> (synthesised to Jan 1), <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">address.country</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">contact.email/phone</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">care_profile.circumstances[]</code>. ContractNumberType hardcoded to EXT.<br><br>
+              <strong style="color:var(--text)">Update</strong> — same fields + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">consents.advertisement</code>. Global App routes via <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">discoveryService</code>; all others via <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">travelService.EditInsuredPerson()</code>.<br><br>
+              <strong style="color:var(--text)">Remove</strong> — path param <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">person_id</code> maps to <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">participant_id</code> in gRPC. → EAPI op=remove on insuredpersons.
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-label">Backend routing — Allianz EAPI</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>Operation</th><th>EAPI path</th></tr></thead>
+              <tbody>
+                <tr><td>Add person</td><td><code style="font-size:10px">PATCH /contracts/{n}/insuredpersons</code> op=add</td></tr>
+                <tr><td>Update person</td><td><code style="font-size:10px">PATCH /contracts/{n}/insuredpersons/{personId}</code></td></tr>
+                <tr><td>Remove person</td><td><code style="font-size:10px">PATCH /contracts/{n}/insuredpersons</code> op=remove</td></tr>
+                <tr><td>View persons</td><td><code style="font-size:10px">GET /contracts/{n}/insuredpersons</code></td></tr>
+              </tbody>
+            </table>
+            <div class="section-label mt12">Updatable person fields (JSON-Patch)</div>
+            <div style="font-size:12px;color:var(--muted)"><code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/firstName</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/lastName</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/maidenName</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/genderIdentity</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/birthDate</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/email</code> · <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">/phoneNumber</code></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: QUOTE MANAGEMENT -->
+      <div class="panel" id="cm-quotes">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Endpoints</div>
+            <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id} <span style="color:var(--muted)">— full quote, served from DB</span></div>
+            <div class="ep"><span class="method m-get">GET</span>/quotes <span style="color:var(--muted)">— paginated list (X-Client-Authentication required)</span></div>
+            <div class="ep"><span class="method m-post">POST</span>/quotes/{quote_id}/quote-actions</div>
+            <div class="ep"><span class="method m-post">POST</span>/quotes/{quote_id}/payment-session <span style="color:var(--muted)">— Westpac AU only</span></div>
+            <hr class="divider">
+            <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+              <strong style="color:var(--text)">GET /quotes/{id}</strong> — returns premium, coverages, participants, excess/cancellation amounts, purchasability. Fully served from <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">sisu_travel_*</code> PostgreSQL DB — no external call.<br><br>
+              <strong style="color:var(--text)">GET /quotes</strong> — pagination: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">page</code> (1–1,000,000) + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">per_page</code> (1–200). Filters: date ranges, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">parent_quote_id</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">marketing_consent</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">is_selected</code>.
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-label">quote-actions event types</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>event_type</th><th>Behaviour</th></tr></thead>
+              <tbody>
+                <tr><td>SAVE_QUOTE</td><td>Saves quote, sets opted_in_time, updates child-quote relationships in DB → partner QuoteActions (eMagin: publication flow)</td></tr>
+                <tr><td>TRIGGER_PRE_PURCHASE_EMAIL</td><td>Sends pre-purchase email via partner adapter</td></tr>
+                <tr><td>RESUME_QUOTE</td><td>Resumes a saved quote session</td></tr>
+                <tr><td>DELETE_QUOTE</td><td>Calls partner, then soft-deletes in rtqpolicy DB (is_deleted=true)</td></tr>
+              </tbody>
+            </table>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Header: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">X-Sisu-Request-ID</code> required (idempotency). Returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code> on success. eMagin partners: SAVE_QUOTE triggers <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">publication_id</code> + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">save_and_retrieve_timestamp</code> fields.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: DOCUMENTS -->
       <div class="panel" id="cm-docs">
         <div class="g2">
           <div class="card">
-            <div class="section-label">Document upload</div>
-            <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+            <div class="section-label">Upload documents endpoint</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents <span style="color:var(--muted)">— multipart/form-data</span></div>
             <hr class="divider">
-            <div style="font-size:13px;line-height:1.8">Uploads documents (e.g. medical questionnaires, signed forms) as multipart/form-data and associates them with policies or persons via a correlations array.<br><br>Header: <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">X-Sisu-Request-ID</code> (UUID) — idempotency key.<br><br>Returns document_id per uploaded file, plus success/failure status per document.</div>
+            <div style="font-size:12px;line-height:1.8;color:var(--muted)">
+              Header: <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">X-Sisu-Request-ID</code> (required, UUID — idempotency key).<br><br>
+              <strong style="color:var(--text)">Size limits:</strong> 10 MB per file · 50 MB total.<br><br>
+              <strong style="color:var(--text)">Field naming:</strong> sequential index — <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">documents[0]key</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">documents[0]file</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">documents[0]correlations</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">documents[0]document_type</code>, <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">documents[0]metadata</code>.<br><br>
+              <strong style="color:var(--text)">Routing:</strong> Motor insurance type → <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">motorService.UploadDocument()</code>. Travel (default) → <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">travelService.UploadDocument()</code> (streaming gRPC — metadata sent first, then file bytes).<br><br>
+              <strong style="color:var(--text)">Response:</strong> array of <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">{key, correlations, status: SUCCESS|FAILURE, result: {document_id}}</code>.
+            </div>
           </div>
           <div class="card">
-            <div class="section-label">Correlation types</div>
+            <div class="section-label">Document types &amp; correlations</div>
             <table class="tbl" style="font-size:12px">
-              <thead><tr><th>correlation.type</th><th>Use case</th></tr></thead>
+              <thead><tr><th>document_type</th><th>Format</th><th>Usage</th></tr></thead>
               <tbody>
-                <tr><td>PERSON_ID</td><td>Associate doc with insured person</td></tr>
-                <tr><td>POLICY_NUMBER</td><td>Associate with policy directly</td></tr>
+                <tr><td>MEDICAL_QUESTIONNAIRE</td><td>.json / .xml</td><td>Medical screening — Fox UK / Rush/Hays (Verisk)</td></tr>
+                <tr><td>TRIAGE_QUESTIONNAIRE</td><td>.json / .xml</td><td>Travel triage flows</td></tr>
+                <tr><td>POLICY_APPLICATION</td><td>.pdf only</td><td>Motor (PDF only)</td></tr>
               </tbody>
             </table>
-            <div class="mt12" style="font-size:12px;color:var(--muted)">Primary usage: medical screening documents in Fox UK / Rush/Hays flows (Verisk integration)</div>
+            <div class="section-label mt12">correlation.type values</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>type</th><th>Use case</th></tr></thead>
+              <tbody>
+                <tr><td>PERSON_ID</td><td>Associate document with insured person</td></tr>
+                <tr><td>QUOTE_ID</td><td>Associate document with a quote</td></tr>
+                <tr><td>POLICY_NUMBER</td><td>Associate document with policy directly</td></tr>
+              </tbody>
+            </table>
+            <div class="mt12" style="font-size:12px;color:var(--muted)"><code style="background:var(--surface2);padding:1px 4px;border-radius:3px">metadata.token</code> + <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">metadata.hash</code> — optional, used for medical screening correlation (Verisk flow)</div>
           </div>
         </div>
       </div>
