@@ -137,7 +137,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <span class="logo-badge">simplesurance · IL</span>
       <span class="slide-title-bar" id="barTitle">Travel &amp; xLob Endpoint Coverage</span>
     </div>
-    <span class="slide-counter" id="barCounter">1 / 10</span>
+    <span class="slide-counter" id="barCounter">1 / 11</span>
   </div>
 
   <!-- ════════════════════════════════════════
@@ -836,6 +836,152 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
     </div>
   </div>
 
+  <!-- ════════════════════════════════════════
+       SLIDE 11 — TRAVEL ENDPOINT DEEP DIVE
+  ════════════════════════════════════════ -->
+  <div class="slide" id="s11">
+    <div class="slide-body">
+      <div class="h2">Travel Endpoint — Deep Dive</div>
+      <p class="lead">The core IL travel endpoint orchestrates the full quote-to-policy journey. CIL routes each request to the correct backend by market, travel type, and partner configuration — partners integrate once and reach every country.</p>
+
+      <div class="tabs mt16">
+        <button class="tb on" onclick="switchTab('tr','flow')">Data Flow</button>
+        <button class="tb" onclick="switchTab('tr','endpoints')">Endpoints</button>
+        <button class="tb" onclick="switchTab('tr','backends')">Backends</button>
+        <button class="tb" onclick="switchTab('tr','partners')">Partners</button>
+      </div>
+
+      <!-- TAB: DATA FLOW -->
+      <div class="panel on" id="tr-flow">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Quote &amp; Buy flow</div>
+            <div style="font-size:13px;line-height:2">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <div style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:12px">Partner / Frontend</div>
+                <span style="color:var(--blue-light)">→ POST /travel/quote</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding-left:20px">
+                <div class="flow-node cil" style="padding:6px 14px;min-width:0"><div class="fn-name" style="color:#fff;font-size:12px">CIL</div></div>
+                <span style="color:var(--muted);font-size:12px">validates · routes by market · orchestrates via Temporal</span>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;padding-left:40px">
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">EU</div><div class="fn-name" style="font-size:11px">eMagin</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">AU/NZ</div><div class="fn-name" style="font-size:11px">Midas + FPE</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">US · CA</div><div class="fn-name" style="font-size:11px">Fusion</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">CA</div><div class="fn-name" style="font-size:11px">Magnesium</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:8px;margin-bottom:6px;padding-left:20px">
+                <div class="flow-node cil" style="padding:6px 14px;min-width:0"><div class="fn-name" style="color:#fff;font-size:12px">CIL</div></div>
+                <span style="color:var(--muted);font-size:12px">→ POST /travel/policies — creates policy</span>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;padding-left:40px">
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">Payment</div><div class="fn-name" style="font-size:11px">OnePay</div></div>
+                <div class="flow-node" style="padding:5px 10px;font-size:11px;min-width:0"><div class="fn-type">Medical</div><div class="fn-name" style="font-size:11px">Verisk</div></div>
+              </div>
+            </div>
+            <div class="mt12" style="font-size:12px;color:var(--muted)">Temporal orchestrates retries, compensation, and multi-step policy creation workflows</div>
+          </div>
+          <div class="card">
+            <div class="section-label">Key capabilities</div>
+            <ul style="font-size:13px;line-height:2;padding-left:16px">
+              <li><strong>Quote &amp; Buy</strong> — real-time via eMagin EQS v3</li>
+              <li><strong>Medical screening</strong> — Verisk (Fox UK, Rush/Hays)</li>
+              <li><strong>Payment</strong> — OnePay session / status polling</li>
+              <li><strong>Policy lifecycle</strong> — amend, cancel, upgrade, renew</li>
+              <li><strong>Save &amp; retrieve quote</strong> — email to customer</li>
+              <li><strong>Travel types</strong> — Single Trip (ST) &amp; Annual Multi-Trip (AMT)</li>
+              <li><strong>Geo zones</strong> — EU · ER · R1(UK) · R2(WW-ex-US) · R3(AU/NZ) · WW · IL(domestic)</li>
+              <li><strong>Partner isolation</strong> — each BP has isolated flow config</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: ENDPOINTS -->
+      <div class="panel" id="tr-endpoints">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Quote &amp; Policy creation</div>
+            <div class="ep"><span class="method m-post">POST</span>/travel/quote</div>
+            <div class="ep"><span class="method m-post">POST</span>/travel/policies <span style="color:var(--muted)">— create policy</span></div>
+            <div class="ep"><span class="method m-get">GET</span>/travel/policies <span style="color:var(--muted)">— list policies</span></div>
+            <div class="ep"><span class="method m-get">GET</span>/policies/{id} <span style="color:var(--muted)">— policy detail</span></div>
+            <div class="section-label mt16">Quote management</div>
+            <div class="ep"><span class="method m-get">GET</span>/quotes/{quote_id}</div>
+            <div class="ep"><span class="method m-post">POST</span>/quotes/{id}/quote-actions <span style="color:var(--muted)">— email/resume</span></div>
+          </div>
+          <div class="card">
+            <div class="section-label">Policy lifecycle</div>
+            <div class="ep"><span class="method m-put">PUT</span>/policies/{id}/insured-person</div>
+            <div class="ep"><span class="method m-delete">DELETE</span>/policies/{id}/insured-person/{pid}</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/{id}/cancellation-eligibility</div>
+            <div class="ep"><span class="method m-post">POST</span>/policies/upload-documents</div>
+            <hr class="divider">
+            <div style="font-size:12px;color:var(--muted)">
+              <strong style="color:var(--text)">POST /travel/quote</strong> — returns quote_id, premium, coverages, purchasability<br><br>
+              <strong style="color:var(--text)">POST /travel/policies</strong> — returns policy_number; triggers OnePay session if payment required<br><br>
+              <strong style="color:var(--text)">POST /policies/{id}/cancellation-eligibility</strong> — returns eligible: true/false + cancellation_date
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: BACKENDS -->
+      <div class="panel" id="tr-backends">
+        <div class="g2">
+          <div class="card">
+            <div class="section-label">Backend routing by market</div>
+            <table class="tbl" style="font-size:12px">
+              <thead><tr><th>Backend</th><th>Markets</th><th>Role</th></tr></thead>
+              <tbody>
+                <tr><td><strong>eMagin (EQS v3)</strong></td><td>EU · US · CA</td><td>Quote · Policy · Pricing</td></tr>
+                <tr><td><strong>Midas</strong></td><td>AU · NZ</td><td>Policy admin — Westpac, NZ B2C</td></tr>
+                <tr><td><strong>FPE</strong></td><td>AU · NZ</td><td>Flexible Pricing Engine</td></tr>
+                <tr><td><strong>Fusion</strong></td><td>US · CA</td><td>Pricing alongside eMagin</td></tr>
+                <tr><td><strong>Magnesium</strong></td><td>CA</td><td>Allyz Canada — contract creation</td></tr>
+                <tr><td><strong>ABS</strong></td><td>EU</td><td>Contract admin · Claims data</td></tr>
+                <tr><td><strong>OnePay</strong></td><td>All</td><td>Payment session · status polling</td></tr>
+                <tr><td><strong>Verisk</strong></td><td>UK</td><td>Medical screening (Fox · Rush/Hays)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="section-label">Routing logic</div>
+            <div style="font-size:13px;line-height:1.8;color:var(--text)">
+              CIL determines the backend from a combination of <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">partner_id</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">country</code>, and <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code> from the request, matched against per-partner flow configuration stored in CIL.<br><br>
+              Each partner has an isolated flow config — changing one partner's routing does not affect others.<br><br>
+              Multi-backend markets (e.g. CA uses both eMagin + Fusion) are handled by Temporal workflow orchestration, which coordinates the calls and compensates on failure.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: PARTNERS -->
+      <div class="panel" id="tr-partners">
+        <div class="card">
+          <table class="tbl">
+            <thead>
+              <tr><th>Partner</th><th>Market(s)</th><th>Travel Type</th><th>Backend</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Rush / Hays UK</strong></td><td><span class="cc cc-live">UK</span></td><td>ST · AMT</td><td>eMagin + Verisk</td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td><strong>Coverwise</strong></td><td><span class="cc cc-live">UK</span><span class="cc cc-live">IT</span><span class="cc cc-live">DE</span></td><td>ST · AMT</td><td>eMagin</td><td><span class="badge b-live">● Live</span></td></tr>
+              <tr><td><strong>Fox UK (LV)</strong></td><td><span class="cc cc-prog">UK</span></td><td>ST · AMT</td><td>eMagin + Verisk</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>AgentMax Retail Portal</strong></td><td><span class="cc cc-prog">DE</span><span class="cc cc-prog">AT</span><span class="cc cc-prog">CH</span><span class="cc cc-prog">UK</span><span class="cc cc-prog">ES</span><span class="cc cc-prog">CZ</span></td><td>ST · AMT</td><td>eMagin</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>Westpac AU (NAC 2.0)</strong></td><td><span class="cc cc-prog">AU</span></td><td>ST · AMT</td><td>Midas + FPE</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>Global App (Allianz SE)</strong></td><td><span class="cc cc-prog">CH</span><span class="cc cc-prog">AU</span><span class="cc cc-prog">IT</span><span class="cc cc-prog">NL</span></td><td>ST · AMT</td><td>eMagin · Midas</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>Fusion US</strong></td><td><span class="cc cc-prog">US</span></td><td>ST</td><td>eMagin + Fusion</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>Allyz Canada (Magnesium)</strong></td><td><span class="cc cc-prog">CA</span></td><td>ST</td><td>eMagin + Fusion + Magnesium</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>New Zealand B2C (Allyz NZ)</strong></td><td><span class="cc cc-prog">NZ</span></td><td>ST · AMT</td><td>Midas + FPE</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+              <tr><td><strong>NBG — National Bank of Greece</strong></td><td><span class="cc cc-prog">GR</span></td><td>ST · AMT</td><td>eMagin</td><td><span class="badge b-prog">◑ In Progress</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- BOTTOM NAV -->
   <div class="bottom-bar">
     <div class="dots" id="dotsContainer"></div>
@@ -854,6 +1000,7 @@ const SLIDES = [
   { id:'s1', title:'Title', label:'Overview' },
   { id:'s2', title:'What is the Integration Layer?', label:'IL Overview' },
   { id:'s3', title:'Travel Endpoint — Architecture', label:'Travel Arch' },
+  { id:'s11', title:'Travel Endpoint — Deep Dive', label:'Travel Deep Dive' },
   { id:'s4', title:'Travel Endpoint — Geographic Reach', label:'Map' },
   { id:'s5', title:'Travel Partners — Full Overview', label:'Partners' },
   { id:'s6', title:'xLob Endpoint Families', label:'xLob' },
