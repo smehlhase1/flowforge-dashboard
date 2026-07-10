@@ -1007,25 +1007,21 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     ]);
 
     const svgE = document.getElementById('europeInset');
-    const eRect = svgE.getBoundingClientRect();
-    const EW = eRect.width || 400, EH = H;
+    // Fixed internal coordinate space — SVG scales it to fit its CSS dimensions
+    const EW = 1000, EH = 1100;
     svgE.setAttribute('viewBox', `0 0 ${EW} ${EH}`);
-    svgE.setAttribute('height', EH);
+    svgE.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-    // Build a single GeoJSON collection of just European countries for fitExtent
-    const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
-    const euroCollection = { type:'FeatureCollection', features: euroFeatures };
-
-    // Fit to a mainland-Europe bounding box (lon -11→33, lat 34→62)
-    // Using a bbox polygon avoids French Guiana pulling France's feature far SW
-    const europeBBox = {
+    // MultiPoint of the four corners of mainland Europe (lon -11→33, lat 34→62).
+    // MultiPoint has no winding-order ambiguity — D3 simply fits the projected
+    // bounding box of these four points, so French Guiana is irrelevant.
+    const euroCorners = {
       type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-11,34],[33,34],[33,62],[-11,62],[-11,34]]]
-      }
+      geometry: { type: 'MultiPoint', coordinates: [[-11,34],[33,34],[33,62],[-11,62]] }
     };
-    const projE = d3.geoMercator().fitExtent([[8,8],[EW-8,EH-8]], europeBBox);
+    const projE = d3.geoMercator().fitExtent([[20,20],[EW-20,EH-20]], euroCorners);
+
+    const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
     const pathE = d3.geoPath().projection(projE);
 
     const svgEd3 = d3.select(svgE);
