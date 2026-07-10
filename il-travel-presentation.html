@@ -617,13 +617,17 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="card">
             <div class="section-label">Architecture</div>
             <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px;padding:8px 0">
-              <div class="flow-node"><div class="fn-type">Frontend (Global App)</div><div class="fn-name">Customer selects contract</div></div>
+              <div class="flow-node"><div class="fn-type">Frontend (Global App / Partners)</div><div class="fn-name">Customer selects contract</div></div>
               <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /claims/v1/submission/channels?policy_number=…</div>
-              <div class="flow-node cil"><div class="fn-type">CIL — pass-through</div><div class="fn-name" style="color:#fff">No transformation</div></div>
+              <div class="flow-node cil"><div class="fn-type">CIL — pass-through</div><div class="fn-name" style="color:#fff">Routes by market</div></div>
               <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ routes to OE Backend by market</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <div class="flow-node"><div class="fn-type">CH OE Backend</div><div class="fn-name">Allianz Switzerland</div><div class="fn-sub">v0.3.4 · Global App pilot</div></div>
-                <div class="flow-node"><div class="fn-type">GR OE Backend</div><div class="fn-name">Greek OE</div><div class="fn-sub">NBG (National Bank of Greece)</div></div>
+                <div class="flow-node"><div class="fn-type">CH OE Backend</div><div class="fn-name">Allianz Switzerland</div><div class="fn-sub">Global App pilot</div></div>
+                <div class="flow-node"><div class="fn-type">IT OE Backend</div><div class="fn-name">Italy OE</div><div class="fn-sub">Italian market</div></div>
+                <div class="flow-node"><div class="fn-type">AU OE Backend</div><div class="fn-name">Australian OE</div><div class="fn-sub">Westpac · Global App</div></div>
+                <div class="flow-node"><div class="fn-type">AzD OE Backend</div><div class="fn-name">AzD OE</div><div class="fn-sub">Azure DevOps pipeline</div></div>
+                <div class="flow-node"><div class="fn-type">Core backend (CA)</div><div class="fn-name">Magnesium</div><div class="fn-sub">Allyz Canada</div></div>
+                <div class="flow-node"><div class="fn-type">Core backend (AU/NZ)</div><div class="fn-name">Midas</div><div class="fn-sub">Australia · New Zealand</div></div>
                 <div class="flow-node"><div class="fn-type">Core backend</div><div class="fn-name">ABS</div><div class="fn-sub">Contract admin · Claims data</div></div>
               </div>
             </div>
@@ -632,7 +636,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="card mt14">
             <div class="section-label">CIL responsibilities</div>
             <ul style="font-size:13px;line-height:2;padding-left:16px">
-              <li>Consume CH OE API and expose via SISU endpoint</li>
               <li>Pass through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">journey_contacts</code> values without transformation</li>
               <li>Support multiple channels per claim type</li>
               <li>Handle optional/missing fields gracefully</li>
@@ -640,8 +643,11 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div class="mt10 section-label">Out of scope for CIL</div>
             <ul style="font-size:13px;line-height:1.8;padding-left:16px;color:var(--muted)">
               <li>Rendering the claims page (frontend)</li>
-              <li>Claim submission processing (OE Backend)</li>
               <li>Enrichment or transformation of OE values</li>
+            </ul>
+            <div class="mt10 section-label">In scope — In Progress</div>
+            <ul style="font-size:13px;line-height:1.8;padding-left:16px;color:#60a5fa">
+              <li>Claim submission processing (OE Backend) <span class="badge b-prog" style="vertical-align:middle">◑ In Progress</span></li>
             </ul>
           </div>
         </div>
@@ -652,8 +658,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <table class="tbl" style="font-size:12px">
               <thead><tr><th>Type</th><th>Channel</th><th>Markets</th></tr></thead>
               <tbody>
-                <tr><td>Annulation</td><td>LINK → web form</td><td>CH · GR</td></tr>
-                <tr><td>Luggage</td><td>LINK → web form</td><td>CH · GR</td></tr>
+                <tr><td>Annulation</td><td>LINK → web form</td><td>CH · IT · AU</td></tr>
+                <tr><td>Luggage</td><td>LINK → web form</td><td>CH · IT · AU</td></tr>
               </tbody>
             </table>
           </div>
@@ -661,14 +667,37 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="card mt14">
             <div class="section-label">Status &amp; geographic reach</div>
             <div class="gap-row mt8">
+              <span class="badge b-live">● Live</span>
+              <span style="font-size:13px">Rush / Hays — UK</span>
+            </div>
+            <div class="gap-row mt8">
+              <span class="badge b-live">● Live</span>
+              <span style="font-size:13px">Santander — UK</span>
+            </div>
+            <div class="gap-row mt8">
+              <span class="badge b-live">● Live</span>
+              <span style="font-size:13px">Miles &amp; More — Germany</span>
+            </div>
+            <div class="gap-row mt8">
+              <span class="badge b-prog">◑ In Progress</span>
+              <span style="font-size:13px">Fox — UK</span>
+            </div>
+            <div class="gap-row mt8">
+              <span class="badge b-prog">◑ In Progress</span>
+              <span style="font-size:13px">Westpac — Australia · via Australian OE Backend</span>
+            </div>
+            <div class="gap-row mt8">
               <span class="badge b-prog">◑ In Progress</span>
               <span style="font-size:13px">Switzerland (CH) — Global App pilot · via CH OE Backend</span>
             </div>
             <div class="gap-row mt8">
               <span class="badge b-prog">◑ In Progress</span>
-              <span style="font-size:13px">Greece (GR) — NBG (National Bank of Greece) · via Greek OE Backend</span>
+              <span style="font-size:13px">Australia — via Australian OE Backend</span>
             </div>
-            <div class="mt12" style="font-size:12px;color:var(--muted)">Fast followers: AU · IT · NL (Global App roll-out plan)</div>
+            <div class="gap-row mt8">
+              <span class="badge b-prog">◑ In Progress</span>
+              <span style="font-size:13px">Italy — via Italian OE Backend</span>
+            </div>
             <hr class="divider">
             <div style="font-size:12px;color:var(--muted)">Implementation ticket: CIL-4301 — [CHOE] e2e: Claims journey (provide a channel for claim submission)</div>
           </div>
@@ -678,9 +707,9 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   </div>
 
   <!-- ════════════════════════════════════════
-       SLIDE 10 — COUNTRY × ENDPOINT MATRIX
+       SLIDE 9 — COUNTRY × ENDPOINT MATRIX
   ════════════════════════════════════════ -->
-  <div class="slide" id="s8">
+  <div class="slide" id="s9">
     <div class="slide-body">
       <div class="h2">Geographic Coverage Matrix</div>
       <p class="lead">Which endpoint families are live, in progress, or planned per country. Combined view across Travel + travel-relevant xLob endpoints.</p>
