@@ -224,6 +224,48 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="stat-label">Endpoint families (Travel · Ben. · Contracts · Claims)</div>
         </div>
       </div>
+
+      <div class="g2 mt14">
+        <div class="card">
+          <div class="section-label">Strategic purpose</div>
+          <ul style="font-size:13px;line-height:1.9;color:var(--text);padding-left:16px">
+            <li>Single REST API for partners — no per-country, per-LoB integrations</li>
+            <li>XLoB: Travel, Motor, Property, RSA, Health in one layer</li>
+            <li>Pan-European + APAC reach through unified routing</li>
+            <li>Hosted on AWS Cloud, microservices, Kubernetes, Temporal for workflow orchestration</li>
+            <li>OAuth2 / OIDC auth, mTLS, PCI DSS &amp; GDPR by design</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="section-label">Architecture components</div>
+          <div class="flow" style="flex-direction:column;align-items:flex-start;gap:10px;padding:0">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">UI Frontend</div><div class="fn-name" style="font-size:12px">MetaPortal</div><div class="fn-sub">Quote &amp; Buy UI</div></div>
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">UI Frontend</div><div class="fn-name" style="font-size:12px">Retail Portal</div><div class="fn-sub">Agent / broker UI</div></div>
+              <div class="flow-node" style="min-width:140px;font-size:11px;padding:8px 10px"><div class="fn-type">Business Partner Frontends</div><div class="fn-name" style="font-size:12px">Direct API integrations</div><div class="fn-sub">Rush · Westpac · Deutsche Bank<br>Santander · Coverwise · Bolttech · Fox…</div></div>
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">Mobile Application</div><div class="fn-name" style="font-size:12px">Allyz</div><div class="fn-sub"></div></div>
+              <div class="flow-node" style="min-width:110px;font-size:11px;padding:8px 10px"><div class="fn-type">B2C Frontend</div><div class="fn-name" style="font-size:12px">B2C</div><div class="fn-sub">Direct consumer channel</div></div>
+              <div class="flow-node" style="min-width:120px;font-size:11px;padding:8px 10px"><div class="fn-type">Frontend</div><div class="fn-name" style="font-size:12px">Global Customer App</div><div class="fn-sub">Allianz SE · CH→AU→IT→NL</div></div>
+            </div>
+            <div style="padding-left:65px;color:var(--blue-light)">↕ REST API (OAuth2)</div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="flow-node cil" style="min-width:130px"><div class="fn-type">IL Core</div><div class="fn-name" style="color:#fff">CIL / sisu-api</div><div class="fn-sub">travel-service · eAPI</div></div>
+            </div>
+            <div style="padding-left:65px;color:var(--blue-light)">↕ Internal APIs + Temporal</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">EU Core</div><div class="fn-name" style="font-size:12px">eMagin</div><div class="fn-sub" style="font-size:9px">Quote · Policy</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">EU Core</div><div class="fn-name" style="font-size:12px">ABS</div><div class="fn-sub" style="font-size:9px">Contract · Claims</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">EU Core</div><div class="fn-name" style="font-size:12px">BIOS</div><div class="fn-sub" style="font-size:9px">Beneficiaries</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">AU/NZ</div><div class="fn-name" style="font-size:12px">Midas</div><div class="fn-sub" style="font-size:9px">Westpac · NZ B2C</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">AU/NZ Pricing</div><div class="fn-name" style="font-size:12px">FPE</div><div class="fn-sub" style="font-size:9px">Flexible Pricing Engine</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">US · CA</div><div class="fn-name" style="font-size:12px">Fusion</div><div class="fn-sub" style="font-size:9px">US + Canada Pricing Engine</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">CA</div><div class="fn-name" style="font-size:12px">Magnesium</div><div class="fn-sub" style="font-size:9px">Allyz Canada</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Payment</div><div class="fn-name" style="font-size:12px">OnePay</div><div class="fn-sub" style="font-size:9px">Session · Status</div></div>
+              <div class="flow-node" style="min-width:80px;font-size:11px;padding:8px 10px"><div class="fn-type">Medical</div><div class="fn-name" style="font-size:12px">Verisk</div><div class="fn-sub" style="font-size:9px">Screening</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
