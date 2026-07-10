@@ -305,14 +305,16 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <div class="h2">Travel Endpoint — Geographic Reach</div>
       <p class="lead">Countries where IL Travel is live, in progress, or planned as of July 2026 — including Americas and Pacific expansion. AgentMax Retail Portal covers 6 European markets across two waves.</p>
 
-      <div class="map-wrap mt16" style="position:relative">
-        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e"></svg>
-        <!-- Europe overlay — bottom-right corner of the map -->
-        <div style="position:absolute;bottom:32px;right:8px;width:270px;background:rgba(13,27,46,.96);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.65)">
-          <div style="padding:5px 10px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Europe — detail</div>
-          <svg id="europeInset" width="270" height="310" style="display:block;background:#0d1b2e"></svg>
+      <div class="map-wrap mt16" style="display:grid;grid-template-columns:58fr 42fr;grid-template-rows:1fr auto;gap:0">
+        <!-- World map — left 58% -->
+        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e;grid-row:1"></svg>
+        <!-- Europe panel — right 42%, full height -->
+        <div style="grid-row:1;border-left:1px solid var(--border);display:flex;flex-direction:column;background:#0d1b2e">
+          <div style="padding:6px 12px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);flex-shrink:0">Europe — detail</div>
+          <svg id="europeInset" style="width:100%;flex:1;display:block;background:#0d1b2e"></svg>
         </div>
-        <div class="map-legend">
+        <!-- Legend spans full width -->
+        <div class="map-legend" style="grid-column:1/-1">
           <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div><span><strong>Live</strong></span></div>
           <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div><span><strong>In Progress</strong></span></div>
           <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div><span><strong>Planned / xLob only</strong></span></div>
@@ -955,7 +957,7 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     // ── World map ──────────────────────────────────────────────────────────
     const svgW = document.getElementById('worldMap');
     const wRect = svgW.getBoundingClientRect();
-    const W = wRect.width || 800, H = Math.round(W * 0.56);
+    const W = wRect.width || 560, H = Math.round(W * 0.60);
     svgW.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svgW.setAttribute('height', H);
 
@@ -1005,9 +1007,11 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       'UKR','BLR','LTU','LVA','EST','MDA','RUS'
     ]);
 
-    const EW = 270, EH = 310;
     const svgE = document.getElementById('europeInset');
+    const eRect = svgE.getBoundingClientRect();
+    const EW = eRect.width || 400, EH = H;
     svgE.setAttribute('viewBox', `0 0 ${EW} ${EH}`);
+    svgE.setAttribute('height', EH);
 
     // Build a single GeoJSON collection of just European countries for fitExtent
     const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
