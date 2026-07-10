@@ -145,7 +145,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   ════════════════════════════════════════ -->
   <div class="slide active" id="s1">
     <div class="title-body">
-      <div class="title-tag">Integration Layer (IL / CIL)</div>
+      <div class="title-tag">Integration Layer (IL)</div>
       <div class="title-h1">Travel &amp; xLob<br>Endpoint Coverage</div>
       <div class="title-sub">Geographic reach, backend connectivity, frontend consumers and xLob endpoint families — sourced from Confluence &amp; Jira</div>
       <div class="title-pills">
@@ -169,86 +169,94 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s2">
     <div class="slide-body" style="display:flex;flex-direction:column;height:100%">
 
-      <!-- Header -->
-      <div style="margin-bottom:18px">
+      <!-- Header + pitch -->
+      <div style="margin-bottom:12px">
         <div class="h2" style="margin-bottom:6px">What is the Integration Layer?</div>
-        <p style="font-size:13.5px;color:var(--muted);margin:0;max-width:680px">Allianz's single, stable integration front door — partners integrate <strong style="color:var(--text)">once</strong> and reach every market, every product, every line of business.</p>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;max-width:860px">The Integration Layer is Allianz's <strong style="color:var(--text)">single, stable integration front door</strong> — a shared platform that shields every customer-facing application from the complexity and constant change of country backends. Partners and channels integrate <em>once</em> and reach every market, every product, every LoB.</p>
+      </div>
+
+      <!-- With IL highlight strip -->
+      <div style="background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px">
+        <div style="font-size:11.5px;line-height:1.7;color:var(--muted)">OE changes absorbed internally — upstream contracts stay <strong style="color:var(--text)">permanently stable</strong></div>
+        <div style="font-size:11.5px;line-height:1.7;color:var(--muted)">Single call per screen — IL <strong style="color:var(--text)">aggregates, composites &amp; transforms</strong> all backends</div>
+        <div style="font-size:11.5px;line-height:1.7;color:var(--muted)">Consistent error models, <strong style="color:var(--text)">normalised DTOs</strong> &amp; auth flows across all channels</div>
+        <div style="font-size:11.5px;line-height:1.7;color:var(--muted)">One audited security boundary — centralised <strong style="color:var(--text)">JWT, audit logs &amp; GDPR</strong></div>
       </div>
 
       <!-- Three pillars -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1">
 
         <!-- Speed & Scale -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;position:relative;overflow:hidden">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;position:relative;overflow:hidden">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#10b981,#34d399)"></div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div style="font-size:26px">🚀</div>
+            <div style="font-size:24px">🚀</div>
             <div>
               <div style="font-size:10px;font-weight:700;letter-spacing:.13em;color:#10b981">SPEED &amp; SCALE</div>
-              <div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.2">Integrate Once.<br>Scale Globally.</div>
+              <div style="font-size:14px;font-weight:800;color:var(--text);line-height:1.2">Integrate Once.<br>Scale Globally.</div>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">One REST API replaces dozens of per-country integrations. New markets ship without re-platforming the channel.</div>
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;font-size:12px">
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">A single REST API replaces dozens of per-country, per-backend integrations. New markets ship without re-platforming. Channel teams focus on UX — not plumbing.</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;font-size:12px">
             <div style="color:var(--text)">→ <strong>30–50%</strong> less duplicated integration logic</div>
-            <div style="color:var(--text)">→ Ship UI improvements <strong>weekly</strong>, not quarterly</div>
-            <div style="color:var(--text)">→ <strong>Zero breaking</strong> upstream API changes</div>
+            <div style="color:var(--text)">→ Ship UI improvements <strong>weekly</strong>, independently of backends</div>
+            <div style="color:var(--text)">→ <strong>Zero breaking</strong> upstream changes — 90-day deprecation windows</div>
           </div>
         </div>
 
         <!-- Resilience -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;position:relative;overflow:hidden">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;position:relative;overflow:hidden">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div style="font-size:26px">🛡️</div>
+            <div style="font-size:24px">🛡️</div>
             <div>
               <div style="font-size:10px;font-weight:700;letter-spacing:.13em;color:#3b82f6">RESILIENCE &amp; STABILITY</div>
-              <div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.2">Absorb Backend Churn.<br>Ship Without Fear.</div>
+              <div style="font-size:14px;font-weight:800;color:var(--text);line-height:1.2">Absorb Backend Churn.<br>Ship Without Fear.</div>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">IL absorbs OE API volatility internally. Upstream contracts stay permanently stable — regardless of what changes downstream.</div>
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;font-size:12px">
-            <div style="color:var(--text)">→ OE outage ≠ app outage — <strong>graceful degradation</strong></div>
-            <div style="color:var(--text)">→ Independent release cycles for <strong>apps and backends</strong></div>
-            <div style="color:var(--text)">→ <strong>≤2 API calls</strong> per screen</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Without IL, every OE API change forces app re-releases and weeks of coordination. IL absorbs that volatility internally — upstream contracts stay stable regardless.</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;font-size:12px">
+            <div style="color:var(--text)">→ OE outage ≠ app outage — <strong>graceful degradation</strong> by design</div>
+            <div style="color:var(--text)">→ Independent release cycles for apps <strong>and</strong> backends</div>
+            <div style="color:var(--text)">→ <strong>≤2 API calls per screen</strong> — IL composites the rest</div>
           </div>
         </div>
 
         <!-- Security -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;position:relative;overflow:hidden">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;position:relative;overflow:hidden">
           <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#a855f7,#c084fc)"></div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-            <div style="font-size:26px">🔐</div>
+            <div style="font-size:24px">🔐</div>
             <div>
               <div style="font-size:10px;font-weight:700;letter-spacing:.13em;color:#a855f7">SECURITY &amp; COMPLIANCE</div>
-              <div style="font-size:15px;font-weight:800;color:var(--text);line-height:1.2">One Audited Boundary.<br>Enforced Everywhere.</div>
+              <div style="font-size:14px;font-weight:800;color:var(--text);line-height:1.2">One Audited Boundary.<br>Enforced Everywhere.</div>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Single entry point for auth, PII handling, and compliance — not scattered across individual OE integrations.</div>
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px;font-size:12px">
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Security and identity are enforced in one place — not scattered across dozens of OE integrations. IL is the single entry point for auth, PII handling, and compliance enforcement.</div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;font-size:12px">
             <div style="color:var(--text)">→ JWT / OIDC, scopes &amp; <strong>audit trails</strong> centralised</div>
-            <div style="color:var(--text)">→ <strong>GDPR</strong> purpose limitation per API call</div>
-            <div style="color:var(--text)">→ IL routes — <strong>never stores</strong> master data</div>
+            <div style="color:var(--text)">→ <strong>GDPR</strong> purpose limitation enforced per API call</div>
+            <div style="color:var(--text)">→ IL routes — it <strong>never stores</strong> master policy or customer data</div>
           </div>
         </div>
 
       </div>
 
       <!-- Stat strip -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px">
-        <div style="text-align:center;padding:10px 8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px">
+        <div style="text-align:center;padding:9px 8px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:8px">
           <div style="font-size:20px;font-weight:800;color:#10b981">&lt;300ms</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">p95 latency target</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px">
+        <div style="text-align:center;padding:9px 8px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:8px">
           <div style="font-size:20px;font-weight:800;color:var(--blue-light)">20+</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">Partners live &amp; in progress</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px">
+        <div style="text-align:center;padding:9px 8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:8px">
           <div style="font-size:20px;font-weight:800;color:var(--amber)">14+</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">Countries via one API</div>
         </div>
-        <div style="text-align:center;padding:10px 8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:8px">
+        <div style="text-align:center;padding:9px 8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.2);border-radius:8px">
           <div style="font-size:20px;font-weight:800;color:#a855f7">4</div>
           <div style="font-size:11px;color:var(--muted);margin-top:2px">Endpoint families</div>
         </div>
@@ -263,7 +271,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s12">
     <div class="slide-body">
       <div class="h2">IL — Architecture Overview</div>
-      <p class="lead">Every channel connects through a single, versioned REST API. CIL orchestrates the downstream complexity — routing, retrying, compositing, and transforming — so backends never need to align with app release cycles.</p>
+      <p class="lead">Every channel connects through a single, versioned REST API. IL orchestrates the downstream complexity — routing, retrying, compositing, and transforming — so backends never need to align with app release cycles.</p>
 
       <div class="card mt16">
         <div class="flow" style="justify-content:center;align-items:center;gap:0;flex-wrap:nowrap">
@@ -284,10 +292,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div style="font-size:22px;color:var(--blue-light)">→</div>
           </div>
 
-          <!-- CIL core -->
+          <!-- IL core -->
           <div class="flow-node cil" style="min-width:150px;padding:20px 18px;align-self:center">
             <div class="fn-type" style="font-size:10px">Integration Layer Core</div>
-            <div class="fn-name" style="color:#fff;font-size:16px;margin:6px 0">CIL / sisu-api</div>
+            <div class="fn-name" style="color:#fff;font-size:16px;margin:6px 0">IL / sisu-api</div>
             <div class="fn-sub" style="font-size:10px;line-height:1.8">travel-service<br>eAPI adapter<br>Temporal orchestration<br>AWS · Kubernetes</div>
           </div>
 
@@ -494,7 +502,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s6">
     <div class="slide-body" style="display:flex;flex-direction:column;height:100%">
       <div class="h2">xLob Travel-Relevant Endpoints</div>
-      <p class="lead" style="margin-bottom:18px">Beyond Travel Quote &amp; Buy, CIL exposes three endpoint families covering the full post-sale lifecycle.</p>
+      <p class="lead" style="margin-bottom:18px">Beyond Travel Quote &amp; Buy, IL exposes three endpoint families covering the full post-sale lifecycle.</p>
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1">
 
@@ -508,7 +516,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <div style="font-size:14px;font-weight:700;color:var(--text)">Full Lifecycle via BIOS</div>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Onboard, modify, and offboard beneficiaries. BIOS is the single record system — CIL translates and routes across all markets.</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">Onboard, modify, and offboard beneficiaries. BIOS is the single record system — IL translates and routes across all markets.</div>
           <div style="margin-top:14px;display:flex;flex-direction:column;gap:5px">
             <div class="ep"><span class="method m-post">POST</span> /beneficiaries</div>
             <div class="ep"><span class="method m-put">PUT</span> /beneficiaries/{id}</div>
@@ -563,7 +571,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <div style="font-size:14px;font-weight:700;color:var(--text)">Channel Retrieval Pass-Through</div>
             </div>
           </div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">CIL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend. CIL does not process claims.</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;flex:1">IL fetches available submission channels (link, phone, email) per contract from the OE Backend and surfaces them to the frontend. IL does not process claims.</div>
           <div style="margin-top:14px;display:flex;flex-direction:column;gap:5px">
             <div class="ep"><span class="method m-get">GET</span> /claims/v1/submission/channels?policy_number=…</div>
           </div>
@@ -588,7 +596,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s7">
     <div class="slide-body">
       <div class="h2">Beneficiaries Endpoint — Deep Dive</div>
-      <p class="lead">Full beneficiary lifecycle for travel insurance policies — onboarding, modification, and offboarding — via BIOS. CIL acts as middleware; BIOS is the single system of record across all markets.</p>
+      <p class="lead">Full beneficiary lifecycle for travel insurance policies — onboarding, modification, and offboarding — via BIOS. IL acts as middleware; BIOS is the single system of record across all markets.</p>
 
       <div class="tabs mt16">
         <button class="tb on" onclick="switchTab('ben','flow')">Data Flow</button>
@@ -606,7 +614,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <span style="color:var(--blue-light);font-size:12px">→ POST /beneficiaries</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">IL</div></div>
               <span style="color:var(--muted);font-size:11px">validates · routes by product_code · transforms</span>
             </div>
             <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: creates beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">201 Created</code></div>
@@ -618,7 +626,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <span style="color:var(--blue-light);font-size:12px">→ PUT /beneficiaries/{id}</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">IL</div></div>
               <span style="color:var(--muted);font-size:11px">validates beneficiary_id · routes · updates payload</span>
             </div>
             <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: updates personal data / contact info · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">200 OK</code></div>
@@ -630,7 +638,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <span style="color:var(--blue-light);font-size:12px">→ DELETE /beneficiaries/{id}</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;padding-left:18px;margin-bottom:4px">
-              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">CIL</div></div>
+              <div class="flow-node cil" style="padding:4px 12px;min-width:0"><div class="fn-name" style="color:#fff;font-size:11px">IL</div></div>
               <span style="color:var(--muted);font-size:11px">validates · routes beneficiary removal</span>
             </div>
             <div style="padding-left:36px;font-size:11px;color:var(--muted)">→ BIOS: removes beneficiary record · returns <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">204 No Content</code></div>
@@ -641,7 +649,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
               <div>⚠ All calls are <strong style="color:var(--text)">asynchronous</strong> — requests pending backend approval</div>
               <div>→ Backend: <strong style="color:var(--text)">BIOS</strong> — single system of record for all beneficiary data</div>
               <div>→ <code style="background:var(--surface2);padding:1px 4px;border-radius:3px">product_code</code> identifies market/product context within BIOS</div>
-              <div>→ CIL translates &amp; routes regardless of country — no market-specific logic in app</div>
+              <div>→ IL translates &amp; routes regardless of country — no market-specific logic in app</div>
             </div>
           </div>
         </div>
@@ -666,7 +674,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="card">
             <div class="section-label">Backend: BIOS</div>
             <div style="font-size:13px;line-height:1.8;color:var(--text);margin-bottom:12px">
-              <strong>BIOS</strong> — the Allianz open-policy admin backend — is the single system of record for all beneficiary data. CIL translates requests and routes to BIOS regardless of originating country.
+              <strong>BIOS</strong> — the Allianz open-policy admin backend — is the single system of record for all beneficiary data. IL translates requests and routes to BIOS regardless of originating country.
             </div>
             <div class="section-label">Markets covered</div>
             <div style="font-size:12px;color:var(--muted);line-height:1.8">UK · DE · HU · BE · NL · LU · PL · RO · ES · FR · IT · PT</div>
@@ -855,7 +863,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s9">
     <div class="slide-body">
       <div class="h2">Claims Endpoint — Deep Dive</div>
-      <p class="lead">CIL acts as a pass-through layer between the frontend and the Allianz OE Backends. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
+      <p class="lead">IL acts as a pass-through layer between the frontend and the Allianz OE Backends. It does not process claims — it exposes available submission channels per policy so the frontend can route the customer to the right claims journey.</p>
 
       <div class="g2 mt16">
         <div>
@@ -864,7 +872,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px;padding:8px 0">
               <div class="flow-node"><div class="fn-type">Frontend (Global App)</div><div class="fn-name">Customer selects contract</div></div>
               <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ GET /claims/v1/submission/channels?policy_number=…</div>
-              <div class="flow-node cil"><div class="fn-type">CIL — pass-through</div><div class="fn-name" style="color:#fff">No transformation</div></div>
+              <div class="flow-node cil"><div class="fn-type">IL — pass-through</div><div class="fn-name" style="color:#fff">No transformation</div></div>
               <div style="padding-left:30px;color:var(--blue-light);font-size:12px">↓ routes to OE Backend by market</div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
                 <div class="flow-node"><div class="fn-type">CH OE Backend</div><div class="fn-name">Allianz Switzerland</div><div class="fn-sub">Global App pilot</div></div>
@@ -879,7 +887,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           </div>
 
           <div class="card mt14">
-            <div class="section-label">CIL responsibilities</div>
+            <div class="section-label">IL responsibilities</div>
             <ul style="font-size:13px;line-height:2;padding-left:16px">
               <li>Pass through <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">journey_contacts</code> values without transformation</li>
               <li>Support multiple channels per claim type</li>
@@ -889,7 +897,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
             <ul style="font-size:13px;line-height:1.8;padding-left:16px;color:#60a5fa">
               <li>Claim submission processing (OE Backend) <span class="badge b-prog" style="vertical-align:middle">◑ In Progress</span></li>
             </ul>
-            <div class="mt10 section-label">Out of scope for CIL</div>
+            <div class="mt10 section-label">Out of scope for IL</div>
             <ul style="font-size:13px;line-height:1.8;padding-left:16px;color:var(--muted)">
               <li>Rendering the claims page (frontend)</li>
               <li>Enrichment or transformation of OE values</li>
@@ -1019,7 +1027,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
   <div class="slide" id="s11">
     <div class="slide-body">
       <div class="h2">Travel Endpoint — Deep Dive</div>
-      <p class="lead">The core IL travel endpoint orchestrates the full quote-to-policy journey. CIL routes each request to the correct backend by market, travel type, and partner configuration — partners integrate once and reach every country.</p>
+      <p class="lead">The core IL travel endpoint orchestrates the full quote-to-policy journey. IL routes each request to the correct backend by market, travel type, and partner configuration — partners integrate once and reach every country.</p>
 
       <div class="tabs mt16">
         <button class="tb on" onclick="switchTab('tr','flow')">Data Flow</button>
@@ -1037,7 +1045,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #3b82f6;border-radius:10px;padding:16px">
             <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#3b82f6;margin-bottom:6px">STEP 1 — QUOTE</div>
             <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Partner / Frontend <span style="color:var(--blue-light);font-weight:600">→ POST /travel/quote</span></div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">CIL validates · routes by market · orchestrates via Temporal</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">IL validates · routes by market · orchestrates via Temporal</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
               <span style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;color:#93c5fd">eMagin <span style="font-weight:400;opacity:.7">EU</span></span>
               <span style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;color:#fcd34d">Fusion <span style="font-weight:400;opacity:.7">US · CA</span></span>
@@ -1051,7 +1059,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <!-- Step 2: Policy Creation -->
           <div style="background:var(--surface);border:1px solid var(--border);border-top:3px solid #10b981;border-radius:10px;padding:16px">
             <div style="font-size:10px;font-weight:700;letter-spacing:.1em;color:#10b981;margin-bottom:6px">STEP 2 — POLICY CREATION</div>
-            <div style="font-size:12px;color:var(--muted);margin-bottom:10px">CIL <span style="color:#10b981;font-weight:600">→ POST /travel/policies</span> · Temporal orchestrates multi-backend markets</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px">IL <span style="color:#10b981;font-weight:600">→ POST /travel/policies</span> · Temporal orchestrates multi-backend markets</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
               <span style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.25);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;color:#93c5fd">eMagin <span style="font-weight:400;opacity:.7">EU</span></span>
               <span style="background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);border-radius:5px;padding:3px 9px;font-size:11px;font-weight:600;color:#5eead4">Midas <span style="font-weight:400;opacity:.7">AU · NZ</span></span>
@@ -1130,7 +1138,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
           <div class="card">
             <div class="section-label">Routing logic</div>
             <div style="font-size:13px;line-height:1.8;color:var(--text)">
-              CIL determines the backend from a combination of <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">partner_id</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">country</code>, and <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code> from the request, matched against per-partner flow configuration stored in CIL.<br><br>
+              IL determines the backend from a combination of <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">partner_id</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">country</code>, and <code style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:11px">product_code</code> from the request, matched against per-partner flow configuration stored in IL.<br><br>
               Each partner has an isolated flow config — changing one partner's routing does not affect others.<br><br>
               Multi-backend markets (e.g. CA uses both eMagin + Fusion) are handled by Temporal workflow orchestration, which coordinates the calls and compensates on failure.
             </div>
