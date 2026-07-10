@@ -305,15 +305,14 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sa
       <div class="h2">Travel Endpoint — Geographic Reach</div>
       <p class="lead">Countries where IL Travel is live, in progress, or planned as of July 2026 — including Americas and Pacific expansion. AgentMax Retail Portal covers 6 European markets across two waves.</p>
 
-      <div class="map-wrap mt16" style="display:grid;grid-template-columns:1fr 260px;gap:0">
-        <!-- World map -->
-        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e;min-height:340px"></svg>
-        <!-- Europe inset -->
-        <div style="border-left:1px solid var(--border);display:flex;flex-direction:column">
-          <div style="padding:8px 12px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Europe — detail</div>
-          <svg id="europeInset" style="width:100%;flex:1;background:#0d1b2e"></svg>
+      <div class="map-wrap mt16" style="position:relative">
+        <svg id="worldMap" style="width:100%;display:block;background:#0d1b2e"></svg>
+        <!-- Europe overlay — bottom-right corner of the map -->
+        <div style="position:absolute;bottom:32px;right:8px;width:270px;background:rgba(13,27,46,.96);border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.65)">
+          <div style="padding:5px 10px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)">Europe — detail</div>
+          <svg id="europeInset" width="270" height="310" style="display:block;background:#0d1b2e"></svg>
         </div>
-        <div class="map-legend" style="grid-column:1/-1">
+        <div class="map-legend">
           <div class="leg-item"><div class="leg-dot" style="background:#10b981"></div><span><strong>Live</strong></span></div>
           <div class="leg-item"><div class="leg-dot" style="background:#3b82f6"></div><span><strong>In Progress</strong></span></div>
           <div class="leg-item"><div class="leg-dot" style="background:#f59e0b"></div><span><strong>Planned / xLob only</strong></span></div>
@@ -956,12 +955,12 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     // ── World map ──────────────────────────────────────────────────────────
     const svgW = document.getElementById('worldMap');
     const wRect = svgW.getBoundingClientRect();
-    const W = wRect.width || 680, H = Math.round(W * 0.52);
+    const W = wRect.width || 800, H = Math.round(W * 0.56);
     svgW.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svgW.setAttribute('height', H);
 
     const projW = d3.geoNaturalEarth1()
-      .scale(W / 6.3)
+      .scale(W / 6.1)
       .translate([W / 2, H / 2]);
     const pathW = d3.geoPath().projection(projW);
 
@@ -999,30 +998,44 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .attr('stroke-width','0.4');
 
     // ── Europe inset ───────────────────────────────────────────────────────
-    const svgE = document.getElementById('europeInset');
-    const eRect = svgE.getBoundingClientRect();
-    const EW = eRect.width || 260, EH = eRect.height || 340;
-    svgE.setAttribute('viewBox', `0 0 ${EW} ${EH}`);
-    svgE.setAttribute('height', EH);
+    // All European country ISO codes we want to show (incl. non-COUNTRY_DATA ones as grey fill)
+    const EURO_ISO = new Set([
+      'GBR','DEU','HUN','ITA','ESP','AUT','CHE','CZE','NLD','FRA','PRT','BEL','LUX','POL','ROU','GRC',
+      'NOR','SWE','DNK','FIN','IRL','SVK','SVN','HRV','SRB','BGR','ALB','MKD','BIH','MNE',
+      'UKR','BLR','LTU','LVA','EST','MDA','RUS'
+    ]);
 
-    const projE = d3.geoMercator()
-      .center([13, 51])
-      .scale(EW * 2.2)
-      .translate([EW / 2, EH / 2]);
+    const EW = 270, EH = 310;
+    const svgE = document.getElementById('europeInset');
+    svgE.setAttribute('viewBox', `0 0 ${EW} ${EH}`);
+
+    // Build a single GeoJSON collection of just European countries for fitExtent
+    const euroFeatures = countries.features.filter(d => EURO_ISO.has(d.properties.iso_a3));
+    const euroCollection = { type:'FeatureCollection', features: euroFeatures };
+
+    // Crop Russia etc. so it doesn't blow the bounding box — clip to lon < 60
+    const projE = d3.geoMercator().fitExtent([[6,6],[EW-6,EH-6]], {
+      type: 'FeatureCollection',
+      features: countries.features.filter(d => {
+        // include only compact European countries by rough lon/lat bounds
+        const iso = d.properties.iso_a3;
+        if (!EURO_ISO.has(iso)) return false;
+        if (['RUS','UKR','BLR'].includes(iso)) return false; // too large, excluded from fit calc
+        return true;
+      })
+    });
     const pathE = d3.geoPath().projection(projE);
 
     const svgEd3 = d3.select(svgE);
 
-    const EURO_ISO = new Set(['GBR','DEU','HUN','ITA','ESP','AUT','CHE','CZE','NLD','FRA','PRT','BEL','LUX','POL','ROU','GRC',
-      'NOR','SWE','DNK','FIN','IRL','SVK','SVN','HRV','SRB','BGR','ALB','MKD','BIH','MNE','UKR','BLR','LTU','LVA','EST','MDA']);
+    // add clipPath so Russia/Ukraine don't bleed out
+    svgEd3.append('defs').append('clipPath').attr('id','euroClip')
+      .append('rect').attr('width', EW).attr('height', EH);
 
-    svgEd3.selectAll('path.ecountry')
-      .data(countries.features.filter(d => {
-        const c = d3.geoCentroid(d);
-        if (!isFinite(c[0]) || !isFinite(c[1])) return false;
-        const [cx, cy] = projE(c);
-        return cx > -20 && cx < EW+20 && cy > -20 && cy < EH+40;
-      }))
+    const euroG = svgEd3.append('g').attr('clip-path','url(#euroClip)');
+
+    euroG.selectAll('path.ecountry')
+      .data(euroFeatures)
       .join('path')
       .attr('class','ecountry')
       .attr('d', pathE)
@@ -1035,28 +1048,28 @@ fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .attr('opacity', d => COUNTRY_DATA[d.properties.iso_a3] ? 0.9 : 1)
       .each(function(d) { attachTip(this, d); });
 
-    // country labels on inset
-    svgEd3.selectAll('text.elabel')
+    // Labels only for COUNTRY_DATA entries whose centroid is inside the viewport
+    const ISO2 = {GBR:'UK',DEU:'DE',HUN:'HU',ITA:'IT',ESP:'ES',AUT:'AT',CHE:'CH',CZE:'CZ',
+                  NLD:'NL',FRA:'FR',PRT:'PT',BEL:'BE',LUX:'LU',POL:'PL',ROU:'RO',GRC:'GR'};
+
+    euroG.selectAll('text.elabel')
       .data(countries.features.filter(d => {
         if (!COUNTRY_DATA[d.properties.iso_a3]) return false;
         const c = d3.geoCentroid(d);
         if (!isFinite(c[0]) || !isFinite(c[1])) return false;
         const [cx, cy] = projE(c);
-        return cx > 5 && cx < EW-5 && cy > 5 && cy < EH-5;
+        return cx > 4 && cx < EW-4 && cy > 4 && cy < EH-4;
       }))
       .join('text')
       .attr('class','elabel')
-      .attr('x', d => projE(d3.geoCentroid(d))[0] || 0)
-      .attr('y', d => (projE(d3.geoCentroid(d))[1] || 0) + 3)
+      .attr('x', d => projE(d3.geoCentroid(d))[0])
+      .attr('y', d => projE(d3.geoCentroid(d))[1] + 3)
       .attr('text-anchor','middle')
       .attr('fill','#fff')
-      .attr('font-size','7')
+      .attr('font-size','7.5')
       .attr('font-weight','700')
       .attr('pointer-events','none')
-      .text(d => {
-        const m = {GBR:'UK',DEU:'DE',HUN:'HU',ITA:'IT',ESP:'ES',AUT:'AT',CHE:'CH',CZE:'CZ',NLD:'NL',FRA:'FR',PRT:'PT',BEL:'BE',LUX:'LU',POL:'PL',ROU:'RO',GRC:'GR'};
-        return m[d.properties.iso_a3] || d.properties.iso_a3.slice(0,2);
-      });
+      .text(d => ISO2[d.properties.iso_a3] || d.properties.iso_a3.slice(0,2));
   })
   .catch(() => {
     // fallback if CDN unavailable
