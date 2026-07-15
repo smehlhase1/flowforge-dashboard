@@ -241,7 +241,7 @@
   <header class="hd">
     <p class="eyebrow">Claude Code · spec-driven development</p>
     <h1>Flow<span class="g">Forge</span></h1>
-    <p class="sub">A structured pipeline inside Claude Code that covers the <strong style="color:var(--text)">full software feature lifecycle</strong> — from initial problem framing through to a verified, CI-delivered PR. Today (v1.1.1), 3 agents support the BA spec phase and 14 agents cover the dev pipeline. The BA Upstream Pipeline (CIL-6148) extends tool coverage to the 6–10 hours of upstream work that currently happens without any agent support.</p>
+    <p class="sub">A structured pipeline inside Claude Code that covers the <strong style="color:var(--text)">full software feature lifecycle</strong> — from initial problem framing through to a verified, CI-delivered PR. Today (v1.1.1), 3 agents support the BA spec phase and 14 agents cover the dev pipeline. The BA Upstream Pipeline (CIL-6148) extends tool coverage to the 6–10 hours of upstream work that currently happens without any agent support, adding 5 commands and 15+ agents to close that gap end-to-end.</p>
   </header>
 
 
@@ -634,23 +634,19 @@
        ============================================================ -->
   <section class="lifecycle-section">
     <h2>Capabilities: Now vs Future</h2>
-    <p class="h2note">FlowForge v1.1.1 owns the dev pipeline end-to-end. CIL-6148 closes the upstream gap — adding 7 new commands so BAs work inside the same pipeline from problem framing onwards, not just from spec capture.</p>
+    <p class="h2note">FlowForge v1.1.1 owns the dev pipeline end-to-end. CIL-6148 closes the upstream gap — adding 5 commands so BAs work inside the same pipeline from problem framing onwards, not just from spec capture.</p>
 
     <!-- Phase band -->
     <div class="lifecycle-band">
       <div class="lifecycle-zone zone-future">
         <div class="zone-eyebrow future">BA Upstream Pipeline <span class="zone-tag future">Coming · CIL-6148</span></div>
         <div class="phase-chips">
-          <div class="phase-chip future"><span class="chip-cmd">.discover</span><span class="chip-lbl">problem framing</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.research</span><span class="chip-lbl">landscape scan</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.ideate</span><span class="chip-lbl">solution options</span></div>
-          <div class="phase-chip now-ba"><span class="chip-cmd">.require</span><span class="chip-lbl">spec capture ✓</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.require+</span><span class="chip-lbl">+5 agents</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.split</span><span class="chip-lbl">epic decomposition</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.refine</span><span class="chip-lbl">refinement prep</span></div>
-          <div class="phase-chip future"><span class="chip-cmd">.prd</span><span class="chip-lbl">stakeholder PRD</span></div>
+          <div class="phase-chip future"><span class="chip-cmd">.discover</span><span class="chip-lbl">framing + research + ideation · 10 agents</span></div>
+          <div class="phase-chip future"><span class="chip-cmd">.require</span><span class="chip-lbl">enhanced · 5 phases · 8 agents</span></div>
+          <div class="phase-chip future"><span class="chip-cmd">.refine</span><span class="chip-lbl">live facilitation</span></div>
+          <div class="phase-chip future"><span class="chip-cmd">.prd</span><span class="chip-lbl">13-section PRD</span></div>
         </div>
-        <p class="zone-note">Today: 6–10h of manual BA work before FlowForge can start. After CIL-6148: the pipeline begins at problem framing.</p>
+        <p class="zone-note">Today: 6–10h of manual BA work before FlowForge can start. After CIL-6148: the pipeline begins at problem framing. 5 commands total: start (patched), discover, require (enhanced), refine, prd.</p>
       </div>
       <div class="lifecycle-zone zone-now">
         <div class="zone-eyebrow now">Dev Pipeline <span class="zone-tag now">Available · v1.1.1</span></div>
@@ -702,15 +698,11 @@
       <div class="gap-card future-state">
         <div class="gap-title future">After CIL-6148 — Full Lifecycle Coverage</div>
         <div class="gap-steps">
+          <span class="gap-step ff-future">/ff.start</span>
+          <span class="gap-arr">→</span>
           <span class="gap-step ff-future">/ff.discover</span>
           <span class="gap-arr">→</span>
-          <span class="gap-step ff-future">/ff.research</span>
-          <span class="gap-arr">→</span>
-          <span class="gap-step ff-future">/ff.ideate</span>
-          <span class="gap-arr">→</span>
-          <span class="gap-step ff-cmd-ba">/ff.require+</span>
-          <span class="gap-arr">→</span>
-          <span class="gap-step ff-future">/ff.split</span>
+          <span class="gap-step ff-future">/ff.require</span>
           <span class="gap-arr">→</span>
           <span class="gap-step ff-future">/ff.refine</span>
           <span class="gap-arr">→</span>
@@ -729,21 +721,21 @@
           <div class="gm"><span class="gm-val purple">15+</span><span class="gm-lbl">upstream agents</span></div>
           <div class="gm"><span class="gm-val green">−33%</span><span class="gm-lbl">total cycle time</span></div>
         </div>
-        <p class="gap-note">Problem framing, landscape research, solution ideation, spec review (8 agents), epic decomposition, refinement prep, and Confluence PRD — all pipeline-driven, from day one of a feature.</p>
+        <p class="gap-note">5 commands cover the full upstream phase: /ff.discover (problem framing + research + ideation, 10 agents), /ff.require enhanced (5 phases, 8 agents, Jira tickets + agenda), /ff.refine (live facilitation), and /ff.prd (13-section PRD, living document).</p>
       </div>
     </div>
 
     <!-- What changes callout -->
     <div class="callout future-cta">
       <span class="lbl">What CIL-6148 unlocks</span>
-      <p>Today, a BA manually frames the problem, scans Confluence and Jira, writes options, decomposes the epic, and runs refinement — then hands off to FlowForge. CIL-6148 moves all of that <b>inside the pipeline</b>: 4 problem-framing agents, 3 research agents, 5 ideation agents, 5 new spec-review agents, 3 decomposition agents, and an Agenda Builder + Decision Transcriber for refinement. A Confluence Publisher assembles everything into a stakeholder PRD. The BA stays in charge — agents draft, humans decide.</p>
+      <p>Today, a BA manually frames the problem, scans Confluence and Jira, writes options, and runs refinement — then hands off to FlowForge. CIL-6148 moves all of that <b>inside the pipeline</b> using 5 commands: <b>/ff.discover</b> (Problem Framing → Landscape Research → Solution Ideation; 10 agents total), <b>/ff.require enhanced</b> (5 phases: capture + 8-agent review + Decomposition Assessor + Agenda Builder; creates Jira tickets with embedded refinement agenda), <b>/ff.refine</b> (live meeting facilitation loading the agenda from /ff.require Phase 5, guided item-by-item loop, real-time spec + Jira sync with hierarchy enforcement), and <b>/ff.prd</b> (13 mandatory sections, persists as a living document, auto-updates on engineering phases). The BA stays in charge — agents draft, humans decide.</p>
     </div>
   </section>
 
 
   <!-- ============ BA UPSTREAM PIPELINE — COMING ============ -->
   <h2>BA upstream pipeline — CIL-6148</h2>
-  <p class="h2note">Seven new commands plus one patch to the existing <code style="font-family:'JetBrains Mono',monospace;color:var(--future-ba)">/flowforge.start</code> command. All tasks are Backlog status. Each new command produces a structured artifact that the next step can consume — enabling a fully traceable chain from <code style="font-family:'JetBrains Mono',monospace;color:var(--future-ba)">0-discovery.md</code> through to the Confluence PRD.</p>
+  <p class="h2note">Five commands: one patch to the existing <code style="font-family:'JetBrains Mono',monospace;color:var(--future-ba)">/flowforge.start</code> + four new commands (discover, require enhanced, refine, prd). All tasks are Backlog status. Each command produces structured artifacts consumed by the next — a fully traceable chain from <code style="font-family:'JetBrains Mono',monospace;color:var(--future-ba)">0-discovery.md</code> through to the Confluence PRD. <b>Note:</b> /ff.research and /ff.ideate are internal phases of /ff.discover; /ff.split is Phase 4 of /ff.require; /ff.refine --prep is Phase 5 of /ff.require.</p>
 
   <div class="grid3">
 
@@ -757,73 +749,46 @@
     </div>
 
     <div class="card pcard future">
-      <div class="future-badge">Coming · CIL-6172 · T002</div>
-      <div class="tno">Step BA-01 · problem framing</div>
+      <div class="future-badge">Coming · CIL-6172–6174 · T002–T004</div>
+      <div class="tno">Step BA-01 · problem framing + research + ideation</div>
       <div class="cmd"><span class="slash future-slash">/flowforge.</span>discover</div>
-      <p class="pdesc">Structured interview that surfaces the real problem, impacted journeys, success metrics, constraints, and stakeholders — before a single line of spec is written.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">4 agents</span><span class="pinfo future">→ 0-discovery.md</span></div>
-      <p class="agents">Agents · <b>Problem Framer</b> (structured interview) · <b>Journey Mapper</b> (end-to-end user flow) · <b>Value Validator</b> (challenges problem statement) · <b>Risk Spotter</b> (regulatory, feasibility, scope)</p>
-    </div>
-
-    <div class="card pcard future">
-      <div class="future-badge">Coming · CIL-6173 · T003</div>
-      <div class="tno">Step BA-02 · landscape research</div>
-      <div class="cmd"><span class="slash future-slash">/flowforge.</span>research</div>
-      <p class="pdesc">Three agents scan Confluence, Jira, and the codebase in parallel — returning ranked, deduplicated findings with source links, scoped to the problem domain in <code style="font-family:'JetBrains Mono',monospace">0-discovery.md</code>.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">3 agents · parallel</span><span class="pinfo future">→ 0-research.md</span></div>
-      <p class="agents">Agents · <b>Confluence Scanner</b> (pages, ADRs, design docs) · <b>Jira Linker</b> (related epics, open/done tickets) · <b>Pattern Scout</b> (existing code patterns, API schemas)</p>
-    </div>
-
-    <div class="card pcard future">
-      <div class="future-badge">Coming · CIL-6174 · T004</div>
-      <div class="tno">Step BA-03 · solution ideation</div>
-      <div class="cmd"><span class="slash future-slash">/flowforge.</span>ideate</div>
-      <p class="pdesc">Generates 3–4 structurally distinct solution options (fast-to-ship, clean-architecture, lowest-risk), each with effort estimate, risk profile, and lane signal. A Recommender selects and justifies the preferred option.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">5 agents</span><span class="pinfo future">→ 0-options.md</span></div>
-      <p class="agents">Agents · <b>Option Generator ×3</b> (distinct strategies) · <b>Recommender</b> (selects + justifies) · <b>Lane Estimator</b> (signals per option)</p>
+      <p class="pdesc">ONE command, 3 internal phases: Phase 1 Problem Framing (4 agents sequential), Phase 2 Landscape Research (3 agents parallel + Research Synthesiser merge), Phase 3 Solution Ideation (option generators + Recommender + Lane Estimator). Produces all three discovery artifacts.</p>
+      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">10 agents · 3 phases</span><span class="pinfo future">→ 0-discovery.md · 0-research.md · 0-options.md</span></div>
+      <p class="agents"><b>Phase 1:</b> Problem Framer · Journey Mapper · Value Validator · Risk Spotter (sequential)&nbsp; <b>Phase 2:</b> Confluence Scanner · Jira Linker (4-dimension search + full comment threads + child ticket threads) · Pattern Scout (parallel) + Research Synthesiser (merge)&nbsp; <b>Phase 3:</b> Option Generator ×3 · Recommender · Lane Estimator</p>
     </div>
 
     <div class="card pcard future">
       <div class="future-badge">Coming · CIL-6175 · T005</div>
-      <div class="tno">Step BA-04 · enhanced spec review</div>
+      <div class="tno">Step BA-02 · enhanced spec capture</div>
       <div class="cmd"><span class="slash future-slash">/flowforge.</span>require<span class="arg"> (enhanced)</span></div>
-      <p class="pdesc">The existing 3 post-capture agents continue unchanged. Five new specialists run after them: Completeness Auditor, Edge Case Hunter, Ambiguity Detector, GDPR Probe, and Scope Guard.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">+5 agents (8 total)</span><span class="pinfo future">→ 1-spec.md</span></div>
-      <p class="agents">New agents · <b>Completeness Auditor</b> · <b>Edge Case Hunter</b> · <b>Ambiguity Detector</b> · <b>GDPR Probe</b> (flags personal data flows) · <b>Scope Guard</b> (checks against discovery context)</p>
-    </div>
-
-    <div class="card pcard future">
-      <div class="future-badge">Coming · CIL-6176 · T006</div>
-      <div class="tno">Step BA-05 · epic decomposition</div>
-      <div class="cmd"><span class="slash future-slash">/flowforge.</span>split</div>
-      <p class="pdesc">Decomposes an approved spec into independently deliverable stories, identifies the minimum MVP slice, and produces a dependency map. Optionally creates Jira tickets via <code style="font-family:'JetBrains Mono',monospace">--create-tickets</code>.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">3 agents</span><span class="pinfo future">→ 0-split-map.md</span></div>
-      <p class="agents">Agents · <b>Story Slicer</b> (independently deployable stories) · <b>MVP Identifier</b> (minimum core-value set) · <b>Dependency Mapper</b> (story dependency graph)</p>
+      <p class="pdesc">5 phases total: Phase 1 spec capture, Phases 2–3 8-agent review panel (3 existing + 5 new), Phase 4 Decomposition Assessor (writes 0-split-map.md with JSON schema, creates sub-specs at specs/&lt;feature-id&gt;-&lt;sub-id&gt;/1-spec.md), Phase 5 Agenda Builder (writes 0-refine-agenda.md; each unresolved finding → numbered agenda item with 2–3 suggested resolutions). Creates Jira tickets at end with 4-section description: Refinement Brief, Solution Options, ACs, Refinement Agenda.</p>
+      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">5 phases · 8 agents</span><span class="pinfo future">→ 1-spec.md · 0-split-map.md · 0-refine-agenda.md · Jira tickets</span></div>
+      <p class="agents">Existing agents · <b>Gap Reviewer</b> · <b>Self-Review</b> · <b>QA Author</b>&nbsp; New agents · <b>Completeness Auditor</b> · <b>Edge Case Hunter</b> · <b>Ambiguity Detector</b> · <b>GDPR Probe</b> (flags personal data flows) · <b>Scope Guard</b>&nbsp; Phase 4 · <b>Decomposition Assessor</b>&nbsp; Phase 5 · <b>Agenda Builder</b></p>
     </div>
 
     <div class="card pcard future">
       <div class="future-badge">Coming · CIL-6177 · T007</div>
-      <div class="tno">Step BA-06 · refinement facilitation</div>
+      <div class="tno">Step BA-03 · live refinement facilitation</div>
       <div class="cmd"><span class="slash future-slash">/flowforge.</span>refine</div>
-      <p class="pdesc">Two modes: <code style="font-family:'JetBrains Mono',monospace">--prep</code> builds a structured meeting agenda (copy-paste ready); <code style="font-family:'JetBrains Mono',monospace">--sync</code> transcribes meeting decisions and syncs scope changes to spec and Jira.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">3 agents</span><span class="pinfo future">→ agenda / spec update</span></div>
-      <p class="agents">Agents · <b>Agenda Builder</b> (meeting prep, copy-paste ready) · <b>Decision Transcriber</b> (extracts decided, deferred, changed) · <b>Jira Sync</b> (user-confirmed ticket writes)</p>
+      <p class="pdesc">Live-only meeting facilitation. Loads agenda from /ff.require Phase 5 (0-refine-agenda.md), guided item-by-item loop with option selection + custom option support, transcript upload offer. Spec Editor updates 1-spec.md; Jira Sync enforces hierarchy (theme → initiative → epic → task; no parentless tickets below theme).</p>
+      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">Spec Editor + Jira Sync</span><span class="pinfo future">→ 1-spec.md update · 0-meeting-log.md</span></div>
+      <p class="agents">Loads <b>0-refine-agenda.md</b> from /ff.require Phase 5 · guided loop per agenda item · option selection with custom option support · <b>Spec Editor</b> (applies decisions to 1-spec.md) · <b>Jira Sync</b> (hierarchy enforcement: theme → initiative → epic → task)</p>
     </div>
 
     <div class="card pcard future">
       <div class="future-badge">Coming · CIL-6178 · T008</div>
-      <div class="tno">Step BA-07 · stakeholder PRD</div>
+      <div class="tno">Step BA-04 · stakeholder PRD</div>
       <div class="cmd"><span class="slash future-slash">/flowforge.</span>prd</div>
-      <p class="pdesc">Assembles all upstream outputs — discovery, research, options, spec, split-map — into a stakeholder-ready PRD in non-technical language, then publishes or updates a Confluence page.</p>
-      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">2 agents</span><span class="pinfo future">→ Confluence page</span></div>
-      <p class="agents">Agents · <b>Document Assembler</b> (compiles all upstream files, notes skipped steps) · <b>Confluence Publisher</b> (creates/updates page, returns URL)</p>
+      <p class="pdesc">Full PRD assembly and Confluence publish. 13 mandatory sections. Persists as a living document — auto-triggers on any engineering phase that modifies 1-spec.md. Stores Confluence URL in status.json. User previews before any Confluence write.</p>
+      <div class="meta"><span class="owner future">BA</span><span class="pinfo future">13 sections · living doc</span><span class="pinfo future">→ 0-prd.md · Confluence page · status.json (confluence_url)</span></div>
+      <p class="agents">Agents · <b>Document Assembler</b> (compiles all upstream files into 13 mandatory sections, notes skipped steps) · <b>Confluence Publisher</b> (creates/updates page, returns URL, stores in status.json) · <b>Auto-update hook</b> fires on any engineering phase modifying 1-spec.md</p>
     </div>
 
   </div>
 
   <div class="callout future-cta" style="margin-top:14px;">
     <span class="lbl">Traceability from first thought to CI delivery</span>
-    <p>Once CIL-6148 ships, every artifact flows into the next step: <b>0-discovery.md → 0-research.md → 0-options.md → 1-spec.md → 0-split-map.md → 2-plan.md → code → CI</b>. The acceptance criteria a BA discusses in /ff.discover are the same criteria the verifier checks in /ff.verify. Nothing gets lost in translation — and nothing bypasses the chain.</p>
+    <p>Once CIL-6148 ships, every artifact flows into the next step: <b>0-discovery.md → 0-research.md → 0-options.md → 1-spec.md → 0-split-map.md → 0-refine-agenda.md → 0-meeting-log.md → 0-prd.md → 2-plan.md → code → CI</b>. The acceptance criteria a BA discusses in /ff.discover are the same criteria the verifier checks in /ff.verify. Nothing gets lost in translation — and nothing bypasses the chain. status.json tracks the full state: start_confirmed, start_branch, jira_key, jira_sub_keys, confluence_url, phase, last_updated.</p>
   </div>
 
 
@@ -869,7 +834,7 @@
   </style>
 
   <h2>The complete pipeline — mandatory vs optional</h2>
-  <p class="h2note">Across both phases — BA upstream and dev — only seven steps are required to complete a feature end-to-end. The rest are optional and additive: each enriches the spec context and downstream artifacts, but the pipeline is always reachable without them.</p>
+  <p class="h2note">Across both phases — BA upstream and dev — only five BA upstream steps plus the dev pipeline are required to complete a feature end-to-end. /ff.discover, /ff.refine, and /ff.prd are optional and additive — the dev pipeline is always reachable from /ff.start + /ff.require alone.</p>
 
   <div class="pipe-map">
 
@@ -893,100 +858,47 @@
       <div class="pcol req"><span class="rpill opt">○ optional</span></div>
       <div class="pcol cmd">
         <div class="pcmd"><span class="sl-ba">/flowforge.</span>discover</div>
-        <div class="pdesc">Structured interview — Problem Framer · Journey Mapper · Value Validator · Risk Spotter. Scopes all downstream commands to the real problem domain.</div>
+        <div class="pdesc">ONE command, 3 internal phases — Phase 1: Problem Framer · Journey Mapper · Value Validator · Risk Spotter (sequential). Phase 2: Confluence Scanner · Jira Linker (4-dimension search + comment threads) · Pattern Scout (parallel) + Research Synthesiser. Phase 3: Option Generator ×3 · Recommender · Lane Estimator.</div>
       </div>
-      <div class="pcol out">0-discovery.md</div>
-      <div class="pcol ag">4 agents</div>
+      <div class="pcol out">0-discovery.md · 0-research.md · 0-options.md</div>
+      <div class="pcol ag">10 agents</div>
       <div class="pcol jira"><span class="jtag none">—</span></div>
     </div>
 
-    <div class="pipe-row optional">
+    <div class="pipe-row mandatory">
       <div class="pcol step">BA-02</div>
-      <div class="pcol req"><span class="rpill opt">○ optional</span></div>
+      <div class="pcol req"><span class="rpill mand-ba">★ required</span></div>
       <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba">/flowforge.</span>research</div>
-        <div class="pdesc">Parallel scan of Confluence, Jira, and codebase — ranked, deduplicated findings with source links. Scoped to <code style="font-family:'JetBrains Mono',monospace">0-discovery.md</code> if it exists.</div>
+        <div class="pcmd"><span class="sl-ba-now">/flowforge.</span>require<span style="font-size:.68rem;color:var(--future-ba)"> (enhanced)</span></div>
+        <div class="pdesc">5 phases: spec capture · 8-agent review (3 existing + 5 new: Completeness Auditor · Edge Case Hunter · Ambiguity Detector · GDPR Probe · Scope Guard) · Decomposition Assessor (writes 0-split-map.md + sub-specs at specs/&lt;id&gt;-&lt;sub&gt;/1-spec.md) · Agenda Builder (writes 0-refine-agenda.md, unresolved findings → numbered items with 2–3 resolutions). Jira tickets at end: 4 sections — Refinement Brief · Solution Options · ACs · Refinement Agenda.</div>
       </div>
-      <div class="pcol out">0-research.md</div>
-      <div class="pcol ag">3 agents ∥</div>
-      <div class="pcol jira"><span class="jtag none">—</span></div>
+      <div class="pcol out">1-spec.md · 0-split-map.md · 0-refine-agenda.md</div>
+      <div class="pcol ag">8 agents · 5 phases</div>
+      <div class="pcol jira"><span class="jtag feat">Jira tickets at end<br>4-section description</span></div>
     </div>
 
     <div class="pipe-row optional">
       <div class="pcol step">BA-03</div>
       <div class="pcol req"><span class="rpill opt">○ optional</span></div>
       <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba">/flowforge.</span>ideate</div>
-        <div class="pdesc">3–4 solution archetypes (fast-to-ship · clean-arch · lowest-risk), each with effort estimate, risk profile, and lane signal. Recommender selects preferred option.</div>
+        <div class="pcmd"><span class="sl-ba">/flowforge.</span>refine</div>
+        <div class="pdesc">Live meeting facilitation only. Loads agenda from /ff.require Phase 5 (0-refine-agenda.md). Guided item-by-item loop — option selection with custom option support, transcript upload offer. Spec Editor applies decisions to 1-spec.md. Jira Sync enforces hierarchy: theme → initiative → epic → task (no parentless tickets below theme).</div>
       </div>
-      <div class="pcol out">0-options.md</div>
-      <div class="pcol ag">5 agents</div>
-      <div class="pcol jira"><span class="jtag none">—</span></div>
+      <div class="pcol out">1-spec.md update · 0-meeting-log.md</div>
+      <div class="pcol ag">Spec Editor + Jira Sync</div>
+      <div class="pcol jira"><span class="jtag update">updates existing<br>tickets (hierarchy enforced)</span></div>
     </div>
 
-    <div class="pipe-row mandatory">
+    <div class="pipe-row optional">
       <div class="pcol step">BA-04</div>
-      <div class="pcol req"><span class="rpill mand-ba">★ required</span></div>
-      <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba-now">/flowforge.</span>require<span style="font-size:.68rem;color:var(--future-ba)"> (enhanced)</span></div>
-        <div class="pdesc">Requirements capture · 11-category coverage scan · 8-agent review panel (3 existing + 5 new: Completeness Auditor · Edge Case Hunter · Ambiguity Detector · GDPR Probe · Scope Guard)</div>
-      </div>
-      <div class="pcol out">1-spec.md</div>
-      <div class="pcol ag">8 agents</div>
-      <div class="pcol jira"><span class="jtag feat">1 feature ticket<br>on demand · user-prompted</span></div>
-    </div>
-
-    <div class="pipe-row optional">
-      <div class="pcol step">BA-05</div>
-      <div class="pcol req"><span class="rpill opt">○ optional</span></div>
-      <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba">/flowforge.</span>split</div>
-        <div class="pdesc">Epic decomposition → Story Slicer · MVP Identifier · Dependency Mapper. <code style="font-family:'JetBrains Mono',monospace">0-split-map.md</code> always written first; ticket creation is opt-in only.<span class="pflag">--create-tickets</span> off by default</div>
-      </div>
-      <div class="pcol out">0-split-map.md</div>
-      <div class="pcol ag">3 agents</div>
-      <div class="pcol jira"><span class="jtag stories">N story tickets<br><code style="font-size:.58rem">--create-tickets</code> flag only</span></div>
-    </div>
-
-    <div class="pipe-row optional">
-      <div class="pcol step">BA-06a</div>
-      <div class="pcol req"><span class="rpill opt">○ optional</span></div>
-      <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba">/flowforge.</span>refine<span class="pflag">--prep</span></div>
-        <div class="pdesc">Agenda Builder generates a structured, copy-paste-ready refinement meeting agenda from spec + split-map. Run before the meeting.</div>
-      </div>
-      <div class="pcol out">agenda (console)</div>
-      <div class="pcol ag">1 agent</div>
-      <div class="pcol jira"><span class="jtag none">—</span></div>
-    </div>
-
-    <div class="pipe-meeting-row">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--future-ba);opacity:.65">▶ refinement meeting</span>
-      <span style="font-size:.74rem;color:var(--muted-2)">Human-led session — decisions captured then fed into --sync</span>
-    </div>
-
-    <div class="pipe-row optional">
-      <div class="pcol step">BA-06b</div>
-      <div class="pcol req"><span class="rpill opt">○ optional</span></div>
-      <div class="pcol cmd">
-        <div class="pcmd"><span class="sl-ba">/flowforge.</span>refine<span class="pflag">--sync</span></div>
-        <div class="pdesc">Decision Transcriber extracts what was decided, scope changes, and deferred items → Jira Sync updates user-selected tickets → <code style="font-family:'JetBrains Mono',monospace">1-spec.md</code> and <code style="font-family:'JetBrains Mono',monospace">status.json</code> updated. User confirms before any write.</div>
-      </div>
-      <div class="pcol out">1-spec.md update</div>
-      <div class="pcol ag">2 agents</div>
-      <div class="pcol jira"><span class="jtag update">updates existing<br>tickets (confirmed)</span></div>
-    </div>
-
-    <div class="pipe-row optional">
-      <div class="pcol step">BA-07</div>
       <div class="pcol req"><span class="rpill opt">○ optional</span></div>
       <div class="pcol cmd">
         <div class="pcmd"><span class="sl-ba">/flowforge.</span>prd</div>
-        <div class="pdesc">Assembles all upstream files into a stakeholder PRD in non-technical language. PII scan blocks publish if personal data found. User previews before Confluence write.</div>
+        <div class="pdesc">Full PRD assembly (13 mandatory sections) and Confluence publish. Living document — auto-triggers on any engineering phase modifying 1-spec.md. Stores Confluence URL in status.json. User previews before Confluence write.</div>
       </div>
-      <div class="pcol out">Confluence page</div>
-      <div class="pcol ag">2 agents</div>
-      <div class="pcol jira"><span class="jtag none">—</span></div>
+      <div class="pcol out">0-prd.md · Confluence page</div>
+      <div class="pcol ag">2 agents · living doc</div>
+      <div class="pcol jira"><span class="jtag none">confluence_url → status.json</span></div>
     </div>
 
     <!-- ── DEV PIPELINE (existing) ── -->
@@ -1081,12 +993,12 @@
   <!-- Jira ticket creation detail -->
   <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
     <div class="callout future-cta" style="margin-top:0;">
-      <span class="lbl">Jira ticket — feature level · /ff.require</span>
-      <p><b>/flowforge.require</b> creates <b>one feature-level ticket</b> — the CIL epic or parent task. This is on-demand and user-prompted at the end of the spec session. The ticket is drafted from <code style="font-family:'JetBrains Mono',monospace">1-spec.md</code> and passes through the Ticket Quality Gate before any Jira write is made. Existing behaviour is unchanged by CIL-6148 — the 5 new spec-review agents are added, but ticket creation remains the same step at the same moment.</p>
+      <span class="lbl">Jira tickets — /ff.require (enhanced)</span>
+      <p><b>/flowforge.require enhanced</b> creates Jira tickets at the <b>end of Phase 5</b> — after spec capture, 8-agent review, decomposition, and agenda building are complete. Each ticket has 4 sections: <b>Refinement Brief</b> (Why/What) · <b>Solution Options</b> · <b>ACs</b> · <b>Refinement Agenda</b> (with numbered items from 0-refine-agenda.md). Decomposition sub-specs (Phase 4) create sub-tickets linked under the parent. Ticket creation is user-confirmed; Jira hierarchy is enforced: theme → initiative → epic → task.</p>
     </div>
     <div class="callout" style="margin-top:0;border-left:3px solid var(--auto);">
-      <span class="lbl" style="color:#7fd0c4;">Jira tickets — story level · /ff.split</span>
-      <p><b>/flowforge.split</b> can create <b>N story-level tickets</b> — one per independently deliverable story from the decomposition. Off by default: <code style="font-family:'JetBrains Mono',monospace">0-split-map.md</code> is always written first, then the user passes <code style="font-family:'JetBrains Mono',monospace">--create-tickets</code> to trigger Jira writes. All tickets are created atomically after user confirmation — no partial creates. CIL-6171 through CIL-6178 in this epic are exactly the kind of story-level tickets this command produces.</p>
+      <span class="lbl" style="color:#7fd0c4;">Jira sync — /ff.refine</span>
+      <p><b>/flowforge.refine</b> (live facilitation) updates existing Jira tickets after each agenda item is resolved. The <b>Jira Sync</b> agent enforces hierarchy — theme → initiative → epic → task — and refuses to create parentless tickets below theme level. All writes are user-confirmed. The meeting log is stored in <code style="font-family:'JetBrains Mono',monospace">0-meeting-log.md</code> and decisions are applied to <code style="font-family:'JetBrains Mono',monospace">1-spec.md</code> by the Spec Editor agent.</p>
     </div>
   </div>
 
@@ -1095,14 +1007,14 @@
     <span class="lbl">Minimum viable run — two commands, full pipeline reachable</span>
     <p>The entire BA upstream phase is additive. A feature can go from zero to a pushed spec and Jira ticket with just two commands:<br><br>
     <code style="font-family:'JetBrains Mono',monospace;color:var(--ember-hot)">/flowforge.start &lt;feature-id&gt;</code>&nbsp;&nbsp;→&nbsp;&nbsp;branch created · status.json initialised<br>
-    <code style="font-family:'JetBrains Mono',monospace;color:var(--ember-hot)">/flowforge.require &lt;feature-id&gt;</code>&nbsp;&nbsp;→&nbsp;&nbsp;spec · QA draft · Jira ticket · pushed to origin<br><br>
-    Every upstream command (<b>.discover · .research · .ideate · .split · .refine · .prd</b>) adds depth and traceability, but the dev pipeline is fully reachable from just those two. The richer the upstream, the fewer surprises in <b>.plan</b> and <b>.verify</b>.</p>
+    <code style="font-family:'JetBrains Mono',monospace;color:var(--ember-hot)">/flowforge.require &lt;feature-id&gt;</code>&nbsp;&nbsp;→&nbsp;&nbsp;5 phases · spec · split-map · agenda · Jira tickets · pushed to origin<br><br>
+    The three optional upstream commands (<b>.discover · .refine · .prd</b>) add depth and traceability, but the dev pipeline is fully reachable from just those two. The richer the upstream, the fewer surprises in <b>.plan</b> and <b>.verify</b>.</p>
   </div>
 
 
   <footer>
     <strong style="color:var(--muted)">Now (v1.1.1):</strong> <code>start → require → lane → plan → analyze → build → verify → fix → review</code>, with <code>/flowforge.express</code> and <code>/flowforge.fast</code> running full pipelines in a single command. QA commands: <code>qa.manual · qa.automation · qa.scenarios-from-history</code>. Supporting: <code>start · investigate · replay · status · init</code>.<br><br>
-    <strong style="color:var(--muted)">Future (CIL-6148):</strong> <code>start (patch) → discover → research → ideate → require+ → split → refine → prd</code> — 7 new commands + 1 patch to existing start, adding 15+ agents for the upstream BA phase. Target: −45% BA time per feature, −33% total cycle time.<br><br>
+    <strong style="color:var(--muted)">Future (CIL-6148):</strong> <code>start (patch) → discover [3 phases · 10 agents] → require enhanced [5 phases · 8 agents] → refine [live facilitation] → prd [13 sections · living doc]</code> — 1 patched command + 4 new commands, adding 15+ agents for the upstream BA phase. Target: −45% BA time per feature, −33% total cycle time.<br><br>
     Lanes: <code>Express · Fast · Standard · Heavy</code> — Express &amp; Fast automated via JIRA into a draft PR, Standard &amp; Heavy through the normal process; Heavy is classification-only with no automated pipeline. Ticket Quality Gate in <code>/flowforge.require</code> ensures Jira tickets have sufficient business context before generation. The engineer is always in charge: nothing merges without human review.
   </footer>
 
