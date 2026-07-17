@@ -3645,21 +3645,6 @@ function toggleUserSpend(h2El) {
   arrow.style.transform = open ? '' : 'rotate(90deg)';
 }
 
-// Move initiative section to bottom of container
-(function() {
-  var container = document.querySelector('.container');
-  var section = document.getElementById('init-section-wrap');
-  if (container && section) container.appendChild(section);
-})();
-
-// Move overall spend section to be first (after summary bar), FCP spend immediately after
-(function() {
-  var summaryBar = document.querySelector('.summary-bar');
-  var spendWrap = document.getElementById('spend-overall-wrap');
-  if (summaryBar && spendWrap) summaryBar.after(spendWrap);
-  var fcpWrap = document.getElementById('fcp-spend-wrap');
-  if (spendWrap && fcpWrap) spendWrap.after(fcpWrap);
-})();
 
 // Search
 (function() {
