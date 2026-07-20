@@ -90,7 +90,7 @@ for slug, prod_key, epics in INITIATIVES:
 
 def jira_search(jql, fields, max_results=500):
     auth = (JIRA_EMAIL, JIRA_TOKEN)
-    url  = f"{JIRA_URL}/rest/api/3/search"
+    url  = f"{JIRA_URL}/rest/api/3/search/jql"
     all_issues, start = [], 0
     fields_list = fields.split(",") if isinstance(fields, str) else fields
     while True:
