@@ -91,19 +91,21 @@ for slug, prod_key, epics in INITIATIVES:
 def jira_search(jql, fields, max_results=500):
     auth = (JIRA_EMAIL, JIRA_TOKEN)
     url  = f"{JIRA_URL}/rest/api/3/search/jql"
-    all_issues, start = [], 0
     fields_list = fields.split(",") if isinstance(fields, str) else fields
+    all_issues, next_token = [], None
     while True:
-        r = requests.post(url, auth=auth, json={
-            "jql": jql, "fields": fields_list,
-            "maxResults": 100, "startAt": start
-        }, timeout=30)
+        body = {"jql": jql, "fields": fields_list, "maxResults": 100}
+        if next_token:
+            body["nextPageToken"] = next_token
+        r = requests.post(url, auth=auth, json=body, timeout=30)
         r.raise_for_status()
         data = r.json()
         issues = data.get("issues", [])
         all_issues.extend(issues)
-        start += len(issues)
-        if start >= data.get("total", 0) or not issues:
+        if data.get("isLast", True) or not issues:
+            break
+        next_token = data.get("nextPageToken")
+        if not next_token:
             break
     return all_issues
 
