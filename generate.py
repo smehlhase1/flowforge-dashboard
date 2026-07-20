@@ -46,41 +46,46 @@ DASHBOARD_FILE = os.path.join(os.path.dirname(__file__), "index.html")
 # Tickets are matched by their parent field pointing to one of these epic keys.
 # A ticket whose parent is the initiative key itself (no sub-epic) goes into a
 # catch-all group for that initiative.
+# (slug, prod_key, iproj_label, display_title, [epic_keys])
 INITIATIVES = [
-    ("fox-uk",             "PROD-11100", ["PROD-12307","PROD-12353","PROD-13072","PROD-13071","PROD-12640","PROD-13070","PROD-13820"]),
-    ("travel",             "PROD-12933", ["PROD-13143","PROD-13062","PROD-13400","PROD-13145","PROD-13136","PROD-13282","PROD-13201","PROD-13245"]),
-    ("mddr",               "PROD-12356", ["PROD-12497","PROD-13196","PROD-13075","PROD-13221","PROD-13223"]),
-    ("nbg",                "PROD-13185", ["PROD-13244","PROD-13170","PROD-13171","PROD-13312","PROD-13320","PROD-13267","PROD-13415","PROD-13413","PROD-13535","PROD-12920","PROD-13403"]),
-    ("nbg-standing-order", "PROD-13287", ["PROD-13576","PROD-13577"]),
-    ("clara",              "PROD-13092", ["PROD-13255","PROD-13225","PROD-12536","PROD-13190","PROD-12535","PROD-12730"]),
-    ("global-ch",          "PROD-12331", ["PROD-12480","PROD-12481","PROD-12482","PROD-12383","PROD-12800","PROD-13301","PROD-13307","PROD-12300","PROD-13686","PROD-13304","PROD-12484"]),
-    ("global-azd",         "PROD-12339", ["PROD-12769","PROD-12770","PROD-12773","PROD-13502","PROD-13500"]),
-    ("global-azp",         "PROD-12514", ["PROD-13082","PROD-13083","PROD-13079"]),
-    ("top-viaggi",         "PROD-12344", ["PROD-12741"]),
-    ("westpac",            "PROD-11253", ["PROD-12292","PROD-13654"]),
-    ("allyz-ca",           "PROD-13100", ["PROD-13269"]),
-    ("coverwise",          "PROD-12115", ["PROD-12116"]),
-    ("netrisk",            "PROD-12355", []),
-    ("bbva",               "PROD-13037", []),
-    ("globus-threat",      "PROD-12332", ["PROD-13653","PROD-12978","PROD-12923"]),
-    ("ff-ba-pipeline",     "PROD-13115", ["PROD-13861","CIL-6148"]),
-    ("bmw",                "PROD-13231", ["PROD-13231","PROD-13233"]),
-    ("travel-claims",      "PROD-13491", ["PROD-13491"]),
-    ("clara-eha-widget",   "PROD-12960", ["PROD-12963"]),
-    ("jlr-wallbox",        "PROD-11449", ["PROD-11516"]),
-    ("global-aal",         "PROD-12340", ["PROD-13791","PROD-13701"]),
-    ("rrb",                "PROD-12919", ["PROD-13809"]),
-    ("hood",               "PROD-12918", ["PROD-13238"]),
-    ("cil-general",        "PROD-10026", ["PROD-12925"]),
+    ("fox-uk",             "PROD-11100", "[15011]",           "Fox UK (Day 1)",                                                          ["PROD-12307","PROD-12353","PROD-13072","PROD-13071","PROD-12640","PROD-13070","PROD-13820"]),
+    ("travel",             "PROD-12933", "[15803]",           "Fusion B2C US (Phase 1)",                                                 ["PROD-13143","PROD-13062","PROD-13400","PROD-13145","PROD-13136","PROD-13282","PROD-13201","PROD-13245"]),
+    ("mddr",               "PROD-12356", "[15044]",           "MDDR individual policies",                                                ["PROD-12497","PROD-13196","PROD-13075","PROD-13221","PROD-13223"]),
+    ("nbg",                "PROD-13185", "[15045]",           "NBG Motor",                                                               ["PROD-13244","PROD-13170","PROD-13171","PROD-13312","PROD-13320","PROD-13267","PROD-13415","PROD-13413","PROD-13535","PROD-12920","PROD-13403"]),
+    ("nbg-standing-order", "PROD-13287", "[15045]",           "NBG Financial Services (Payments, Commissions)",                         ["PROD-13576","PROD-13577"]),
+    ("clara",              "PROD-13092", "[15832]",           "Clara EHA Beneficiary Management and MP Access",                         ["PROD-13255","PROD-13225","PROD-12536","PROD-13190","PROD-12535","PROD-12730"]),
+    ("global-ch",          "PROD-12331", "[18201]",           "Global App CH Switzerland",                                               ["PROD-12480","PROD-12481","PROD-12482","PROD-12383","PROD-12800","PROD-13301","PROD-13307","PROD-12300","PROD-13686","PROD-13304","PROD-12484"]),
+    ("global-azd",         "PROD-12339", "[18202]",           "Global App AzD - Allianz Direct NL",                                     ["PROD-12769","PROD-12770","PROD-12773","PROD-13502","PROD-13500"]),
+    ("global-azp",         "PROD-12514", "[18204]",           "Global App - AUS Az Partners",                                           ["PROD-13082","PROD-13083","PROD-13079"]),
+    ("top-viaggi",         "PROD-12344", "[15041]",           "Travel Beneficiaries - Wave 1 - (ON/OFF Boarding) TOP VIAGGI (Italy)",   ["PROD-12741"]),
+    ("westpac",            "PROD-11253", "[15017]",           "[Westpac] Post-sales data flows: Policy, Claim and credit card cancellations", ["PROD-12292","PROD-13654"]),
+    ("allyz-ca",           "PROD-13100", "[60999]",           "Allyz Canada",                                                            ["PROD-13269"]),
+    ("coverwise",          "PROD-12115", "[15005 · 15019]",   "Coverwise - post go live",                                               ["PROD-12116"]),
+    ("netrisk",            "PROD-12355", "[15043]",           "Netrisk - COI Retrival",                                                  []),
+    ("bbva",               "PROD-13037", "[15036]",           "[BBVA/SISU] Implementation of new business partner",                      []),
+    ("globus-threat",      "PROD-12332", "[18200]",           "Global App - General work",                                               ["PROD-13653","PROD-12978","PROD-12923"]),
+    ("ff-ba-pipeline",     "PROD-13115", "[18200]",           "AI Rollout",                                                              ["PROD-13861","CIL-6148"]),
+    ("bmw",                "PROD-13231", "[15037]",           "BMW",                                                                     ["PROD-13231","PROD-13233"]),
+    ("travel-claims",      "PROD-13491", "[Travel Claims]",   "Travel Claims — Unified Claims View",                                    ["PROD-13491"]),
+    ("clara-eha-widget",   "PROD-12960", "[15832]",           "Clara Emergency Home Assistance",                                        ["PROD-12963"]),
+    ("jlr-wallbox",        "PROD-11449", "[15030]",           "JLR Wallbox",                                                             ["PROD-11516"]),
+    ("global-aal",         "PROD-12340", "[18203]",           "Global App Australia (AAL)",                                              ["PROD-13791","PROD-13701"]),
+    ("rrb",                "PROD-12919", "[15047]",           "AU Regional Banks (RRB)",                                                 ["PROD-13809"]),
+    ("hood",               "PROD-12918", "[15048]",           "Hood Group",                                                              ["PROD-13238"]),
+    ("cil-general",        "PROD-10026", "[15015]",           "CIL General — Non-Billable",                                             ["PROD-12925"]),
 ]
 
 # Map every epic key → initiative slug (built at runtime)
 EPIC_TO_INIT = {}
 INIT_EPICS   = {}  # slug → [epic keys]
 INIT_PROD    = {}  # slug → prod key
-for slug, prod_key, epics in INITIATIVES:
-    INIT_PROD[slug] = prod_key
-    INIT_EPICS[slug] = epics
+INIT_IPROJ   = {}  # slug → iproj label
+INIT_ITITLE  = {}  # slug → display title
+for slug, prod_key, iproj, ititle, epics in INITIATIVES:
+    INIT_PROD[slug]   = prod_key
+    INIT_EPICS[slug]  = epics
+    INIT_IPROJ[slug]  = iproj
+    INIT_ITITLE[slug] = ititle
     EPIC_TO_INIT[prod_key] = slug
     for e in epics:
         EPIC_TO_INIT[e] = slug
@@ -548,53 +553,43 @@ def patch_html(html, all_tickets, epic_titles):
         for t in unrouted[:10]:
             print(f"    {t['key']} parent={t['parent']}", file=sys.stderr)
 
-    # Build a lookup of the full initiative-block shell (head only) keyed by slug,
-    # then replace the entire init-section-body in one shot to avoid index drift.
-    section_start = html.find('<div id="init-section-body">')
-    section_end   = html.find('</div><!-- end init-section-body -->')
+    # Build all 25 initiative blocks from config — never reads existing HTML blocks.
+    section_start_tag = '<div id="init-section-body">'
+    section_end_tag   = '</div><!-- end init-section-body -->'
+    section_start = html.find(section_start_tag)
+    section_end   = html.find(section_end_tag)
     if section_start < 0 or section_end < 0:
         print("  ⚠ could not find init-section-body boundaries", file=sys.stderr)
     else:
-        old_section = html[section_start:section_end + len('</div><!-- end init-section-body -->')]
-
-        # For each initiative block in the OLD section, extract the head HTML
-        # (everything up to but not including <div class="initiative-body">)
-        # so we preserve sort-filter controls, ikey, iproj, ititle, etc.
         new_blocks = []
-        for slug, _, _ in INITIATIVES:
-            # Find this block in the OLD section
-            bs = old_section.find(f'data-init="{slug}"')
-            if bs < 0:
-                print(f"  ⚠ initiative block not found for {slug}", file=sys.stderr)
-                continue
-            # Find the start of the initiative-block div (walk back to the <div)
-            block_div_start = old_section.rfind('<div ', 0, bs)
-            # Find where initiative-body starts inside this block
-            body_tag_start = old_section.find('<div class="initiative-body"', bs)
-            # Head = from block_div_start up to (not including) <div class="initiative-body">
-            head_html = old_section[block_div_start:body_tag_start]
-
+        for slug, prod_key, iproj, ititle, _ in INITIATIVES:
             tickets_by_epic = init_ticket_map.get(slug, {})
             all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
-            new_icounts = build_icounts(all_init_tickets)
+            icounts_html = build_icounts(all_init_tickets)
 
-            # Update icounts in the extracted head
-            head_html = re.sub(
-                r'<div class="icounts">.*?</div>',
-                f'<div class="icounts">\n        {new_icounts}\n      </div>',
-                head_html, flags=re.DOTALL
+            head = (
+                f'    <div class="initiative-block" data-init="{slug}">\n'
+                f'    <div class="initiative-head" onclick="toggleInit(this)">\n'
+                f'      <span class="iarrow">▶</span>\n'
+                f'      <span class="ikey"><a href="{JIRA_URL}/browse/{prod_key}" target="_blank" '
+                f'style="color:inherit;text-decoration:none">{prod_key}</a></span>\n'
+                f'      <span class="iproj">{html_lib.escape(iproj)}</span>\n'
+                f'      <span class="ititle">{html_lib.escape(ititle)}</span>\n'
+                f'      <div class="icounts">\n        {icounts_html}\n      </div>\n'
+                f'    </div>\n'
+            )
+            body = build_initiative_body(slug, tickets_by_epic, epic_titles)
+            new_blocks.append(
+                head + body
+                + f'    </div><!-- end initiative-block data-init={slug} -->\n\n'
             )
 
-            new_body = build_initiative_body(slug, tickets_by_epic, epic_titles)
-            # Close the initiative-block div
-            new_blocks.append(head_html + new_body + '    </div><!-- end initiative-block data-init=' + slug + ' -->\n\n')
-
         new_section = (
-            '<div id="init-section-body">\n'
+            section_start_tag + '\n'
             + ''.join(new_blocks)
-            + '  </div><!-- end init-section-body -->'
+            + '  ' + section_end_tag
         )
-        html = html[:section_start] + new_section + html[section_end + len('</div><!-- end init-section-body -->'):]
+        html = html[:section_start] + new_section + html[section_end + len(section_end_tag):]
 
     # ── 2. Summary bar ─────────────────────────────────────────────────────
     bar_m = re.search(
@@ -655,7 +650,7 @@ def main():
     print(f"  {len(tickets)} tickets (Closed excluded)")
 
     # Fetch epic titles for all known epics
-    all_epic_keys = list({e for _, _, epics in INITIATIVES for e in epics if e})
+    all_epic_keys = list({e for _, _, _, _, epics in INITIATIVES for e in epics if e})
     print(f"Fetching titles for {len(all_epic_keys)} epics…")
     epic_titles = fetch_epic_titles(all_epic_keys)
 
