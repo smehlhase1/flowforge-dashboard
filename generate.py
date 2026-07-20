@@ -112,9 +112,8 @@ def jira_search(jql, fields, max_results=500):
 
 def fetch_all_flowforge_tickets():
     """Return list of dicts with fields we care about."""
-    jql = 'labels = "FlowForge" AND statusCategory != "Done" OR (labels = "FlowForge" AND statusCategory = "Done" AND updated >= -90d)'
-    # Simpler: just fetch all FlowForge-labelled tickets
-    jql = 'labels = "FlowForge" ORDER BY created ASC'
+    # CIL board only — PROD-* tickets are excluded intentionally
+    jql = 'project = CIL AND labels = "FlowForge" ORDER BY created ASC'
     fields = f"summary,status,assignee,reporter,parent,created,{AI_COST_FIELD},resolutiondate,labels"
     raw = jira_search(jql, fields)
     tickets = []
@@ -549,80 +548,53 @@ def patch_html(html, all_tickets, epic_titles):
         for t in unrouted[:10]:
             print(f"    {t['key']} parent={t['parent']}", file=sys.stderr)
 
-    # Replace each initiative-body in place
-    def replace_body(m):
-        # m captures: everything up to and including the initiative-body open tag,
-        # then the old body, then the closing tag
-        prefix = m.group(1)  # head + open tag
-        slug_m = re.search(r'data-init="([^"]+)"', prefix)
-        if not slug_m:
-            return m.group(0)
-        slug = slug_m.group(1)
-        tickets_by_epic = init_ticket_map.get(slug, {})
-        all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
+    # Build a lookup of the full initiative-block shell (head only) keyed by slug,
+    # then replace the entire init-section-body in one shot to avoid index drift.
+    section_start = html.find('<div id="init-section-body">')
+    section_end   = html.find('</div><!-- end init-section-body -->')
+    if section_start < 0 or section_end < 0:
+        print("  ⚠ could not find init-section-body boundaries", file=sys.stderr)
+    else:
+        old_section = html[section_start:section_end + len('</div><!-- end init-section-body -->')]
 
-        # Update icounts in the head
-        new_icounts = build_icounts(all_init_tickets)
-        new_prefix = re.sub(
-            r'<div class="icounts">.*?</div>',
-            f'<div class="icounts">{new_icounts}</div>',
-            prefix, flags=re.DOTALL
-        )
-        new_body = build_initiative_body(slug, tickets_by_epic, epic_titles)
-        return new_prefix + new_body
-
-    # Pattern: from data-init="..." through the initiative-body closing tag
-    html = re.sub(
-        r'(<div class="initiative-block" data-init="[^"]*".*?<div class="initiative-body"[^>]*>)'
-        r'.*?'
-        r'(</div><!-- end initiative-body -->|(?=\s*</div><!-- end initiative-body))',
-        lambda m: replace_body(m) if '</div><!-- end initiative-body' not in m.group(0) else m.group(0),
-        html, flags=re.DOTALL
-    )
-
-    # Simpler approach: replace each initiative-body content directly
-    for slug, _, _ in INITIATIVES:
-        tickets_by_epic = init_ticket_map.get(slug, {})
-        all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
-        new_icounts = build_icounts(all_init_tickets)
-        new_body_content = build_initiative_body(slug, tickets_by_epic, epic_titles)
-
-        # Find the initiative block for this slug
-        block_start = html.find(f'data-init="{slug}"')
-        if block_start < 0:
-            print(f"  ⚠ initiative block not found for {slug}", file=sys.stderr)
-            continue
-
-        # Find the initiative-body within this block
-        body_start = html.find('<div class="initiative-body"', block_start)
-        body_end   = html.find('</div><!-- end initiative-body -->', body_start)
-
-        if body_end < 0:
-            # No explicit end comment — find the matching closing div
-            # Count to the next initiative-block or end of init-section
-            next_block = html.find('<div class="initiative-block"', block_start + 10)
-            if next_block < 0:
-                next_block = html.find('<!-- end init-section-body -->')
-            # Find last </div></div> before next_block
-            chunk = html[body_start:next_block]
-            # The initiative-body closing is the second-to-last </div> in the block
-            inner_end = chunk.rfind('</div>\n    </div>')
-            if inner_end >= 0:
-                body_end_abs = body_start + inner_end + len('</div>')
-            else:
-                print(f"  ⚠ could not find end of initiative-body for {slug}", file=sys.stderr)
+        # For each initiative block in the OLD section, extract the head HTML
+        # (everything up to but not including <div class="initiative-body">)
+        # so we preserve sort-filter controls, ikey, iproj, ititle, etc.
+        new_blocks = []
+        for slug, _, _ in INITIATIVES:
+            # Find this block in the OLD section
+            bs = old_section.find(f'data-init="{slug}"')
+            if bs < 0:
+                print(f"  ⚠ initiative block not found for {slug}", file=sys.stderr)
                 continue
-        else:
-            body_end_abs = body_end
+            # Find the start of the initiative-block div (walk back to the <div)
+            block_div_start = old_section.rfind('<div ', 0, bs)
+            # Find where initiative-body starts inside this block
+            body_tag_start = old_section.find('<div class="initiative-body"', bs)
+            # Head = from block_div_start up to (not including) <div class="initiative-body">
+            head_html = old_section[block_div_start:body_tag_start]
 
-        # Replace icounts in the head
-        head_region = html[block_start:body_start]
-        new_head_region = re.sub(
-            r'<div class="icounts">.*?</div>',
-            f'<div class="icounts">\n        {new_icounts}\n      </div>',
-            head_region, flags=re.DOTALL
+            tickets_by_epic = init_ticket_map.get(slug, {})
+            all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
+            new_icounts = build_icounts(all_init_tickets)
+
+            # Update icounts in the extracted head
+            head_html = re.sub(
+                r'<div class="icounts">.*?</div>',
+                f'<div class="icounts">\n        {new_icounts}\n      </div>',
+                head_html, flags=re.DOTALL
+            )
+
+            new_body = build_initiative_body(slug, tickets_by_epic, epic_titles)
+            # Close the initiative-block div
+            new_blocks.append(head_html + new_body + '    </div><!-- end initiative-block data-init=' + slug + ' -->\n\n')
+
+        new_section = (
+            '<div id="init-section-body">\n'
+            + ''.join(new_blocks)
+            + '  </div><!-- end init-section-body -->'
         )
-        html = html[:block_start] + new_head_region + new_body_content + html[body_end_abs:]
+        html = html[:section_start] + new_section + html[section_end + len('</div><!-- end init-section-body -->'):]
 
     # ── 2. Summary bar ─────────────────────────────────────────────────────
     bar_m = re.search(
