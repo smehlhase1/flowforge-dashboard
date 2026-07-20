@@ -370,7 +370,7 @@ def build_created_leaderboard(all_tickets):
         cards += lb_card(rank, initials, name, len(tickets), "tickets", rows, open_=(i == 0))
 
     return (
-        f'🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>\n\n'
+        f'<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>\n\n'
         f'  <div class="initiative-block" style="margin-bottom:16px">\n'
         f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #d97706">\n'
         f'      <span class="iarrow">▶</span>\n'
@@ -412,7 +412,7 @@ def build_done_leaderboard(all_tickets):
         cards += lb_card(rank, initials, name, len(tickets), "done", rows, open_=(i == 0), green=True)
 
     return (
-        f'✅ Top 5 Authors — Most FlowForge Tickets Done</h2>\n\n'
+        f'<h2>✅ Top 5 Authors — Most FlowForge Tickets Done</h2>\n\n'
         f'  <div class="initiative-block" style="margin-bottom:16px">\n'
         f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #16a34a">\n'
         f'      <span class="iarrow">▶</span>\n'
@@ -455,7 +455,7 @@ def build_top10_devs(all_tickets):
         cards += lb_card(rank, initials, name, len(tickets), "done", rows, open_=(i == 0), green=True)
 
     return (
-        f'🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>\n\n'
+        f'<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>\n\n'
         f'  <div class="initiative-block" style="margin-bottom:16px">\n'
         f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #16a34a">\n'
         f'      <span class="iarrow">▶</span>\n'
@@ -646,20 +646,20 @@ def patch_html(html, all_tickets, epic_titles):
         html = html[:ba_open] + new_ba + html[ba_end:]
 
     # ── 4. Created leaderboard ──────────────────────────────────────────────
-    created_h2 = html.find('🏆 Top 5 Authors — Most FlowForge Tickets Created')
-    done_h2    = html.find('✅ Top 5 Authors — Most FlowForge Tickets Done')
+    created_h2 = html.find('<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created')
+    done_h2    = html.find('<h2>✅ Top 5 Authors — Most FlowForge Tickets Done')
     if created_h2 > 0 and done_h2 > 0:
         html = html[:created_h2] + build_created_leaderboard(all_tickets) + html[done_h2:]
 
     # ── 5. Done leaderboard ─────────────────────────────────────────────────
-    done_h2  = html.find('✅ Top 5 Authors — Most FlowForge Tickets Done')
-    top10_h2 = html.find('🏅 Top 10 Developers — Most FlowForge Tickets Done')
+    done_h2  = html.find('<h2>✅ Top 5 Authors — Most FlowForge Tickets Done')
+    top10_h2 = html.find('<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done')
     if done_h2 > 0 and top10_h2 > 0:
         html = html[:done_h2] + build_done_leaderboard(all_tickets) + html[top10_h2:]
 
     # ── 6. Top 10 Developers Done leaderboard ──────────────────────────────
-    top10_h2    = html.find('🏅 Top 10 Developers — Most FlowForge Tickets Done')
-    active_h2   = html.find('⚡ Top 10 Developers')
+    top10_h2    = html.find('<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done')
+    active_h2   = html.find('<h2>⚡ Top 10 Developers')
     if top10_h2 > 0 and active_h2 > 0:
         html = html[:top10_h2] + build_top10_devs(all_tickets) + html[active_h2:]
 
