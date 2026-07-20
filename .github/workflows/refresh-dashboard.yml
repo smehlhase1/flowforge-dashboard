@@ -1,10 +1,10 @@
 name: Refresh FlowForge Dashboard
 
 on:
-  schedule:
-    # 09:00 UTC daily (11:00 CEST / 10:00 CET)
-    - cron: '0 9 * * *'
-  workflow_dispatch:  # allow manual trigger from GitHub UI
+  # schedule disabled until generator is fixed and tested
+  # schedule:
+  #   - cron: '0 9 * * *'
+  workflow_dispatch:  # manual trigger only
 
 permissions:
   contents: write
