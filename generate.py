@@ -90,11 +90,12 @@ for slug, prod_key, epics in INITIATIVES:
 
 def jira_search(jql, fields, max_results=500):
     auth = (JIRA_EMAIL, JIRA_TOKEN)
-    url  = f"{JIRA_URL}/rest/api/2/search"
+    url  = f"{JIRA_URL}/rest/api/3/search"
     all_issues, start = [], 0
+    fields_list = fields.split(",") if isinstance(fields, str) else fields
     while True:
-        r = requests.get(url, auth=auth, params={
-            "jql": jql, "fields": fields,
+        r = requests.post(url, auth=auth, json={
+            "jql": jql, "fields": fields_list,
             "maxResults": 100, "startAt": start
         }, timeout=30)
         r.raise_for_status()
@@ -514,7 +515,7 @@ def fetch_epic_titles(epic_keys):
             continue
         try:
             r = requests.get(
-                f"{JIRA_URL}/rest/api/2/issue/{key}",
+                f"{JIRA_URL}/rest/api/3/issue/{key}",
                 auth=auth, params={"fields": "summary"}, timeout=15
             )
             if r.ok:
