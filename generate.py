@@ -205,13 +205,14 @@ for slug, prod_key, iproj, ititle, epics in INITIATIVES:
 
 def jira_search(jql, fields, expand=None):
     auth = (JIRA_EMAIL, JIRA_TOKEN)
-    url  = f"{JIRA_URL}/rest/api/3/search/jql"
     fields_list = fields.split(",") if isinstance(fields, str) else fields
     all_issues, next_token = [], None
+    expand_str = ",".join(expand) if isinstance(expand, list) else (expand or "")
     while True:
+        url = f"{JIRA_URL}/rest/api/3/search/jql"
+        if expand_str:
+            url += f"?expand={expand_str}"
         body = {"jql": jql, "fields": fields_list, "maxResults": 100}
-        if expand:
-            body["expand"] = expand
         if next_token:
             body["nextPageToken"] = next_token
         r = requests.post(url, auth=auth, json=body, timeout=30)
