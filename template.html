@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowForge AI Tickets Dashboard</title>
+<style>
+  :root {
+    --done:    #16a34a; --done-lt: #dcfce7;
+    --wip:     #d97706; --wip-lt:  #fef3c7;
+    --todo:    #6b7280; --todo-lt: #f3f4f6;
+    --hold:    #7c3aed; --hold-lt: #ede9fe;
+    --red:     #dc2626; --red-lt:  #fee2e2;
+    --blue:    #2563eb; --blue-lt: #eff6ff;
+    --border:  #e5e7eb; --text: #111827; --muted: #6b7280;
+    --ai:      #7c3aed; --ai-lt:   #ede9fe;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; color: var(--text); background: #f9fafb; }
+  a { color: var(--blue); text-decoration: none; } a:hover { text-decoration: underline; }
+
+  header { background: linear-gradient(135deg, #3b0764 0%, #6d28d9 100%); color: #fff; padding: 32px 40px 28px; }
+  header .inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+  header .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .6; margin-bottom: 8px; }
+  header h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  header .sub { margin-top: 6px; opacity: .65; font-size: 13px; }
+  .ai-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; margin-top: 14px; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  /* Search */
+  .search-wrap { margin-bottom: 20px; position: relative; }
+  .search-wrap input { width: 100%; padding: 10px 16px 10px 42px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fff; color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
+  .search-wrap input:focus { border-color: var(--ai); box-shadow: 0 0 0 3px rgba(124,58,237,.12); }
+  .search-wrap .si { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+  .search-wrap .sc { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); }
+
+  /* Summary bar */
+  .summary-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 28px; }
+  .summary-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; }
+  .summary-card .num { font-size: 24px; font-weight: 700; line-height: 1; }
+  .summary-card .lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .summary-card.purple .num { color: var(--ai); }
+  .summary-card.green  .num { color: var(--done); }
+  .summary-card.amber  .num { color: var(--wip); }
+  .summary-card.gray   .num { color: var(--todo); }
+  .summary-card.blue   .num { color: var(--blue); }
+  .summary-card.red    .num { color: var(--red); }
+  .summary-card.teal   .num { color: #0891b2; }
+
+  /* Section headings */
+  h2 { font-size: 16px; font-weight: 700; color: var(--text); margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .badge-done     { background: var(--done-lt); color: var(--done); }
+  .badge-wip      { background: var(--wip-lt);  color: var(--wip); }
+  .badge-todo     { background: var(--todo-lt); color: var(--todo); }
+  .badge-hold     { background: var(--hold-lt); color: var(--hold); }
+  .badge-closed   { background: #f0fdf4; color: #166534; }
+  .badge-review   { background: #dbeafe; color: #1d4ed8; }
+  .badge-ai       { background: var(--ai-lt);  color: var(--ai); }
+
+  /* Initiative group */
+  .initiative-block { margin-bottom: 20px; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .initiative-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #faf5ff; border-bottom: 1px solid #e9d5ff; cursor: pointer; user-select: none; }
+  .initiative-head .ikey { font-size: 11px; font-family: monospace; color: var(--ai); flex-shrink: 0; }
+  .initiative-head .iproj { font-size: 11px; font-weight: 600; color: var(--muted); flex-shrink: 0; }
+  .initiative-head .ititle { font-size: 13px; font-weight: 700; flex: 1; }
+  .initiative-head .icounts { display: flex; gap: 6px; flex-shrink: 0; }
+  .initiative-head .iarrow { font-size: 9px; color: var(--muted); transition: transform .15s; flex-shrink: 0; }
+  .initiative-block.open .iarrow { transform: rotate(90deg); }
+  .initiative-body { display: none; }
+  .initiative-block.open .initiative-body { display: block; }
+
+  /* Epic sub-group */
+  .epic-group { border-bottom: 1px solid #f3f4f6; }
+  .epic-group:last-child { border-bottom: none; }
+  .epic-group-head { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #fefce8; border-bottom: 1px solid #fef08a; }
+  .epic-group-head .eg-key { font-size: 10px; font-family: monospace; color: var(--wip); flex-shrink: 0; }
+  .epic-group-head .eg-title { font-size: 12px; font-weight: 600; flex: 1; color: #78350f; }
+  .epic-group-head .eg-count { font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+  /* Ticket rows */
+  .ticket-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .ticket-table th { padding: 7px 12px; text-align: left; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: #f9fafb; border-bottom: 1px solid var(--border); overflow: hidden; white-space: nowrap; }
+  .ticket-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; font-size: 12px; vertical-align: middle; overflow: hidden; }
+  .ticket-table th:nth-child(1), .ticket-table td:nth-child(1) { width: 96px; }
+  .ticket-table th:nth-child(2), .ticket-table td:nth-child(2) { width: auto; }
+  .ticket-table th:nth-child(3), .ticket-table td:nth-child(3) { width: 130px; }
+  .ticket-table th:nth-child(4), .ticket-table td:nth-child(4) { width: 120px; }
+  .ticket-table th:nth-child(5), .ticket-table td:nth-child(5) { width: 152px; }
+  .ticket-table th:nth-child(6), .ticket-table td:nth-child(6) { width: 82px; }
+  .ticket-table th:nth-child(7), .ticket-table td:nth-child(7) { width: 74px; }
+  .ticket-table th:nth-child(8), .ticket-table td:nth-child(8) { width: 74px; }
+  .ticket-table tr:last-child td { border-bottom: none; }
+  .ticket-table tr:hover td { background: #faf5ff; }
+  .ticket-table .t-key { font-family: monospace; font-size: 11px; white-space: nowrap; }
+  .ticket-table .t-summary { color: #374151; word-break: break-word; }
+  .ticket-table .t-who { color: var(--muted); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-date { color: var(--muted); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-done { color: var(--done); white-space: nowrap; font-size: 11px; }
+  .ticket-table .t-done-na { color: #d1d5db; font-size: 11px; }
+  .ticket-table .t-cost { color: #6d28d9; white-space: nowrap; font-size: 11px; font-weight: 600; }
+  .ticket-table .t-cost-na { color: #d1d5db; font-size: 11px; }
+  .badge-cost { background: #ede9fe; color: #6d28d9; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+  /* Author section */
+  .author-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+  .author-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .author-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border-bottom: 1px solid var(--border); }
+  .author-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--ai), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .author-name { font-size: 13px; font-weight: 700; flex: 1; }
+  .author-count { font-size: 11px; color: var(--muted); }
+  .author-body { padding: 0; }
+  .author-ticket { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
+  .author-ticket:last-child { border-bottom: none; }
+  .author-ticket .at-key { font-family: monospace; color: var(--blue); flex-shrink: 0; min-width: 70px; }
+  .author-ticket .at-title { flex: 1; color: #374151; }
+  .author-ticket .at-date { color: var(--muted); flex-shrink: 0; white-space: nowrap; }
+
+  /* Leaderboard */
+  .leaderboard { display: flex; flex-direction: column; gap: 8px; }
+  .lb-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .lb-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; user-select: none; }
+  .lb-head:hover { background: #faf5ff; }
+  .lb-rank { font-size: 18px; font-weight: 800; width: 28px; text-align: center; flex-shrink: 0; color: var(--muted); }
+  .lb-rank.rank-1 { color: #f59e0b; }
+  .lb-rank.rank-2 { color: #94a3b8; }
+  .lb-rank.rank-3 { color: #b45309; }
+  .lb-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--ai), #a855f7); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .lb-avatar.green-grad { background: linear-gradient(135deg, var(--done), #22c55e); }
+  .lb-name { font-size: 14px; font-weight: 700; flex: 1; }
+  .lb-count { font-size: 22px; font-weight: 800; color: var(--ai); min-width: 32px; text-align: right; flex-shrink: 0; }
+  .lb-count.green-count { color: var(--done); }
+  .lb-avatar.blue-grad { background: linear-gradient(135deg, var(--blue), #60a5fa); }
+  .lb-count.blue-count { color: var(--blue); }
+  .lb-count-lbl { font-size: 10px; color: var(--muted); margin-left: 4px; flex-shrink: 0; }
+  .lb-arrow { font-size: 9px; color: var(--muted); transition: transform .15s; margin-left: 8px; flex-shrink: 0; }
+  .lb-card.open .lb-arrow { transform: rotate(90deg); }
+  .lb-body { display: none; border-top: 1px solid #f3f4f6; }
+  .lb-card.open .lb-body { display: block; }
+  .lb-ticket { display: flex; align-items: center; gap: 8px; padding: 7px 16px; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
+  .lb-ticket:last-child { border-bottom: none; }
+  .lb-ticket .lt-key { font-family: monospace; color: var(--blue); flex-shrink: 0; min-width: 76px; }
+  .lb-ticket .lt-title { flex: 1; color: #374151; }
+
+  /* ── Bedrock Spend ── */
+  .spend-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .spend-table-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+  .spend-table { width: 100%; border-collapse: collapse; }
+  .spend-table th { padding: 8px 14px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: #f9fafb; border-bottom: 1px solid var(--border); }
+  .spend-table td { padding: 8px 14px; border-bottom: 1px solid #f3f4f6; font-size: 12px; vertical-align: middle; }
+  .spend-table tr:last-child td { border-bottom: none; }
+  .spend-table tr:hover td { background: #faf5ff; }
+  .cost-strong { font-weight: 700; color: #0f172a; }
+  .spend-bar-wrap { width: 130px; }
+  .spend-bar { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .spend-bar.model-bar { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+  .model-pct { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .user-spend-list { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .user-spend-row { display: flex; align-items: center; gap: 12px; padding: 9px 16px; border-bottom: 1px solid #f3f4f6; }
+  .user-spend-row:last-child { border-bottom: none; }
+  .user-spend-row:hover { background: #faf5ff; }
+  .usr-rank { font-size: 12px; font-weight: 700; width: 22px; text-align: center; color: var(--muted); flex-shrink: 0; }
+  .usr-rank.r1 { color: #f59e0b; }
+  .usr-rank.r2 { color: #94a3b8; }
+  .usr-rank.r3 { color: #b45309; }
+  .usr-name { font-size: 13px; font-weight: 600; flex: 1; color: #1e293b; font-family: monospace; }
+  .usr-req { font-size: 11px; color: var(--muted); white-space: nowrap; width: 90px; text-align: right; flex-shrink: 0; }
+  .usr-bar-wrap { width: 140px; flex-shrink: 0; }
+  .usr-bar { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #7c3aed, #a855f7); }
+  .usr-cost { font-size: 14px; font-weight: 800; color: #0f172a; white-space: nowrap; width: 76px; text-align: right; flex-shrink: 0; }
+
+  /* s-hide for search */
+  .s-hide { display: none !important; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div>
+      <div class="eyebrow">FlowForge · Claude Code AI</div>
+      <h1>FlowForge Tickets Dashboard</h1>
+      <p class="sub">All Jira tickets carrying the <strong>FlowForge</strong> label — created with Claude Code AI · Last pull: <!-- SLOT:last_pull --></p>
+      <div class="ai-badge"><!-- SLOT:badge_stats --></div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <span class="si">🔍</span>
+    <input type="text" id="ff-search" placeholder="Search tickets, summaries, assignees, authors…" autocomplete="off">
+    <span class="sc" id="ff-count"></span>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="summary-bar" style="grid-template-columns: repeat(5, 1fr)">
+<!-- SLOT:summary_dynamic -->
+
+    <div class="summary-card purple"><div class="num">$11,219</div><div class="lbl">Combined Bedrock Total</div></div>
+    <div class="summary-card purple"><div class="num">$11,166</div><div class="lbl">AWS Bedrock (Jun 2 – Jul 16)</div></div>
+    <div class="summary-card blue"><div class="num">$53.30</div><div class="lbl">FCP Bedrock (Jun–Jul)</div></div>
+    <div class="summary-card blue"><div class="num">188,859</div><div class="lbl">Total Requests</div></div>
+    <div class="summary-card amber"><div class="num">67</div><div class="lbl">Peak Active Users · Jul 13</div></div>
+    <div class="summary-card green"><div class="num">$248</div><div class="lbl">Avg Daily Cost</div></div>
+    <div class="summary-card red"><div class="num">23</div><div class="lbl">Avg Daily Users</div></div>
+    <div class="summary-card teal"><div class="num">$10.78</div><div class="lbl">Avg Daily Cost / User</div></div>
+    <!-- SLOT:avg_ai_cost_card -->
+  
+  
+  
+  
+  </div>
+
+  <div id="init-section-wrap">
+  <h2>✦ FlowForge Tickets — by Initiative &amp; Epic</h2>
+  <div id="init-section-body">
+<!-- SLOT:initiatives -->
+  </div><!-- end init-section-body -->
+  </div><!-- end init-section-wrap -->
+
+  <!-- ══ Section 3: Top 5 Authors by Ticket Count ══ -->
+  <h2>🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>
+
+<!-- SLOT:leaderboard_created -->
+  <h2>✅ Top 5 Authors — Most FlowForge Tickets Done</h2>
+
+<!-- SLOT:leaderboard_done -->
+  <h2>🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>
+
+<!-- SLOT:leaderboard_top10_done -->
+
+  <!-- ══ Section 6: Top 10 Assignees — Active Work ══ -->
+  <h2>⚡ Top 10 Developers — Most Active FlowForge Tickets <span style="font-size:12px;font-weight:400;color:var(--muted)">(excl. To Do / AI Gen / QA)</span></h2>
+  <div class="author-grid">
+
+    <div class="author-card" data-assignee="mahmoud-mohamed">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">MM</div>
+        <div class="author-name">Mahmoud Mohamed</div>
+        <div class="author-count">4 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5597" target="_blank">CIL-5597</a><span class="at-title">Global App AzD NL — e2e: List Policies, Get Policy — Product title related mapping</span><span class="badge badge-wip">In Validation</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5352" target="_blank">CIL-5352</a><span class="at-title">Global App AzD — Remove product_type mapping for Direct NL policies</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5574" target="_blank">CIL-5574</a><span class="at-title">Global App AzD — API Draft: Status Notification Info</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5474" target="_blank">CIL-5474</a><span class="at-title">[CHOE] Mock enabled vs Mock disabled: Get Person endpoint response differs</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="mehdi-makki">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">MM</div>
+        <div class="author-name">Mehdi Makki</div>
+        <div class="author-count">3 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5766" target="_blank">CIL-5766</a><span class="at-title">[NBG Property] Integrate Get Policy Document with AZ GR — Policy document retrieval</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5535" target="_blank">CIL-5535</a><span class="at-title">[NBG Motor] motor service: Withdraw a created amendment due payment</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5618" target="_blank">CIL-5618</a><span class="at-title">[NBG Property] sisu api: Extend POST /quote fields for enriched coverage and binding offer data</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5083" target="_blank">CIL-5083</a><span class="at-title">[sisu-api] Introduce Amend Policy endpoint</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="alex-yaroshenko">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">AY</div>
+        <div class="author-name">Alex Yaroshenko</div>
+        <div class="author-count">3 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5394" target="_blank">CIL-5394</a><span class="at-title">Global App AzD — Implement parallel calls for Get Policy endpoint</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5575" target="_blank">CIL-5575</a><span class="at-title">Global App AzD — Integrate updated API spec from Direct NL</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5573" target="_blank">CIL-5573</a><span class="at-title">Global App AzD — API draft: Add product_name to Travel and LegalAid additional_data</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="danylo-lubenets">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">DL</div>
+        <div class="author-name">Danylo Lubenets</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5773" target="_blank">CIL-5773</a><span class="at-title">[NBG Motor] Accept an endorsement and immediately issue via AZ Greece charge</span><span class="badge badge-done">Waiting For Merge</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5691" target="_blank">CIL-5691</a><span class="at-title">[NBG UL] sisu api: Introduce Quote endpoint in new Life Insurance API</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5681" target="_blank">CIL-5681</a><span class="at-title">[NBG Property] Integrate Get Policy Document with AZ GR — applications document</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="mert-akman">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">MA</div>
+        <div class="author-name">Mert Akman</div>
+        <div class="author-count">2 done</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5699" target="_blank">CIL-5699</a><span class="at-title">[NBG Property] sisu api: Extend fields to Property POST /policies for issuance</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5682" target="_blank">CIL-5682</a><span class="at-title">[NBG Property] sisu api: Introduce endpoint for Issuance of Property policy</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="andrey-skoryk">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">AS</div>
+        <div class="author-name">Andrey Skoryk</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5347" target="_blank">CIL-5347</a><span class="at-title">[CHOE] provider &amp; discovery: Support updating a vehicle under amendments endpoint</span><span class="badge badge-wip">In Progress</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-4279" target="_blank">CIL-4279</a><span class="at-title">[CHOE] provider &amp; discovery: Create Green Card (/policies/{id}/documents)</span><span class="badge badge-wip">QA To Do</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="daria-gorokhova">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">DG</div>
+        <div class="author-name">Daria Gorokhova</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5103" target="_blank">CIL-5103</a><span class="at-title">[MDDR] Reusing created ABS person for Policy endpoint</span><span class="badge badge-wip">QA To Do</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5112" target="_blank">CIL-5112</a><span class="at-title">[sisu-api] Introduce accept Amend Policy endpoint</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="dmitry-kudryashov">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">DK</div>
+        <div class="author-name">Dmitry Kudryashov</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5728" target="_blank">CIL-5728</a><span class="at-title">[CIL-topviaggi-crosslob] Fix Top Viaggi routing: change InsuranceType to CROSS_LOB</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5583" target="_blank">CIL-5583</a><span class="at-title">Extend create and update beneficiary endpoints with EHA home-specific fields</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="jose-gil">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">JG</div>
+        <div class="author-name">Jose Gil</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5641" target="_blank">CIL-5641</a><span class="at-title">Clara — Create new provider Lib Home Assistance Contract Management</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5640" target="_blank">CIL-5640</a><span class="at-title">Clara — Add client credentials + Product Code for Widget &amp; Metaportal</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+    <div class="author-card" data-assignee="mario-pinderi">
+      <div class="author-head">
+        <div class="author-avatar" style="background:linear-gradient(135deg,#2563eb,#60a5fa)">MP</div>
+        <div class="author-name">Mario Pinderi</div>
+        <div class="author-count">2 tickets</div>
+      </div>
+      <div class="author-body">
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5648" target="_blank">CIL-5648</a><span class="at-title">[travel-service] Webhook Endpoint not writing Logzilla Logs</span><span class="badge badge-done">Done</span></div>
+        <div class="author-ticket"><a class="at-key" href="https://sisu-agile.atlassian.net/browse/CIL-5571" target="_blank">CIL-5571</a><span class="at-title">[Fox UK] Main Quote Not Returned in List Quotes when only Base Policy is saved</span><span class="badge badge-done">Done</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ Section 6: By Author ══ -->
+  <h2 id="by-author-h2" style="cursor:pointer;user-select:none" onclick="toggleByAuthor()">👤 FlowForge Tickets — by Author <span id="by-author-arrow" style="font-size:12px;color:var(--muted);font-weight:400;margin-left:8px;transition:transform .15s;display:inline-block">▼</span></h2>
+  <div id="by-author-body">
+<div class="author-grid">
+<!-- SLOT:by_author -->
+</div>
+</div><!-- end by-author-body -->
+
+  <!-- ══ Section 7: AWS Bedrock Spend — By User ══ -->
+  <h2 style="cursor:pointer;user-select:none" onclick="toggleUserSpend(this)">👤 AWS Bedrock Spend — By User (Jun 2 – Jul 16, 2026) <span class="usr-sec-arrow" style="font-size:12px;color:var(--muted);font-weight:400;transition:transform .15s;display:inline-block">▶</span></h2>
+  <div id="user-spend-body" style="display:none">
+    <div class="user-spend-row"><span class="usr-rank r1">1</span><span class="usr-name">flowforge-gh-workflow</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:100.0%"></div></div><span class="usr-cost">$1,275.87</span></div>
+    <div class="user-spend-row"><span class="usr-rank r2">2</span><span class="usr-name">igormishinsisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:43.0%"></div></div><span class="usr-cost">$548.85</span></div>
+    <div class="user-spend-row"><span class="usr-rank r3">3</span><span class="usr-name">AlexYaroshenko</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:35.3%"></div></div><span class="usr-cost">$450.60</span></div>
+    <div class="user-spend-row"><span class="usr-rank">4</span><span class="usr-name">hzamani</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:33.1%"></div></div><span class="usr-cost">$422.10</span></div>
+    <div class="user-spend-row"><span class="usr-rank">5</span><span class="usr-name">smehlhase1</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:32.4%"></div></div><span class="usr-cost">$413.62</span></div>
+    <div class="user-spend-row"><span class="usr-rank">6</span><span class="usr-name">itsmahmoudmo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:30.2%"></div></div><span class="usr-cost">$384.71</span></div>
+    <div class="user-spend-row"><span class="usr-rank">7</span><span class="usr-name">mahdimakki</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:26.1%"></div></div><span class="usr-cost">$332.92</span></div>
+    <div class="user-spend-row"><span class="usr-rank">8</span><span class="usr-name">andrei.okhotnikov</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:19.9%"></div></div><span class="usr-cost">$253.41</span></div>
+    <div class="user-spend-row"><span class="usr-rank">9</span><span class="usr-name">markamdev</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:18.8%"></div></div><span class="usr-cost">$239.49</span></div>
+    <div class="user-spend-row"><span class="usr-rank">10</span><span class="usr-name">Goga-sam</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:18.3%"></div></div><span class="usr-cost">$233.57</span></div>
+    <div class="user-spend-row"><span class="usr-rank">11</span><span class="usr-name">makman95</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:18.0%"></div></div><span class="usr-cost">$229.77</span></div>
+    <div class="user-spend-row"><span class="usr-rank">12</span><span class="usr-name">siarhei.kisialeu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:15.0%"></div></div><span class="usr-cost">$190.77</span></div>
+    <div class="user-spend-row"><span class="usr-rank">13</span><span class="usr-name">sbaghirov123</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:14.7%"></div></div><span class="usr-cost">$187.11</span></div>
+    <div class="user-spend-row"><span class="usr-rank">14</span><span class="usr-name">igorkochman</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:14.0%"></div></div><span class="usr-cost">$178.88</span></div>
+    <div class="user-spend-row"><span class="usr-rank">15</span><span class="usr-name">daria-gorokhova</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:13.8%"></div></div><span class="usr-cost">$176.17</span></div>
+    <div class="user-spend-row"><span class="usr-rank">16</span><span class="usr-name">sirk</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:13.0%"></div></div><span class="usr-cost">$165.87</span></div>
+    <div class="user-spend-row"><span class="usr-rank">17</span><span class="usr-name">w1kend</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:12.5%"></div></div><span class="usr-cost">$159.43</span></div>
+    <div class="user-spend-row"><span class="usr-rank">18</span><span class="usr-name">Ganzeroar</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:11.0%"></div></div><span class="usr-cost">$140.78</span></div>
+    <div class="user-spend-row"><span class="usr-rank">19</span><span class="usr-name">neetu-verma-19</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:10.7%"></div></div><span class="usr-cost">$136.70</span></div>
+    <div class="user-spend-row"><span class="usr-rank">20</span><span class="usr-name">alpkaraca-simplesurance-alpkaraca</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:10.1%"></div></div><span class="usr-cost">$128.50</span></div>
+    <div class="user-spend-row"><span class="usr-rank">21</span><span class="usr-name">ataraskov</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:8.6%"></div></div><span class="usr-cost">$109.16</span></div>
+    <div class="user-spend-row"><span class="usr-rank">22</span><span class="usr-name">josgilmo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:7.7%"></div></div><span class="usr-cost">$97.69</span></div>
+    <div class="user-spend-row"><span class="usr-rank">23</span><span class="usr-name">jeanassysisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:7.5%"></div></div><span class="usr-cost">$95.84</span></div>
+    <div class="user-spend-row"><span class="usr-rank">24</span><span class="usr-name">papkhadze-safiko</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:6.5%"></div></div><span class="usr-cost">$82.93</span></div>
+    <div class="user-spend-row"><span class="usr-rank">25</span><span class="usr-name">mario-pinderi</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:6.4%"></div></div><span class="usr-cost">$81.33</span></div>
+    <div class="user-spend-row"><span class="usr-rank">26</span><span class="usr-name">sumithsrini</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:6.0%"></div></div><span class="usr-cost">$76.31</span></div>
+    <div class="user-spend-row"><span class="usr-rank">27</span><span class="usr-name">pauldepraz</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:5.6%"></div></div><span class="usr-cost">$70.82</span></div>
+    <div class="user-spend-row"><span class="usr-rank">28</span><span class="usr-name">RaisatRamazanov</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:5.4%"></div></div><span class="usr-cost">$68.87</span></div>
+    <div class="user-spend-row"><span class="usr-rank">29</span><span class="usr-name">kzl-danylo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:5.4%"></div></div><span class="usr-cost">$68.55</span></div>
+    <div class="user-spend-row"><span class="usr-rank">30</span><span class="usr-name">Francouer</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.9%"></div></div><span class="usr-cost">$62.83</span></div>
+    <div class="user-spend-row"><span class="usr-rank">31</span><span class="usr-name">defshift</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.4%"></div></div><span class="usr-cost">$55.99</span></div>
+    <div class="user-spend-row"><span class="usr-rank">32</span><span class="usr-name">eakimova</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.3%"></div></div><span class="usr-cost">$54.83</span></div>
+    <div class="user-spend-row"><span class="usr-rank">33</span><span class="usr-name">dmytro-logvinov-kazzlo-dmytro</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.2%"></div></div><span class="usr-cost">$54.14</span></div>
+    <div class="user-spend-row"><span class="usr-rank">34</span><span class="usr-name">imre-marton</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:4.0%"></div></div><span class="usr-cost">$50.89</span></div>
+    <div class="user-spend-row"><span class="usr-rank">35</span><span class="usr-name">DeepakBazinga</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:3.7%"></div></div><span class="usr-cost">$46.89</span></div>
+    <div class="user-spend-row"><span class="usr-rank">36</span><span class="usr-name">Asset-BA</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:3.4%"></div></div><span class="usr-cost">$43.43</span></div>
+    <div class="user-spend-row"><span class="usr-rank">37</span><span class="usr-name">xxDENxx</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:3.3%"></div></div><span class="usr-cost">$42.03</span></div>
+    <div class="user-spend-row"><span class="usr-rank">38</span><span class="usr-name">DiogoRaimundo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:3.2%"></div></div><span class="usr-cost">$41.43</span></div>
+    <div class="user-spend-row"><span class="usr-rank">39</span><span class="usr-name">bulentkazanci</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:2.8%"></div></div><span class="usr-cost">$35.24</span></div>
+    <div class="user-spend-row"><span class="usr-rank">40</span><span class="usr-name">vitalykazzlo</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:2.3%"></div></div><span class="usr-cost">$29.52</span></div>
+    <div class="user-spend-row"><span class="usr-rank">41</span><span class="usr-name">MadiyarSISU</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:2.1%"></div></div><span class="usr-cost">$26.29</span></div>
+    <div class="user-spend-row"><span class="usr-rank">42</span><span class="usr-name">DVasselli</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:2.0%"></div></div><span class="usr-cost">$25.50</span></div>
+    <div class="user-spend-row"><span class="usr-rank">43</span><span class="usr-name">zivkovicswe</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.9%"></div></div><span class="usr-cost">$24.67</span></div>
+    <div class="user-spend-row"><span class="usr-rank">44</span><span class="usr-name">dmytrogvk</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.6%"></div></div><span class="usr-cost">$20.66</span></div>
+    <div class="user-spend-row"><span class="usr-rank">45</span><span class="usr-name">eks-sng-ci-euc-litellm</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.5%"></div></div><span class="usr-cost">$18.65</span></div>
+    <div class="user-spend-row"><span class="usr-rank">46</span><span class="usr-name">karatas12</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:1.3%"></div></div><span class="usr-cost">$16.03</span></div>
+    <div class="user-spend-row"><span class="usr-rank">47</span><span class="usr-name">florianemiletic</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.9%"></div></div><span class="usr-cost">$11.81</span></div>
+    <div class="user-spend-row"><span class="usr-rank">48</span><span class="usr-name">pashakorzh-ba</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.9%"></div></div><span class="usr-cost">$10.94</span></div>
+    <div class="user-spend-row"><span class="usr-rank">49</span><span class="usr-name">MukatdeerQureshi</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.7%"></div></div><span class="usr-cost">$8.77</span></div>
+    <div class="user-spend-row"><span class="usr-rank">50</span><span class="usr-name">juliakuznietsova-sisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.6%"></div></div><span class="usr-cost">$8.21</span></div>
+    <div class="user-spend-row"><span class="usr-rank">51</span><span class="usr-name">AndriiGatsaniuk</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.6%"></div></div><span class="usr-cost">$7.11</span></div>
+    <div class="user-spend-row"><span class="usr-rank">52</span><span class="usr-name">bekzat-mustafa-ext-sisu-bekzat</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.5%"></div></div><span class="usr-cost">$6.25</span></div>
+    <div class="user-spend-row"><span class="usr-rank">53</span><span class="usr-name">msobkowiak</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.3%"></div></div><span class="usr-cost">$3.70</span></div>
+    <div class="user-spend-row"><span class="usr-rank">54</span><span class="usr-name">armidanapolitanoext-hash</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.3%"></div></div><span class="usr-cost">$3.65</span></div>
+    <div class="user-spend-row"><span class="usr-rank">55</span><span class="usr-name">lzerbini</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.2%"></div></div><span class="usr-cost">$3.11</span></div>
+    <div class="user-spend-row"><span class="usr-rank">56</span><span class="usr-name">mbezrukova-ext</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.2%"></div></div><span class="usr-cost">$2.45</span></div>
+    <div class="user-spend-row"><span class="usr-rank">57</span><span class="usr-name">sanatZhengisSisu</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.1%"></div></div><span class="usr-cost">$0.68</span></div>
+    <div class="user-spend-row"><span class="usr-rank">58</span><span class="usr-name">sarahsimplesurance</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.0%"></div></div><span class="usr-cost">$0.60</span></div>
+    <div class="user-spend-row"><span class="usr-rank">59</span><span class="usr-name">yuliiatsybanovaext-cloud</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.0%"></div></div><span class="usr-cost">$0.54</span></div>
+    <div class="user-spend-row"><span class="usr-rank">60</span><span class="usr-name">barysik-volha</span><span class="usr-req"></span><div class="usr-bar-wrap"><div class="usr-bar" style="width:0.0%"></div></div><span class="usr-cost">$0.00</span></div>
+  </div><!-- end user-spend-body -->
+
+
+  <!-- ══ Section 6: AWS Bedrock Spend — Overall ══ -->
+  <div id="spend-overall-wrap">
+  <h2>💰 AWS Bedrock Spend — Overall <span style="float:right;font-size:14px;font-weight:600;color:#6d28d9;background:#ede9fe;padding:3px 12px;border-radius:12px;vertical-align:middle">$11,165.75 total</span></h2>
+
+  <!-- June 2026 -->
+  <div class="initiative-block" style="margin-bottom:16px">
+    <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #6d28d9">
+      <span class="iarrow">▶</span>
+      <span class="ititle">June 2026</span>
+      <div class="icounts"><span class="badge badge-wip">29 days (Jun 2–30)</span><span class="badge" style="background:#ede9fe;color:#6d28d9;margin-left:6px">$3,549.57 total</span></div>
+    </div>
+    <div class="initiative-body">
+      <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
+        <table class="spend-table">
+          <thead>
+            <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Jun 30</td><td class="cost-strong">$257.95</td><td>8,227</td><td>35</td><td>Sonnet 4.6 · $230.36 · 5,407 req</td></tr>
+            <tr><td>Jun 29</td><td class="cost-strong">$156.82</td><td>4,591</td><td>34</td><td>Sonnet 4.6 · $152.14 · 3,840 req</td></tr>
+            <tr><td>Jun 28</td><td class="cost-strong">$31.92</td><td>749</td><td>8</td><td>Sonnet 4.6 · $31.56 · 692 req</td></tr>
+            <tr><td>Jun 27</td><td class="cost-strong">$16.41</td><td>675</td><td>6</td><td>Sonnet 4.6 · $14.57 · 411 req</td></tr>
+            <tr><td>Jun 26</td><td class="cost-strong">$200.60</td><td>5,200</td><td>28</td><td>Sonnet 4.6 · $174.65 · 4,197 req</td></tr>
+            <tr><td>Jun 25</td><td class="cost-strong">$229.96</td><td>5,944</td><td>31</td><td>Sonnet 4.6 · $215.40 · 4,839 req</td></tr>
+            <tr><td>Jun 24</td><td class="cost-strong">$184.37</td><td>5,020</td><td>26</td><td>Sonnet 4.6 · $174.35 · 4,072 req</td></tr>
+            <tr><td>Jun 23</td><td class="cost-strong">$219.50</td><td>6,650</td><td>37</td><td>Sonnet 4.6 · $202.02 · 4,765 req</td></tr>
+            <tr><td>Jun 22</td><td class="cost-strong">$157.49</td><td>4,226</td><td>31</td><td>Sonnet 4.6 · $142.84 · 3,097 req</td></tr>
+            <tr><td>Jun 21</td><td class="cost-strong">$39.04</td><td>916</td><td>10</td><td>Sonnet 4.6 · $38.29 · 821 req</td></tr>
+            <tr><td>Jun 20</td><td class="cost-strong">$54.82</td><td>1,741</td><td>5</td><td>Sonnet 4.6 · $53.40 · 1,581 req</td></tr>
+            <tr><td>Jun 19</td><td class="cost-strong">$133.39</td><td>3,576</td><td>25</td><td>Sonnet 4.6 · $109.12 · 2,563 req</td></tr>
+            <tr><td>Jun 18</td><td class="cost-strong">$246.03</td><td>5,807</td><td>26</td><td>Sonnet 4.6 · $222.64 · 3,848 req</td></tr>
+            <tr><td>Jun 17</td><td class="cost-strong">$161.57</td><td>4,153</td><td>36</td><td>Sonnet 4.6 · $149.39 · 3,051 req</td></tr>
+            <tr><td>Jun 16</td><td class="cost-strong">$211.59</td><td>4,718</td><td>31</td><td>Sonnet 4.6 · $183.46 · 3,338 req</td></tr>
+            <tr><td>Jun 15</td><td class="cost-strong">$230.51</td><td>4,853</td><td>32</td><td>Sonnet 4.6 · $195.51 · 3,274 req</td></tr>
+            <tr><td>Jun 14</td><td class="cost-strong">$39.67</td><td>745</td><td>10</td><td>Sonnet 4.6 · $38.47 · 612 req</td></tr>
+            <tr><td>Jun 13</td><td class="cost-strong">$4.64</td><td>130</td><td>3</td><td>Sonnet 4.6 · $4.45 · 106 req</td></tr>
+            <tr><td>Jun 12</td><td class="cost-strong">$170.98</td><td>3,437</td><td>28</td><td>Sonnet 4.6 · $149.11 · 2,306 req</td></tr>
+            <tr><td>Jun 11</td><td class="cost-strong">$131.06</td><td>2,376</td><td>23</td><td>Sonnet 4.6 · $105.20 · 1,796 req</td></tr>
+            <tr><td>Jun 10</td><td class="cost-strong">$110.02</td><td>2,172</td><td>20</td><td>Sonnet 4.6 · $64.78 · 1,487 req</td></tr>
+            <tr><td>Jun 9</td><td class="cost-strong">$50.89</td><td>924</td><td>18</td><td>Sonnet 4.6 · $26.28 · 458 req</td></tr>
+            <tr><td>Jun 8</td><td class="cost-strong">$104.67</td><td>2,145</td><td>16</td><td>Sonnet 4.6 · $82.67 · 1,341 req</td></tr>
+            <tr><td>Jun 7</td><td class="cost-strong">$8.70</td><td>194</td><td>2</td><td>Sonnet 4.6 · $8.70 · 192 req</td></tr>
+            <tr><td>Jun 6</td><td class="cost-strong">$15.75</td><td>234</td><td>1</td><td>Sonnet 4.6 · $15.75 · 233 req</td></tr>
+            <tr><td>Jun 5</td><td class="cost-strong">$70.29</td><td>2,071</td><td>13</td><td>Sonnet 4.6 · $55.75 · 1,197 req</td></tr>
+            <tr><td>Jun 4</td><td class="cost-strong">$96.70</td><td>2,086</td><td>24</td><td>Sonnet 4.6 · $83.34 · 1,568 req</td></tr>
+            <tr><td>Jun 3</td><td class="cost-strong">$111.56</td><td>1,257</td><td>9</td><td>Sonnet 4.6 · $77.84 · 849 req</td></tr>
+            <tr><td>Jun 2</td><td class="cost-strong">$102.67</td><td>1,241</td><td>10</td><td>Sonnet 4.6 · $71.97 · 830 req</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- July 2026 -->
+  <div class="initiative-block" style="margin-bottom:16px">
+    <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #6d28d9">
+      <span class="iarrow">▶</span>
+      <span class="ititle">July 2026</span>
+      <div class="icounts"><span class="badge badge-wip">16 / 31 days (Jul 1–16)</span><span class="badge" style="background:#ede9fe;color:#6d28d9;margin-left:6px">$7,616.18 so far</span></div>
+    </div>
+    <div class="initiative-body">
+      <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
+        <table class="spend-table">
+          <thead>
+            <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Jul 16</strong></td><td class="cost-strong"><strong>$856.08</strong></td><td>19,553</td><td><strong>55</strong></td><td>Sonnet 4.6 · $516.15 · 12,387 req</td></tr>
+            <tr><td>Jul 15</td><td class="cost-strong">$881.66</td><td>19,545</td><td>59</td><td>Sonnet 4.6 · $774.57 · 17,189 req</td></tr>
+            <tr><td>Jul 14</td><td class="cost-strong">$699.35</td><td>15,976</td><td>49</td><td>Sonnet 4.6 · $615.77 · 13,292 req</td></tr>
+            <tr><td><strong>Jul 13</strong></td><td class="cost-strong"><strong>$820.66</strong></td><td>18,747</td><td><strong>67</strong></td><td>Sonnet 4.6 · $476.56 · 10,843 req</td></tr>
+            <tr><td>Jul 12</td><td class="cost-strong">$183.91</td><td>2,844</td><td>13</td><td>Sonnet 5 · $151.88 · 2,253 req</td></tr>
+            <tr><td>Jul 11</td><td class="cost-strong">$41.77</td><td>819</td><td>4</td><td>Sonnet 5 · $29.41 · 452 req</td></tr>
+            <tr><td>Jul 10</td><td class="cost-strong">$894.65</td><td>18,157</td><td>51</td><td>Sonnet 5 · $600.08 · 10,411 req</td></tr>
+            <tr><td>Jul 9</td><td class="cost-strong">$570.73</td><td>12,830</td><td>51</td><td>Sonnet 4.6 · $459.16 · 9,617 req</td></tr>
+            <tr><td>Jul 8</td><td class="cost-strong">$522.97</td><td>11,928</td><td><strong>54</strong></td><td>Sonnet 4.6 · $498.62 · 10,348 req</td></tr>
+            <tr><td>Jul 7</td><td class="cost-strong">$493.85</td><td>11,311</td><td><strong>48</strong></td><td>Sonnet 4.6 · $477.65 · 10,230 req</td></tr>
+            <tr><td>Jul 6</td><td class="cost-strong">$550.17</td><td>12,256</td><td>46</td><td>Sonnet 4.6 · $544.88 · 11,580 req</td></tr>
+            <tr><td>Jul 5</td><td class="cost-strong">$53.39</td><td>797</td><td>13</td><td>Sonnet 4.6 · $50.92 · 634 req</td></tr>
+            <tr><td>Jul 4</td><td class="cost-strong">$50.11</td><td>1,311</td><td>4</td><td>Sonnet 4.6 · $50.10 · 1,306 req</td></tr>
+            <tr><td>Jul 3</td><td class="cost-strong">$261.42</td><td>6,303</td><td>39</td><td>Sonnet 4.6 · $248.84 · 5,531 req</td></tr>
+            <tr><td>Jul 2</td><td class="cost-strong">$382.05</td><td>9,007</td><td>43</td><td>Sonnet 4.6 · $361.87 · 7,721 req</td></tr>
+            <tr><td>Jul 1</td><td class="cost-strong">$353.41</td><td>8,419</td><td>37</td><td>Sonnet 4.6 · $321.23 · 6,796 req</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="spend-table-wrap">
+    <table class="spend-table">
+      <thead>
+        <tr><th>Model</th><th>Combined Cost (AWS + FCP, Jun 2 – Jul 16)</th><th style="width:200px">Cost share</th><th>% of spend</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sonnet 4.6</strong></td><td class="cost-strong">$6,902.02</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:79.1%"></div></div></td>
+          <td class="model-pct">79.1%</td>
+        </tr>
+        <tr>
+          <td><strong>Sonnet 5</strong></td><td class="cost-strong">$1,135.11</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:13.0%;background:linear-gradient(90deg,#7c3aed,#a855f7)"></div></div></td>
+          <td class="model-pct">13.0%</td>
+        </tr>
+        <tr>
+          <td><strong>Sonnet 4.5</strong></td><td class="cost-strong">$128.07</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:1.5%;background:linear-gradient(90deg,#d97706,#fbbf24)"></div></div></td>
+          <td class="model-pct">1.5%</td>
+        </tr>
+        <tr>
+          <td><strong>Haiku 4.5</strong></td><td class="cost-strong">$129.58</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:1.5%;background:linear-gradient(90deg,#16a34a,#4ade80)"></div></div></td>
+          <td class="model-pct">1.5%</td>
+        </tr>
+        <tr>
+          <td><strong>Opus 4.6</strong></td><td class="cost-strong">$92.07</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:1.1%;background:linear-gradient(90deg,#dc2626,#f87171)"></div></div></td>
+          <td class="model-pct">1.1%</td>
+        </tr>
+        <tr>
+          <td><strong>Opus 4.8</strong></td><td class="cost-strong">$0.00</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:0.0%;background:linear-gradient(90deg,#be185d,#f472b6)"></div></div></td>
+          <td class="model-pct">0.0%</td>
+        </tr>
+        <tr style="opacity:.6">
+          <td><strong>Other</strong> <span style="font-size:11px;color:var(--muted);font-weight:400">(Sonnet 4.5 + Haiku + Opus, Jun 2–20 not broken out)</span></td><td class="cost-strong">$357.68</td>
+          <td><div class="spend-bar-wrap"><div class="spend-bar model-bar" style="width:4.1%;background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></div></div></td>
+          <td class="model-pct">4.1%</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div><!-- end spend-overall-wrap -->
+
+  <!-- ══ Section 6b: FCP Bedrock Spend ══ -->
+  <div id="fcp-spend-wrap">
+  <h2>💰 FCP Bedrock Spend — Overall <span style="float:right;font-size:14px;font-weight:600;color:#0891b2;background:#e0f2fe;padding:3px 12px;border-radius:12px;vertical-align:middle">$53.30 total</span></h2>
+
+  <!-- June 2026 -->
+  <div class="initiative-block" style="margin-bottom:16px">
+    <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #0891b2">
+      <span class="iarrow">▶</span>
+      <span class="ititle">June 2026</span>
+      <div class="icounts"><span class="badge badge-wip">3 active days (Jun 8–29)</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">$15.47 total</span></div>
+    </div>
+    <div class="initiative-body">
+      <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
+        <table class="spend-table">
+          <thead>
+            <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
+          </thead>
+          <tbody>
+            <tr style="opacity:.45"><td>Jun 29</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr style="opacity:.45"><td>Jun 28</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr><td>Jun 10</td><td class="cost-strong">$8.92</td><td>252</td><td>2</td><td>Sonnet 4.6 · $8.08 · 171 req</td></tr>
+            <tr><td>Jun 9</td><td class="cost-strong">$6.25</td><td>197</td><td>3</td><td>Sonnet 4.6 · $5.42 · 117 req</td></tr>
+            <tr><td>Jun 8</td><td class="cost-strong">$0.30</td><td>15</td><td>2</td><td>Sonnet 4.6 · $0.30 · 14 req</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- July 2026 -->
+  <div class="initiative-block" style="margin-bottom:16px">
+    <div class="initiative-head" onclick="this.closest('.initiative-block').classList.toggle('open')" style="border-left:3px solid #0891b2">
+      <span class="iarrow">▶</span>
+      <span class="ititle">July 2026</span>
+      <div class="icounts"><span class="badge badge-wip">8 active days (Jul 2–16)</span><span class="badge" style="background:#e0f2fe;color:#0891b2;margin-left:6px">$37.83 so far</span></div>
+    </div>
+    <div class="initiative-body">
+      <div class="spend-table-wrap" style="border-radius:0;border:none;box-shadow:none">
+        <table class="spend-table">
+          <thead>
+            <tr><th>Date</th><th>Total Cost</th><th>Requests</th><th>Active Users</th><th>Top Model</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Jul 16</strong></td><td class="cost-strong"><strong>$12.16</strong></td><td>165</td><td>1</td><td>Sonnet 4.6 · $12.16 · 165 req</td></tr>
+            <tr><td>Jul 15</td><td class="cost-strong">$3.35</td><td>71</td><td>1</td><td>Sonnet 4.6 · $3.35 · 70 req</td></tr>
+            <tr><td>Jul 14</td><td class="cost-strong">$10.44</td><td>157</td><td>2</td><td>Sonnet 4.6 · $10.44 · 151 req</td></tr>
+            <tr><td>Jul 13</td><td class="cost-strong">$2.80</td><td>52</td><td>2</td><td>Sonnet 4.6 · $2.79 · 49 req</td></tr>
+            <tr style="opacity:.45"><td>Jul 12</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr style="opacity:.45"><td>Jul 11</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr><td>Jul 10</td><td class="cost-strong">$5.39</td><td>53</td><td>1</td><td>Sonnet 4.6 · $5.39 · 53 req</td></tr>
+            <tr><td>Jul 9</td><td class="cost-strong">$3.30</td><td>139</td><td>2</td><td>Sonnet 4.6 · $3.25 · 95 req</td></tr>
+            <tr style="opacity:.45"><td>Jul 8</td><td class="cost-strong">$0.00</td><td>2</td><td>1</td><td>Haiku 4.5 · $0.00 · 2 req</td></tr>
+            <tr style="opacity:.45"><td>Jul 6</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr style="opacity:.45"><td>Jul 5</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr style="opacity:.45"><td>Jul 4</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+            <tr><td>Jul 3</td><td class="cost-strong">$0.12</td><td>3</td><td>1</td><td>Sonnet 4.6 · $0.12 · 2 req</td></tr>
+            <tr><td>Jul 2</td><td class="cost-strong">$0.27</td><td>11</td><td>1</td><td>Sonnet 4.6 · $0.26 · 6 req</td></tr>
+            <tr style="opacity:.45"><td>Jul 1</td><td class="cost-strong">—</td><td>—</td><td>—</td><td>No usage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- end fcp-spend-wrap -->
+
+
+</div>
+
+<script>
+function toggleInit(headEl) {
+  var block = headEl.closest('.initiative-block');
+  block.classList.toggle('open');
+}
+
+
+function toggleByAuthor() {
+  var body = document.getElementById('by-author-body');
+  var arrow = document.getElementById('by-author-arrow');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.textContent = open ? '▶' : '▼';
+}
+
+function toggleUserSpend(h2El) {
+  var body = document.getElementById('user-spend-body');
+  var arrow = h2El.querySelector('.usr-sec-arrow');
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  arrow.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+// Move initiative section to bottom of container
+(function() {
+  var container = document.querySelector('.container');
+  var section = document.getElementById('init-section-wrap');
+  if (container && section) container.appendChild(section);
+})();
+
+// Move overall spend section to be first (after summary bar), FCP spend immediately after
+(function() {
+  var summaryBar = document.querySelector('.summary-bar');
+  var spendWrap = document.getElementById('spend-overall-wrap');
+  if (summaryBar && spendWrap) summaryBar.after(spendWrap);
+  var fcpWrap = document.getElementById('fcp-spend-wrap');
+  if (spendWrap && fcpWrap) spendWrap.after(fcpWrap);
+})();
+
+// Search
+(function() {
+  var input = document.getElementById('ff-search');
+  var countEl = document.getElementById('ff-count');
+  if (!input) return;
+  var initBlocks = Array.from(document.querySelectorAll('.initiative-block'));
+  var authorCards = Array.from(document.querySelectorAll('.author-card'));
+
+  function getText(el) { return el.textContent.toLowerCase(); }
+
+  input.addEventListener('input', function() {
+    var q = input.value.trim().toLowerCase();
+    if (!q) {
+      initBlocks.forEach(function(b) { b.classList.remove('s-hide'); });
+      authorCards.forEach(function(c) { c.classList.remove('s-hide'); });
+      countEl.textContent = '';
+      return;
+    }
+    var hits = 0;
+    initBlocks.forEach(function(b) {
+      if (getText(b).includes(q)) { b.classList.remove('s-hide'); b.classList.add('open'); hits++; }
+      else b.classList.add('s-hide');
+    });
+    authorCards.forEach(function(c) {
+      if (getText(c).includes(q)) { c.classList.remove('s-hide'); hits++; }
+      else c.classList.add('s-hide');
+    });
+    countEl.textContent = hits + ' result' + (hits !== 1 ? 's' : '');
+  });
+})();
+</script>
+</body>
+</html>

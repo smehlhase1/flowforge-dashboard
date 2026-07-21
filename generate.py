@@ -574,84 +574,6 @@ def _leaderboard_month_block(ym, tickets, top_n, group_key, count_lbl,
     )
 
 
-def build_created_leaderboard(all_tickets):
-    buckets = _month_buckets(all_tickets, "created")
-    blocks = ""
-    for i, (ym, tickets) in enumerate(buckets):
-        blocks += _leaderboard_month_block(
-            ym, tickets, top_n=5, group_key="reporter",
-            count_lbl="tickets",
-            row_badge_fn=lambda t: badge_html(t["status"], t["cat"]),
-            border_color="#d97706", open_first=(i == 0), green=False
-        )
-    return f'<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>\n\n{blocks}  '
-
-
-def build_done_leaderboard(all_tickets):
-    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
-    buckets = _month_buckets(done_tickets, "done_date")
-    blocks = ""
-    for i, (ym, tickets) in enumerate(buckets):
-        blocks += _leaderboard_month_block(
-            ym, tickets, top_n=5, group_key="reporter",
-            count_lbl="done",
-            row_badge_fn=lambda t: badge_html(t["status"], t["cat"]),
-            border_color="#16a34a", open_first=(i == 0), green=True
-        )
-    return f'<h2>✅ Top 5 Authors — Most FlowForge Tickets Done</h2>\n\n{blocks}  '
-
-
-def build_top10_devs(all_tickets):
-    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
-    buckets = _month_buckets(done_tickets, "done_date")
-    blocks = ""
-    for i, (ym, tickets) in enumerate(buckets):
-        blocks += _leaderboard_month_block(
-            ym, tickets, top_n=10, group_key="assignee",
-            count_lbl="done",
-            row_badge_fn=lambda t: '<span class="badge badge-done">Done</span>',
-            border_color="#16a34a", open_first=(i == 0), green=True
-        )
-    return (
-        f'<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>\n\n{blocks}'
-        f'  <!-- ══ Section 6: Top 10 Assignees — Active Work ══ -->\n  '
-    )
-
-
-def build_summary_bar(all_tickets, static_cards_html, active_init_count=None):
-    total = len(all_tickets)
-    done  = sum(1 for t in all_tickets if t["cat"] == "Done")
-    wip   = sum(1 for t in all_tickets if t["cat"] == "In Progress")
-    todo  = sum(1 for t in all_tickets if t["cat"] == "To Do")
-
-    # Authors (unique reporters)
-    authors = len(set(t["reporter"] for t in all_tickets))
-
-    # Initiatives: only count those with at least one ticket
-    n_inits = active_init_count if active_init_count is not None else len(INITIATIVES)
-
-    # Avg AI cost (sum of non-zero / count of non-zero)
-    costs = [t["ai_cost"] for t in all_tickets if t["ai_cost"] > 0]
-    avg_cost_str = f'${sum(costs)/len(costs):.2f}' if costs else "—"
-    cost_lbl = f'Avg AI Cost / Ticket ({len(costs)} tickets)'
-
-    dynamic = (
-        f'    <div class="summary-card purple"><div class="num">{total}</div><div class="lbl">Total Tickets</div></div>\n'
-        f'    <div class="summary-card green"><div class="num">{done}</div><div class="lbl">Done</div></div>\n'
-        f'    <div class="summary-card amber"><div class="num">{wip}</div><div class="lbl">In Progress / Review</div></div>\n'
-        f'    <div class="summary-card gray"><div class="num">{todo}</div><div class="lbl">To Do</div></div>\n'
-        f'    <div class="summary-card blue"><div class="num">{n_inits}</div><div class="lbl">Initiatives</div></div>\n'
-        f'    <div class="summary-card red"><div class="num">{authors}</div><div class="lbl">Authors</div></div>\n'
-    )
-
-    # Replace Avg AI Cost card in the static block
-    updated_static = re.sub(
-        r'<div class="summary-card amber"><div class="num">[^<]+</div><div class="lbl">Avg AI Cost[^<]*</div></div>',
-        f'<div class="summary-card amber"><div class="num">{avg_cost_str}</div><div class="lbl">{cost_lbl}</div></div>',
-        static_cards_html
-    )
-
-    return dynamic + updated_static
 
 
 # ── Epic title lookup ─────────────────────────────────────────────────────────
@@ -675,14 +597,37 @@ def fetch_epic_titles(epic_keys):
     return titles
 
 
-# ── HTML patcher ──────────────────────────────────────────────────────────────
+# ── Template filler ───────────────────────────────────────────────────────────
+# The generator ONLY fills named <!-- SLOT:name --> placeholders.
+# It NEVER modifies CSS, class names, wrappers, or any structural HTML.
+# All layout lives in template.html permanently. generate.py touches data only.
 
-def patch_html(html, all_tickets):
-    """Rebuild all dynamic sections of the dashboard HTML."""
+TEMPLATE_FILE  = os.path.join(os.path.dirname(__file__), "template.html")
+SLOT_RE        = re.compile(r'<!-- SLOT:(\w+) -->')
 
-    # ── 1. Initiatives section ─────────────────────────────────────────────
-    # Route tickets to initiatives
-    init_ticket_map  = defaultdict(lambda: defaultdict(list))  # slug → epic_key → [tickets]
+
+def _slot(name, content):
+    return f'<!-- SLOT:{name} -->', content
+
+
+def fill_template(all_tickets):
+    """Read template.html, fill every SLOT with computed data, return index.html content."""
+
+    with open(TEMPLATE_FILE) as f:
+        html = f.read()
+
+    # Verify all expected slots are present — abort rather than produce broken output
+    expected = {'last_pull','badge_stats','summary_dynamic','avg_ai_cost_card',
+                'initiatives','leaderboard_created','leaderboard_done',
+                'leaderboard_top10_done','by_author'}
+    found = set(SLOT_RE.findall(html))
+    missing = expected - found
+    if missing:
+        sys.exit(f"ERROR: template.html is missing slots: {missing}. "
+                 f"Do not edit template.html slots manually.")
+
+    # ── Route tickets to initiatives ──────────────────────────────────────────
+    init_ticket_map = defaultdict(lambda: defaultdict(list))
     unrouted = []
     for t in all_tickets:
         parent = t["parent"]
@@ -691,99 +636,108 @@ def patch_html(html, all_tickets):
             init_ticket_map[slug][parent].append(t)
         else:
             unrouted.append(t)
-
     if unrouted:
         print(f"  ⚠ {len(unrouted)} tickets not routed to any initiative:", file=sys.stderr)
         for t in unrouted[:10]:
             print(f"    {t['key']} parent={t['parent']}", file=sys.stderr)
 
-    active_init_count = 0  # will be set when building blocks below
-
-    # Build all initiative blocks from config — never reads existing HTML blocks.
-    section_start_tag = '<div id="init-section-body">'
-    section_end_tag   = '</div><!-- end init-section-body -->'
-    section_start = html.find(section_start_tag)
-    section_end   = html.find(section_end_tag)
-    if section_start < 0 or section_end < 0:
-        print("  ⚠ could not find init-section-body boundaries", file=sys.stderr)
-    else:
-        new_blocks = []
-        for slug, prod_key, iproj, ititle, _ in INITIATIVES:
-            tickets_by_epic = init_ticket_map.get(slug, {})
-            all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
-            if not all_init_tickets:
-                continue
-            active_init_count += 1
-            icounts_html = build_icounts(all_init_tickets)
-
-            head = (
-                f'    <div class="initiative-block" data-init="{slug}">\n'
-                f'    <div class="initiative-head" onclick="toggleInit(this)">\n'
-                f'      <span class="iarrow">▶</span>\n'
-                f'      <span class="ikey"><a href="{JIRA_URL}/browse/{prod_key}" target="_blank" style="color:inherit;text-decoration:none">{prod_key}</a></span>\n'
-                f'      <span class="iproj">{html_lib.escape(iproj)}</span>\n'
-                f'      <span class="ititle">{html_lib.escape(ititle)}</span>\n'
-                f'      <div class="icounts">\n        {icounts_html}\n      </div>\n'
-                f'    </div>\n'
-            )
-            body = build_initiative_body(slug, tickets_by_epic)
-            new_blocks.append(head + body + '  </div>\n\n')
-
-        new_section = (
-            section_start_tag + '\n'
-            + ''.join(new_blocks)
-            + '  ' + section_end_tag
+    # ── Build initiatives slot ────────────────────────────────────────────────
+    init_blocks = []
+    active_init_count = 0
+    for slug, prod_key, iproj, ititle, _ in INITIATIVES:
+        tickets_by_epic  = init_ticket_map.get(slug, {})
+        all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
+        if not all_init_tickets:
+            continue
+        active_init_count += 1
+        icounts_html = build_icounts(all_init_tickets)
+        head = (
+            f'    <div class="initiative-block" data-init="{slug}">\n'
+            f'    <div class="initiative-head" onclick="toggleInit(this)">\n'
+            f'      <span class="iarrow">▶</span>\n'
+            f'      <span class="ikey"><a href="{JIRA_URL}/browse/{prod_key}" target="_blank" style="color:inherit;text-decoration:none">{prod_key}</a></span>\n'
+            f'      <span class="iproj">{html_lib.escape(iproj)}</span>\n'
+            f'      <span class="ititle">{html_lib.escape(ititle)}</span>\n'
+            f'      <div class="icounts">\n        {icounts_html}\n      </div>\n'
+            f'    </div>\n'
         )
-        html = html[:section_start] + new_section + html[section_end + len(section_end_tag):]
+        body = build_initiative_body(slug, tickets_by_epic)
+        init_blocks.append(head + body + '  </div>\n\n')
 
-    # ── 2. Summary bar ─────────────────────────────────────────────────────
-    bar_m = re.search(
-        r'(<div class="summary-bar"[^>]*>)(.*?)(</div>)\s*\n\s*(<div id="init-section-wrap")',
-        html, re.DOTALL
+    # ── Build summary bar dynamic cards ──────────────────────────────────────
+    total   = len(all_tickets)
+    done    = sum(1 for t in all_tickets if t["cat"] == "Done")
+    wip     = sum(1 for t in all_tickets if t["cat"] == "In Progress")
+    todo    = sum(1 for t in all_tickets if t["cat"] == "To Do")
+    authors = len(set(t["reporter"] for t in all_tickets))
+    costs   = [t["ai_cost"] for t in all_tickets if t["ai_cost"] > 0]
+    avg_cost_str = f'${sum(costs)/len(costs):.2f}' if costs else "—"
+    cost_lbl     = f'Avg AI Cost / Ticket ({len(costs)} tickets)'
+
+    summary_dynamic = (
+        f'    <div class="summary-card purple"><div class="num">{total}</div><div class="lbl">Total Tickets</div></div>\n'
+        f'    <div class="summary-card green"><div class="num">{done}</div><div class="lbl">Done</div></div>\n'
+        f'    <div class="summary-card amber"><div class="num">{wip}</div><div class="lbl">In Progress / Review</div></div>\n'
+        f'    <div class="summary-card gray"><div class="num">{todo}</div><div class="lbl">To Do</div></div>\n'
+        f'    <div class="summary-card blue"><div class="num">{active_init_count}</div><div class="lbl">Initiatives</div></div>\n'
+        f'    <div class="summary-card red"><div class="num">{authors}</div><div class="lbl">Authors</div></div>'
     )
-    if bar_m:
-        static_cards = re.sub(
-            r'\s*<div class="summary-card [^"]*"><div class="num">[^<]*</div><div class="lbl">(?:Total Tickets|Done|In Progress.*?|To Do|Initiatives|Authors)</div></div>',
-            '', bar_m.group(2), flags=re.DOTALL
-        )
-        new_bar_content = build_summary_bar(all_tickets, static_cards, active_init_count)
-        html = html[:bar_m.start(2)] + "\n" + new_bar_content + "\n  " + html[bar_m.end(2):]
-
-    # ── 2b. ai-badge (header stats) ────────────────────────────────────────
-    authors_count = len(set(t["reporter"] for t in all_tickets))
-    html = re.sub(
-        r'✦ FlowForge · \d+ tickets · \d+ initiatives · \d+ authors',
-        f'✦ FlowForge · {len(all_tickets)} tickets · {active_init_count} initiatives · {authors_count} authors',
-        html
+    avg_ai_cost_card = (
+        f'<div class="summary-card amber"><div class="num">{avg_cost_str}</div>'
+        f'<div class="lbl">{cost_lbl}</div></div>'
     )
 
-    # ── 3. By-author section ────────────────────────────────────────────────
-    ba_start = html.find('id="by-author-body"')
-    ba_open  = html.find('>', ba_start) + 1
-    ba_end   = html.find('</div><!-- end by-author-body')
-    if ba_start > 0 and ba_end > 0:
-        new_ba = "\n" + build_author_section(all_tickets)
-        html = html[:ba_open] + new_ba + html[ba_end:]
+    # ── Build leaderboard slots ───────────────────────────────────────────────
+    created_blocks = _leaderboard_slot_content(all_tickets, "created", 5, "reporter",
+                                                "tickets", lambda t: badge_html(t["status"], t["cat"]),
+                                                "#d97706", green=False)
+    done_blocks    = _leaderboard_slot_content(
+                        [t for t in all_tickets if t["cat"] == "Done"],
+                        "done_date", 5, "reporter",
+                        "done", lambda t: badge_html(t["status"], t["cat"]),
+                        "#16a34a", green=True)
+    top10_blocks   = _leaderboard_slot_content(
+                        [t for t in all_tickets if t["cat"] == "Done"],
+                        "done_date", 10, "assignee",
+                        "done", lambda t: '<span class="badge badge-done">Done</span>',
+                        "#16a34a", green=True)
 
-    # ── 4. Created leaderboard ──────────────────────────────────────────────
-    created_h2 = html.find('<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created')
-    done_h2    = html.find('<h2>✅ Top 5 Authors — Most FlowForge Tickets Done')
-    if created_h2 > 0 and done_h2 > 0:
-        html = html[:created_h2] + build_created_leaderboard(all_tickets) + html[done_h2:]
+    today_str = date.today().strftime("%d %b %Y")
 
-    # ── 5. Done leaderboard ─────────────────────────────────────────────────
-    done_h2  = html.find('<h2>✅ Top 5 Authors — Most FlowForge Tickets Done')
-    top10_h2 = html.find('<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done')
-    if done_h2 > 0 and top10_h2 > 0:
-        html = html[:done_h2] + build_done_leaderboard(all_tickets) + html[top10_h2:]
+    # ── Fill all slots ────────────────────────────────────────────────────────
+    replacements = {
+        'last_pull':             today_str,
+        'badge_stats':           f'✦ FlowForge · {total} tickets · {active_init_count} initiatives · {authors} authors',
+        'summary_dynamic':       summary_dynamic,
+        'avg_ai_cost_card':      avg_ai_cost_card,
+        'initiatives':           ''.join(init_blocks),
+        'leaderboard_created':   created_blocks,
+        'leaderboard_done':      done_blocks,
+        'leaderboard_top10_done': top10_blocks,
+        'by_author':             build_author_section(all_tickets),
+    }
 
-    # ── 6. Top 10 Developers Done leaderboard ──────────────────────────────
-    top10_h2    = html.find('<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done')
-    active_h2   = html.find('<h2>⚡ Top 10 Developers')
-    if top10_h2 > 0 and active_h2 > 0:
-        html = html[:top10_h2] + build_top10_devs(all_tickets) + html[active_h2:]
+    def replace_slot(m):
+        name = m.group(1)
+        if name not in replacements:
+            sys.exit(f"ERROR: unknown slot '{name}' in template.html")
+        return replacements[name]
 
-    return html
+    return SLOT_RE.sub(replace_slot, html)
+
+
+def _leaderboard_slot_content(tickets, date_key, top_n, group_key,
+                               count_lbl, row_badge_fn, border_color, green):
+    """Build all monthly accordion blocks for a leaderboard slot."""
+    buckets = _month_buckets(tickets, date_key)
+    blocks = ""
+    for i, (ym, month_tickets) in enumerate(buckets):
+        blocks += _leaderboard_month_block(
+            ym, month_tickets, top_n=top_n, group_key=group_key,
+            count_lbl=count_lbl, row_badge_fn=row_badge_fn,
+            border_color=border_color, open_first=(i == 0), green=green
+        )
+    return blocks
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -798,7 +752,6 @@ def main():
 
     print("Fetching FlowForge tickets from Jira…")
     tickets = fetch_all_flowforge_tickets()
-    # Exclude Closed tickets
     tickets = [t for t in tickets if t["status"] != "Closed"]
     print(f"  {len(tickets)} tickets (Closed excluded)")
 
@@ -812,14 +765,12 @@ def main():
             print(f"  Avg AI cost: ${sum(costs)/len(costs):.2f} ({len(costs)} tickets with cost)")
         return
 
-    with open(DASHBOARD_FILE) as f:
-        html = f.read()
-
-    print("Patching HTML…")
-    new_html = patch_html(html, tickets)
+    print("Filling template…")
+    new_html = fill_template(tickets)
 
     with open(DASHBOARD_FILE, "w") as f:
         f.write(new_html)
+    print(f"  Written {DASHBOARD_FILE}")
 
     print(f"Written: {DASHBOARD_FILE}")
     print(f"  {len(html):,} → {len(new_html):,} chars (delta {len(new_html)-len(html):+,})")
