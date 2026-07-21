@@ -432,7 +432,7 @@ def build_author_section(all_tickets):
             f'      </div>\n'
             f'    </div>\n\n'
         )
-    return "".join(cards)
+    return '<div class="author-grid">\n\n' + "".join(cards) + '</div>\n'
 
 
 # ── Leaderboard builders ──────────────────────────────────────────────────────
