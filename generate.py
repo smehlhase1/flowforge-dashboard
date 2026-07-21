@@ -94,11 +94,11 @@ INITIATIVES = [
     }),
     ("clara",   "PROD-13092", "[15832]", "Clara EHA Beneficiary Management and MP Access", {
         "PROD-13255": "Clara EHA — CIL Beneficiary Management Implementation",
-        "PROD-13225": "MDDR — Individual Policy Cancellation",
-        "PROD-12536": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
-        "PROD-13190": "Clara Replacement — Get Policy (Retail &amp; Meta Portal)",
-        "PROD-12535": "Clara Replacement — Remove Unnecessary OnePay Fields",
-        "PROD-12730": "Clara Replacement — Travel Sales Data Flows",
+        "PROD-13225": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
+        "PROD-12536": "Clara Replacement — Get Policy (Retail &amp; Meta Portal)",
+        "PROD-13190": "Clara Replacement — Remove Unnecessary OnePay Fields",
+        "PROD-12535": "Clara Replacement — Travel Sales Data Flows",
+        "PROD-12730": "Clara Replacement — Post-sales Policy Amendments",
     }),
     ("global-ch",  "PROD-12331", "[18201]", "Global App CH Switzerland", {
         "PROD-12480": "CH — Person Details 2",
@@ -136,18 +136,24 @@ INITIATIVES = [
         "PROD-13269": "Allyz CA — GetPolicy &amp; Setup",
     }),
     ("coverwise",  "PROD-12115", "[15005 · 15019]", "Coverwise - post go live", {
+        "": "Partner Onboarding — New Integrations",
         "PROD-12116": "Coverwise — Production Issues",
     }),
-    ("netrisk",    "PROD-12355", "[15043]", "Netrisk - COI Retrival", {}),
-    ("bbva",       "PROD-13037", "[15036]", "[BBVA/SISU] Implementation of new business partner", {}),
+    ("netrisk",    "PROD-12355", "[15043]", "Netrisk - COI Retrival", {
+        "": "Netrisk — Grafana",
+    }),
+    ("bbva",       "PROD-13037", "[15036]", "[BBVA/SISU] Implementation of new business partner", {
+        "": "BBVA — Grafana",
+    }),
     ("globus-threat", "PROD-12332", "[18200]", "Global App - General work", {
         "PROD-13653": "Globus — Threat Model Remediation",
         "PROD-12978": "Global App — Login Beta+",
         "PROD-12923": "Global App — Virtual OE",
     }),
     ("ff-ba-pipeline", "PROD-13115", "[18200]", "AI Rollout", {
-        "PROD-13861": "FlowForge — Tooling &amp; Infrastructure",
+        "": "FlowForge — Tooling &amp; Infrastructure",
         "CIL-6148":   "[FlowForge] BA/PO Upstream Pipeline Epic",
+        "PROD-13861": "FlowForge /flowforge.review — Replace Human Code Analysis Stage",
     }),
     ("bmw",        "PROD-13231", "[15037]", "BMW", {
         "PROD-13231": "BMW — Handle customer self-payment for service",
@@ -171,6 +177,7 @@ INITIATIVES = [
     }),
     ("hood",       "PROD-12918", "[15048]", "Hood Group", {
         "PROD-13238": "Hood Group — FlowForge Integration",
+        "": "Hood Group — General",
     }),
     ("cil-general","PROD-10026", "[15015]", "CIL General — Non-Billable", {
         "PROD-12925": "CIL API Versioning",
@@ -190,7 +197,8 @@ for slug, prod_key, iproj, ititle, epics in INITIATIVES:
     INIT_ITITLE[slug] = ititle
     EPIC_TO_INIT[prod_key] = slug
     for e in epics:
-        EPIC_TO_INIT[e] = slug
+        if e:  # skip empty-string placeholder keys
+            EPIC_TO_INIT[e] = slug
 
 
 # ── Jira helpers ──────────────────────────────────────────────────────────────
@@ -305,20 +313,20 @@ def build_ticket_row(t):
 
 
 def build_epic_group(epic_key, epic_title, tickets):
-    if not tickets:
-        return ""
-    rows = "\n            ".join(build_ticket_row(t) for t in tickets)
+    # Render even with 0 tickets — baseline always shows the group
+    rows = "\n            ".join(build_ticket_row(t) for t in tickets) if tickets else "            "
     count = len(tickets)
     eg_key_html = (
         f'<a href="{JIRA_URL}/browse/{epic_key}" target="_blank">{epic_key}</a>'
         if epic_key else ""
     )
+    count_str = f'{count} ticket{"s" if count != 1 else ""}' if count > 0 else ""
+    count_span = f'\n          <span class="eg-count">{count_str}</span>' if count_str else ""
     return (
         f'\n            <div class="epic-group">\n'
         f'        <div class="epic-group-head">\n'
         f'          <span class="eg-key">{eg_key_html}</span>\n'
-        f'          <span class="eg-title">{epic_title}</span>\n'
-        f'          <span class="eg-count">{count} ticket{"s" if count != 1 else ""}</span>\n'
+        f'          <span class="eg-title">{epic_title}</span>{count_span}\n'
         f'        </div>\n'
         f'        <table class="ticket-table">\n'
         f'          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th>'
@@ -337,19 +345,25 @@ def build_initiative_body(slug, tickets_by_epic):
     prod_key = INIT_PROD[slug]
     parts = []
 
-    # Known epics in config order
-    seen_epics = set()
+    # Render all configured epic groups in order (even empty — baseline shows them).
+    # An empty-string key "" in the config means: no eg-key displayed, tickets come
+    # from the initiative's prod_key directly.
+    seen_epics = set(k for k in epics.keys() if k)
+    seen_epics.add(prod_key)
     for epic_key, title in epics.items():
-        ts = tickets_by_epic.get(epic_key, [])
-        if ts:
-            parts.append(build_epic_group(epic_key, title, ts))
-            seen_epics.add(epic_key)
+        if epic_key == "":
+            # Direct-tickets group: prod_key-parented tickets with no eg-key shown
+            ts = tickets_by_epic.get(prod_key, [])
+        else:
+            ts = tickets_by_epic.get(epic_key, [])
+        parts.append(build_epic_group(epic_key, title, ts))
 
-    # Tickets parented directly to the initiative PROD key
-    direct = tickets_by_epic.get(prod_key, [])
-    if direct:
-        parts.append(build_epic_group("", f"{slug.replace('-',' ').title()} — General", direct))
-        seen_epics.add(prod_key)
+    # Tickets parented directly to the initiative PROD key, but only if no explicit
+    # "" placeholder was configured for them already
+    if "" not in epics and prod_key not in epics:
+        direct = tickets_by_epic.get(prod_key, [])
+        if direct:
+            parts.append(build_epic_group("", f"{slug.replace('-',' ').title()} — General", direct))
 
     # Any tickets with unexpected parent keys (show them under their parent)
     for epic_key, ts in tickets_by_epic.items():
@@ -362,14 +376,16 @@ def build_initiative_body(slug, tickets_by_epic):
 
 
 def build_icounts(tickets):
-    done = sum(1 for t in tickets if t["cat"] == "Done")
-    wip  = sum(1 for t in tickets if t["cat"] == "In Progress")
-    todo = sum(1 for t in tickets if t["cat"] == "To Do")
+    done   = sum(1 for t in tickets if t["cat"] == "Done")
+    wip    = sum(1 for t in tickets if t["cat"] == "In Progress")
+    ai_gen = sum(1 for t in tickets if "AI-Generation" in t["status"])
+    todo   = sum(1 for t in tickets if t["cat"] == "To Do" and "AI-Generation" not in t["status"])
     total_cost = sum(t["ai_cost"] for t in tickets if t["ai_cost"] > 0)
     parts = []
-    if wip:  parts.append(f'<span class="badge badge-wip">{wip} active</span>')
-    if done: parts.append(f'<span class="badge badge-done">{done} done</span>')
-    if todo: parts.append(f'<span class="badge badge-todo">{todo} to do</span>')
+    if wip:    parts.append(f'<span class="badge badge-wip">{wip} active</span>')
+    if done:   parts.append(f'<span class="badge badge-done">{done} done</span>')
+    if todo:   parts.append(f'<span class="badge badge-todo">{todo} to do</span>')
+    if ai_gen: parts.append(f'<span class="badge badge-ai">{ai_gen} AI-gen</span>')
     if total_cost > 0:
         parts.append(f'<span class="badge-cost">✦ ${total_cost:.0f}</span>')
     return "\n        ".join(parts)
@@ -681,10 +697,7 @@ def patch_html(html, all_tickets):
                 f'    </div>\n'
             )
             body = build_initiative_body(slug, tickets_by_epic)
-            new_blocks.append(
-                head + body
-                + f'    </div><!-- end initiative-block data-init={slug} -->\n\n'
-            )
+            new_blocks.append(head + body + '  </div>\n\n')
 
         new_section = (
             section_start_tag + '\n'
