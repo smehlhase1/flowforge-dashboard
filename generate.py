@@ -203,13 +203,15 @@ for slug, prod_key, iproj, ititle, epics in INITIATIVES:
 
 # ── Jira helpers ──────────────────────────────────────────────────────────────
 
-def jira_search(jql, fields, max_results=500):
+def jira_search(jql, fields, expand=None):
     auth = (JIRA_EMAIL, JIRA_TOKEN)
     url  = f"{JIRA_URL}/rest/api/3/search/jql"
     fields_list = fields.split(",") if isinstance(fields, str) else fields
     all_issues, next_token = [], None
     while True:
         body = {"jql": jql, "fields": fields_list, "maxResults": 100}
+        if expand:
+            body["expand"] = expand
         if next_token:
             body["nextPageToken"] = next_token
         r = requests.post(url, auth=auth, json=body, timeout=30)
@@ -225,12 +227,32 @@ def jira_search(jql, fields, max_results=500):
     return all_issues
 
 
+def _done_date_from_changelog(issue):
+    """Return the date (YYYY-MM-DD) when this issue last transitioned to a Done
+    status category, using the changelog embedded in the search response.
+    Returns "" if no such transition is found."""
+    changelog = issue.get("changelog", {})
+    histories = changelog.get("histories", [])
+    done_date = ""
+    for history in histories:
+        for item in history.get("items", []):
+            if item.get("field") == "status":
+                to_cat = item.get("toCategoryId", "") or ""
+                to_str = (item.get("toString") or "").lower()
+                # Jira Done category id is "3"; also match by name
+                if to_cat == "3" or "done" in to_str:
+                    ts = history.get("created", "")[:10]
+                    if ts > done_date:
+                        done_date = ts
+    return done_date
+
+
 def fetch_all_flowforge_tickets():
     """Return list of dicts with fields we care about."""
     # CIL board only — PROD-* tickets are excluded intentionally
     jql = 'project = CIL AND labels = "FlowForge" ORDER BY created ASC'
-    fields = f"summary,status,assignee,reporter,parent,created,updated,{AI_COST_FIELD},resolutiondate,labels"
-    raw = jira_search(jql, fields)
+    fields = f"summary,status,assignee,reporter,parent,created,{AI_COST_FIELD},resolutiondate,labels"
+    raw = jira_search(jql, fields, expand=["changelog"])
     tickets = []
     for issue in raw:
         f = issue["fields"]
@@ -241,15 +263,17 @@ def fetch_all_flowforge_tickets():
         reporter    = (f.get("reporter") or {}).get("displayName", "—")
         parent      = (f.get("parent") or {}).get("key", "")
         created_raw = f.get("created", "")[:10]
-        updated_raw = f.get("updated", "")[:10]
         ai_cost_raw = f.get(AI_COST_FIELD) or 0
         try:
             ai_cost = float(ai_cost_raw)
         except (TypeError, ValueError):
             ai_cost = 0.0
-        # resolutiondate is often empty even for Done tickets; fall back to updated date
-        resolution  = (f.get("resolutiondate") or "")[:10]
-        done_date   = resolution or (updated_raw if stat_cat == "Done" else "")
+        # Use the changelog to find when the ticket actually moved to Done
+        resolution = (f.get("resolutiondate") or "")[:10]
+        if stat_cat == "Done":
+            done_date = _done_date_from_changelog(issue) or resolution or created_raw
+        else:
+            done_date = ""
         tickets.append({
             "key":       issue["key"],
             "summary":   f.get("summary", ""),
