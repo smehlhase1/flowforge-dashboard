@@ -229,7 +229,7 @@ def fetch_all_flowforge_tickets():
     """Return list of dicts with fields we care about."""
     # CIL board only — PROD-* tickets are excluded intentionally
     jql = 'project = CIL AND labels = "FlowForge" ORDER BY created ASC'
-    fields = f"summary,status,assignee,reporter,parent,created,{AI_COST_FIELD},resolutiondate,labels"
+    fields = f"summary,status,assignee,reporter,parent,created,updated,{AI_COST_FIELD},resolutiondate,labels"
     raw = jira_search(jql, fields)
     tickets = []
     for issue in raw:
@@ -241,12 +241,15 @@ def fetch_all_flowforge_tickets():
         reporter    = (f.get("reporter") or {}).get("displayName", "—")
         parent      = (f.get("parent") or {}).get("key", "")
         created_raw = f.get("created", "")[:10]
+        updated_raw = f.get("updated", "")[:10]
         ai_cost_raw = f.get(AI_COST_FIELD) or 0
         try:
             ai_cost = float(ai_cost_raw)
         except (TypeError, ValueError):
             ai_cost = 0.0
-        done_date   = (f.get("resolutiondate") or "")[:10]
+        # resolutiondate is often empty even for Done tickets; fall back to updated date
+        resolution  = (f.get("resolutiondate") or "")[:10]
+        done_date   = resolution or (updated_raw if stat_cat == "Done" else "")
         tickets.append({
             "key":       issue["key"],
             "summary":   f.get("summary", ""),
@@ -469,122 +472,73 @@ def compute_ranks(sorted_items, key_fn):
     return ranks
 
 
-def build_created_leaderboard(all_tickets):
-    by_author = defaultdict(list)
-    for t in all_tickets:
-        by_author[t["reporter"]].append(t)
-    ranked = sorted(by_author.items(), key=lambda x: -len(x[1]))
-    top5   = ranked[:5]
-    ranks  = compute_ranks(top5, lambda x: -len(x[1]))
-    total_authors  = len(ranked)
-    total_tickets  = sum(len(v) for _, v in ranked)
-    today = date.today().strftime("%b %d, %Y")
+def _month_buckets(tickets, date_key):
+    """Group tickets into calendar-month buckets using the given date field.
+    Tickets with no date for that field are skipped.
+    Returns list of (year, month, [tickets]) sorted newest-first."""
+    by_month = defaultdict(list)
+    for t in tickets:
+        d = t.get(date_key, "")
+        if d and len(d) >= 7:
+            ym = d[:7]   # "YYYY-MM"
+            by_month[ym].append(t)
+    return sorted(by_month.items(), reverse=True)   # newest month first
+
+
+def _month_label(ym):
+    """'2026-06' → 'June 2026'"""
+    y, m = ym.split("-")
+    month_names = ["", "January", "February", "March", "April", "May", "June",
+                   "July", "August", "September", "October", "November", "December"]
+    return f"{month_names[int(m)]} {y}"
+
+
+def _leaderboard_month_block(ym, tickets, top_n, group_key, count_lbl,
+                              row_badge_fn, border_color, open_first, green):
+    """Build one initiative-block accordion for a single month's leaderboard."""
+    by_person = defaultdict(list)
+    for t in tickets:
+        by_person[t[group_key]].append(t)
+    if group_key == "assignee":
+        by_person.pop("Unassigned", None)
+
+    ranked = sorted(by_person.items(), key=lambda x: (-len(x[1]), x[0]))
+    top    = ranked[:top_n]
+    if not top:
+        return ""
+    ranks  = compute_ranks(top, lambda x: -len(x[1]))
+
+    total_people  = len(ranked)
+    total_tickets = sum(len(v) for _, v in ranked)
+    person_lbl    = "developers" if group_key == "assignee" else "authors"
 
     cards = ""
-    for i, ((name, tickets), rank) in enumerate(zip(top5, ranks)):
+    for i, ((name, person_tickets), rank) in enumerate(zip(top, ranks)):
         initials = ''.join(w[0].upper() for w in name.split()[:2]) or "??"
         rows = "".join(
             f'\n        <div class="lb-ticket">'
             f'<a class="lt-key" href="{JIRA_URL}/browse/{t["key"]}" target="_blank">{t["key"]}</a>'
             f'<span class="lt-title">{html_lib.escape(t["summary"])}</span>'
-            f'{badge_html(t["status"], t["cat"])}</div>'
-            for t in sorted(tickets, key=lambda t: t["key"])
+            f'{row_badge_fn(t)}</div>'
+            for t in sorted(person_tickets, key=lambda t: t["key"])
         )
-        cards += lb_card(rank, initials, name, len(tickets), "tickets", rows, open_=(i == 0))
+        cards += lb_card(rank, initials, name, len(person_tickets), count_lbl,
+                         rows, open_=(i == 0 and open_first), green=green)
+
+    badge_cls = "badge-done" if green else "badge-wip"
+    ticket_cls = "badge-done" if green else "badge-todo"
+    label = _month_label(ym)
+    is_current = (ym == date.today().strftime("%Y-%m"))
+    label_suffix = " (so far)" if is_current else ""
 
     return (
-        f'<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>\n\n'
         f'  <div class="initiative-block" style="margin-bottom:16px">\n'
-        f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #d97706">\n'
+        f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid {border_color}">\n'
         f'      <span class="iarrow">▶</span>\n'
-        f'      <span class="ititle">Jun 18 – {today}</span>\n'
-        f'      <div class="icounts"><span class="badge badge-wip">{total_authors} authors</span>'
-        f'<span class="badge badge-todo">{total_tickets} tickets</span></div>\n'
-        f'    </div>\n'
-        f'    <div class="initiative-body">\n'
-        f'      <div class="leaderboard" style="padding:12px 0">\n'
-        f'{cards}'
-        f'      </div>\n'
-        f'    </div>\n'
-        f'  </div>\n\n  '
-    )
-
-
-def build_done_leaderboard(all_tickets):
-    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
-    by_author = defaultdict(list)
-    for t in done_tickets:
-        by_author[t["reporter"]].append(t)
-    ranked = sorted(by_author.items(), key=lambda x: (-len(x[1]), x[0]))
-    top5   = ranked[:5]
-    ranks  = compute_ranks(top5, lambda x: -len(x[1]))
-    total_authors = len(ranked)
-    total_done    = sum(len(v) for _, v in ranked)
-    today = date.today().strftime("%b %d, %Y")
-
-    cards = ""
-    for i, ((name, tickets), rank) in enumerate(zip(top5, ranks)):
-        initials = ''.join(w[0].upper() for w in name.split()[:2]) or "??"
-        rows = "".join(
-            f'\n        <div class="lb-ticket">'
-            f'<a class="lt-key" href="{JIRA_URL}/browse/{t["key"]}" target="_blank">{t["key"]}</a>'
-            f'<span class="lt-title">{html_lib.escape(t["summary"])}</span>'
-            f'{badge_html(t["status"], t["cat"])}</div>'
-            for t in sorted(tickets, key=lambda t: t["key"])
-        )
-        cards += lb_card(rank, initials, name, len(tickets), "done", rows, open_=(i == 0), green=True)
-
-    return (
-        f'<h2>✅ Top 5 Authors — Most FlowForge Tickets Done</h2>\n\n'
-        f'  <div class="initiative-block" style="margin-bottom:16px">\n'
-        f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #16a34a">\n'
-        f'      <span class="iarrow">▶</span>\n'
-        f'      <span class="ititle">Jun 18 – {today}</span>\n'
-        f'      <div class="icounts"><span class="badge badge-done">{total_authors} authors</span>'
-        f'<span class="badge badge-done">{total_done} tickets done</span></div>\n'
-        f'    </div>\n'
-        f'    <div class="initiative-body">\n'
-        f'      <div class="leaderboard" style="padding:12px 0">\n'
-        f'{cards}'
-        f'      </div>\n'
-        f'    </div>\n'
-        f'  </div>\n\n  '
-    )
-
-
-def build_top10_devs(all_tickets):
-    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
-    by_dev = defaultdict(list)
-    for t in done_tickets:
-        by_dev[t["assignee"]].append(t)
-    by_dev.pop("Unassigned", None)
-    ranked = sorted(by_dev.items(), key=lambda x: (-len(x[1]), x[0]))
-    top10  = ranked[:10]
-    ranks  = compute_ranks(top10, lambda x: -len(x[1]))
-    total_devs = len(ranked)
-    total_done = sum(len(v) for _, v in ranked)
-    today = date.today().strftime("%b %d, %Y")
-
-    cards = ""
-    for i, ((name, tickets), rank) in enumerate(zip(top10, ranks)):
-        initials = ''.join(w[0].upper() for w in name.split()[:2]) or "??"
-        rows = "".join(
-            f'\n        <div class="lb-ticket">'
-            f'<a class="lt-key" href="{JIRA_URL}/browse/{t["key"]}" target="_blank">{t["key"]}</a>'
-            f'<span class="lt-title">{html_lib.escape(t["summary"])}</span>'
-            f'<span class="badge badge-done">Done</span></div>'
-            for t in sorted(tickets, key=lambda t: t["key"])
-        )
-        cards += lb_card(rank, initials, name, len(tickets), "done", rows, open_=(i == 0), green=True)
-
-    return (
-        f'<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>\n\n'
-        f'  <div class="initiative-block" style="margin-bottom:16px">\n'
-        f'    <div class="initiative-head" onclick="this.closest(\'.initiative-block\').classList.toggle(\'open\')" style="border-left:3px solid #16a34a">\n'
-        f'      <span class="iarrow">▶</span>\n'
-        f'      <span class="ititle">Jun 18 – {today}</span>\n'
-        f'      <div class="icounts"><span class="badge badge-done">{total_devs} developers</span>'
-        f'<span class="badge badge-done">{total_done} tickets done</span></div>\n'
+        f'      <span class="ititle">{label}{label_suffix}</span>\n'
+        f'      <div class="icounts">'
+        f'<span class="badge {badge_cls}">{total_people} {person_lbl}</span>'
+        f'<span class="badge {ticket_cls}">{total_tickets} {count_lbl}</span></div>\n'
         f'    </div>\n'
         f'    <div class="initiative-body">\n'
         f'      <div class="leaderboard" style="padding:12px 0">\n'
@@ -592,6 +546,49 @@ def build_top10_devs(all_tickets):
         f'      </div>\n'
         f'    </div>\n'
         f'  </div>\n\n'
+    )
+
+
+def build_created_leaderboard(all_tickets):
+    buckets = _month_buckets(all_tickets, "created")
+    blocks = ""
+    for i, (ym, tickets) in enumerate(buckets):
+        blocks += _leaderboard_month_block(
+            ym, tickets, top_n=5, group_key="reporter",
+            count_lbl="tickets",
+            row_badge_fn=lambda t: badge_html(t["status"], t["cat"]),
+            border_color="#d97706", open_first=(i == 0), green=False
+        )
+    return f'<h2>🏆 Top 5 Authors — Most FlowForge Tickets Created</h2>\n\n{blocks}  '
+
+
+def build_done_leaderboard(all_tickets):
+    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
+    buckets = _month_buckets(done_tickets, "done_date")
+    blocks = ""
+    for i, (ym, tickets) in enumerate(buckets):
+        blocks += _leaderboard_month_block(
+            ym, tickets, top_n=5, group_key="reporter",
+            count_lbl="done",
+            row_badge_fn=lambda t: badge_html(t["status"], t["cat"]),
+            border_color="#16a34a", open_first=(i == 0), green=True
+        )
+    return f'<h2>✅ Top 5 Authors — Most FlowForge Tickets Done</h2>\n\n{blocks}  '
+
+
+def build_top10_devs(all_tickets):
+    done_tickets = [t for t in all_tickets if t["cat"] == "Done"]
+    buckets = _month_buckets(done_tickets, "done_date")
+    blocks = ""
+    for i, (ym, tickets) in enumerate(buckets):
+        blocks += _leaderboard_month_block(
+            ym, tickets, top_n=10, group_key="assignee",
+            count_lbl="done",
+            row_badge_fn=lambda t: '<span class="badge badge-done">Done</span>',
+            border_color="#16a34a", open_first=(i == 0), green=True
+        )
+    return (
+        f'<h2>🏅 Top 10 Developers — Most FlowForge Tickets Done</h2>\n\n{blocks}'
         f'  <!-- ══ Section 6: Top 10 Assignees — Active Work ══ -->\n  '
     )
 
