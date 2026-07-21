@@ -46,44 +46,146 @@ DASHBOARD_FILE = os.path.join(os.path.dirname(__file__), "index.html")
 # Tickets are matched by their parent field pointing to one of these epic keys.
 # A ticket whose parent is the initiative key itself (no sub-epic) goes into a
 # catch-all group for that initiative.
-# (slug, prod_key, iproj_label, display_title, [epic_keys])
+# (slug, prod_key, iproj_label, display_title, {epic_key: display_title, ...})
+# Epic titles are hardcoded here — never fetched from Jira — so the design never drifts.
 INITIATIVES = [
-    ("fox-uk",             "PROD-11100", "[15011]",           "Fox UK (Day 1)",                                                          ["PROD-12307","PROD-12353","PROD-13072","PROD-13071","PROD-12640","PROD-13070","PROD-13820"]),
-    ("travel",             "PROD-12933", "[15803]",           "Fusion B2C US (Phase 1)",                                                 ["PROD-13143","PROD-13062","PROD-13400","PROD-13145","PROD-13136","PROD-13282","PROD-13201","PROD-13245"]),
-    ("mddr",               "PROD-12356", "[15044]",           "MDDR individual policies",                                                ["PROD-12497","PROD-13196","PROD-13075","PROD-13221","PROD-13223"]),
-    ("nbg",                "PROD-13185", "[15045]",           "NBG Motor",                                                               ["PROD-13244","PROD-13170","PROD-13171","PROD-13312","PROD-13320","PROD-13267","PROD-13415","PROD-13413","PROD-13535","PROD-12920","PROD-13403"]),
-    ("nbg-standing-order", "PROD-13287", "[15045]",           "NBG Financial Services (Payments, Commissions)",                         ["PROD-13576","PROD-13577"]),
-    ("clara",              "PROD-13092", "[15832]",           "Clara EHA Beneficiary Management and MP Access",                         ["PROD-13255","PROD-13225","PROD-12536","PROD-13190","PROD-12535","PROD-12730"]),
-    ("global-ch",          "PROD-12331", "[18201]",           "Global App CH Switzerland",                                               ["PROD-12480","PROD-12481","PROD-12482","PROD-12383","PROD-12800","PROD-13301","PROD-13307","PROD-12300","PROD-13686","PROD-13304","PROD-12484"]),
-    ("global-azd",         "PROD-12339", "[18202]",           "Global App AzD - Allianz Direct NL",                                     ["PROD-12769","PROD-12770","PROD-12773","PROD-13502","PROD-13500"]),
-    ("global-azp",         "PROD-12514", "[18204]",           "Global App - AUS Az Partners",                                           ["PROD-13082","PROD-13083","PROD-13079"]),
-    ("top-viaggi",         "PROD-12344", "[15041]",           "Travel Beneficiaries - Wave 1 - (ON/OFF Boarding) TOP VIAGGI (Italy)",   ["PROD-12741"]),
-    ("westpac",            "PROD-11253", "[15017]",           "[Westpac] Post-sales data flows: Policy, Claim and credit card cancellations", ["PROD-12292","PROD-13654"]),
-    ("allyz-ca",           "PROD-13100", "[60999]",           "Allyz Canada",                                                            ["PROD-13269"]),
-    ("coverwise",          "PROD-12115", "[15005 · 15019]",   "Coverwise - post go live",                                               ["PROD-12116"]),
-    ("netrisk",            "PROD-12355", "[15043]",           "Netrisk - COI Retrival",                                                  []),
-    ("bbva",               "PROD-13037", "[15036]",           "[BBVA/SISU] Implementation of new business partner",                      []),
-    ("globus-threat",      "PROD-12332", "[18200]",           "Global App - General work",                                               ["PROD-13653","PROD-12978","PROD-12923"]),
-    ("ff-ba-pipeline",     "PROD-13115", "[18200]",           "AI Rollout",                                                              ["PROD-13861","CIL-6148"]),
-    ("bmw",                "PROD-13231", "[15037]",           "BMW",                                                                     ["PROD-13231","PROD-13233"]),
-    ("travel-claims",      "PROD-13491", "[Travel Claims]",   "Travel Claims — Unified Claims View",                                    ["PROD-13491"]),
-    ("clara-eha-widget",   "PROD-12960", "[15832]",           "Clara Emergency Home Assistance",                                        ["PROD-12963"]),
-    ("jlr-wallbox",        "PROD-11449", "[15030]",           "JLR Wallbox",                                                             ["PROD-11516"]),
-    ("global-aal",         "PROD-12340", "[18203]",           "Global App Australia (AAL)",                                              ["PROD-13791","PROD-13701"]),
-    ("rrb",                "PROD-12919", "[15047]",           "AU Regional Banks (RRB)",                                                 ["PROD-13809"]),
-    ("hood",               "PROD-12918", "[15048]",           "Hood Group",                                                              ["PROD-13238"]),
-    ("cil-general",        "PROD-10026", "[15015]",           "CIL General — Non-Billable",                                             ["PROD-12925"]),
+    ("fox-uk",  "PROD-11100", "[15011]", "Fox UK (Day 1)", {
+        "PROD-12307": "Fox UK — UAT Wave 1",
+        "PROD-12353": "Fox UK — [FR-8] Save and Retrieve Quote",
+        "PROD-13072": "Fox UK — [FR-13] Migration / Bugs &amp; Fixes",
+        "PROD-13071": "Fox UK — Save Quotation Email",
+        "PROD-12640": "Fox UK — [FR-14] Support of Affiliated Business Partners",
+        "PROD-13070": "Fox UK — [FR-1] Q&amp;B flow / Fixes and bugs",
+        "PROD-13820": "Fox — GO LIVE",
+    }),
+    ("travel",  "PROD-12933", "[15803]", "Fusion B2C US (Phase 1)", {
+        "PROD-13143": "[FR-04] Requote 'Get a Quote' (Traveler's Details)",
+        "PROD-13062": "[EHA Widget + MP] — Get Policy and Coverages details",
+        "PROD-13400": "EHA Widget — Upload and Delete Case Documents",
+        "PROD-13145": "Travel — Braintree Payment Integration",
+        "PROD-13136": "Travel — Gadget Fields Integration",
+        "PROD-13282": "Travel — [FR-09] Save &amp; Retrieve via Email",
+        "PROD-13201": "CIL Library — USPG API Provider",
+        "PROD-13245": "Fusion B2C US — Policy Recalculation for Contract Management (Amendments)",
+    }),
+    ("mddr",    "PROD-12356", "[15044]", "MDDR individual policies", {
+        "PROD-12497": "MDDR — Individual Policies: E2E Testing",
+        "PROD-13196": "MDDR — Individual Policies: Contract Modification &amp; Cancellation via eAPI",
+        "PROD-13075": "MDDR — Expand Beneficiaries",
+        "PROD-13221": "MDDR Open Policies — Beneficiary Creation Events (webhook intake)",
+        "PROD-13223": "MDDR Open Policies — Beneficiary Modification Events (webhook intake)",
+    }),
+    ("nbg",     "PROD-13185", "[15045]", "NBG Motor", {
+        "PROD-13244": "NBG Motor — API Modifications",
+        "PROD-13170": "NBG Property — API Draft",
+        "PROD-13171": "NBG Property — Quote/Offer Integration",
+        "PROD-13312": "NBG Property — Documents Integration",
+        "PROD-13320": "NBG Property — Apply for Policy Integration",
+        "PROD-13267": "NBG UL — API Modifications",
+        "PROD-13415": "NBG UL — Apply for Policy Integration",
+        "PROD-13413": "NBG UL — Document Retrieval &amp; Upload Integration",
+        "PROD-13535": "NBG Property — Amend &amp; Cancel Policy",
+        "PROD-12920": "NBG Motor — Fix Missing Field Mappings",
+        "PROD-13403": "NBG Health — Partner Flow &amp; Product Setup",
+    }),
+    ("nbg-standing-order", "PROD-13287", "[15045]", "NBG Financial Services (Payments, Commissions)", {
+        "PROD-13576": "NBG Standing Order — API Modifications",
+        "PROD-13577": "NBG Standing Order — Integration",
+    }),
+    ("clara",   "PROD-13092", "[15832]", "Clara EHA Beneficiary Management and MP Access", {
+        "PROD-13255": "Clara EHA — CIL Beneficiary Management Implementation",
+        "PROD-13225": "MDDR — Individual Policy Cancellation",
+        "PROD-12536": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
+        "PROD-13190": "Clara Replacement — Get Policy (Retail &amp; Meta Portal)",
+        "PROD-12535": "Clara Replacement — Remove Unnecessary OnePay Fields",
+        "PROD-12730": "Clara Replacement — Travel Sales Data Flows",
+    }),
+    ("global-ch",  "PROD-12331", "[18201]", "Global App CH Switzerland", {
+        "PROD-12480": "CH — Person Details 2",
+        "PROD-12481": "CH PI-III — Mailbox-List",
+        "PROD-12482": "CH PI-III — Mailbox-Item",
+        "PROD-12383": "CH — Person Details",
+        "PROD-12800": "CH PI-II — Payment Frequency",
+        "PROD-13301": "CH PI-III — Asynch Process Communication",
+        "PROD-13307": "CH — Extend Product Type Enum",
+        "PROD-12300": "CH — Motor Additional Data",
+        "PROD-13686": "CH PI-III — Technical Debts",
+        "PROD-13304": "CH PI-III — Customer Profile Delete",
+        "PROD-12484": "CH PI-II — Motor Insurance Certificate",
+    }),
+    ("global-azd", "PROD-12339", "[18202]", "Global App AzD - Allianz Direct NL", {
+        "PROD-12769": "AzD NL — Display All Policies",
+        "PROD-12770": "AzD NL — Display Policy Details",
+        "PROD-12773": "AzD NL — Display Claims",
+        "PROD-13502": "Global App AzD NL — Risk Address &amp; Actions",
+        "PROD-13500": "Global App AzD NL — Available Actions",
+    }),
+    ("global-azp", "PROD-12514", "[18204]", "Global App - AUS Az Partners", {
+        "PROD-13082": "Allyz AUS — Get Emergency Numbers",
+        "PROD-13083": "Allyz AUS — Hospital Finder",
+        "PROD-13079": "AzP — Lounge Zone Access (QR code)",
+    }),
+    ("top-viaggi", "PROD-12344", "[15041]", "Travel Beneficiaries - Wave 1 - (ON/OFF Boarding) TOP VIAGGI (Italy)", {
+        "PROD-12741": "Top Viaggi — [FR-1] Enable beneficiary creation",
+    }),
+    ("westpac",    "PROD-11253", "[15017]", "[Westpac] Post-sales data flows: Policy, Claim and credit card cancellations", {
+        "PROD-12292": "Westpac — View Policy Details (Travel)",
+        "PROD-13654": "Westpac — UAT Bugs",
+    }),
+    ("allyz-ca",   "PROD-13100", "[60999]", "Allyz Canada", {
+        "PROD-13269": "Allyz CA — GetPolicy &amp; Setup",
+    }),
+    ("coverwise",  "PROD-12115", "[15005 · 15019]", "Coverwise - post go live", {
+        "PROD-12116": "Coverwise — Production Issues",
+    }),
+    ("netrisk",    "PROD-12355", "[15043]", "Netrisk - COI Retrival", {}),
+    ("bbva",       "PROD-13037", "[15036]", "[BBVA/SISU] Implementation of new business partner", {}),
+    ("globus-threat", "PROD-12332", "[18200]", "Global App - General work", {
+        "PROD-13653": "Globus — Threat Model Remediation",
+        "PROD-12978": "Global App — Login Beta+",
+        "PROD-12923": "Global App — Virtual OE",
+    }),
+    ("ff-ba-pipeline", "PROD-13115", "[18200]", "AI Rollout", {
+        "PROD-13861": "FlowForge — Tooling &amp; Infrastructure",
+        "CIL-6148":   "[FlowForge] BA/PO Upstream Pipeline Epic",
+    }),
+    ("bmw",        "PROD-13231", "[15037]", "BMW", {
+        "PROD-13231": "BMW — Handle customer self-payment for service",
+        "PROD-13233": "BMW — Handle empty ETA returned by RSA GET /geolocation",
+    }),
+    ("travel-claims",    "PROD-13491", "[Travel Claims]", "Travel Claims — Unified Claims View", {
+        "PROD-13491": "Travel Claims — Single CIL Entry Point",
+    }),
+    ("clara-eha-widget", "PROD-12960", "[15832]", "Clara Emergency Home Assistance", {
+        "PROD-12963": "EHA Widget — Create Case",
+    }),
+    ("jlr-wallbox",      "PROD-11449", "[15030]", "JLR Wallbox", {
+        "PROD-11516": "JLR Wallbox — Internal E2E Testing",
+    }),
+    ("global-aal", "PROD-12340", "[18203]", "Global App Australia (AAL)", {
+        "PROD-13791": "GlobaApp AAL OE — General Time Tracking",
+        "PROD-13701": "AAL — PI 3 Planning",
+    }),
+    ("rrb",        "PROD-12919", "[15047]", "AU Regional Banks (RRB)", {
+        "PROD-13809": "RRB — CIL Partner Integration",
+    }),
+    ("hood",       "PROD-12918", "[15048]", "Hood Group", {
+        "PROD-13238": "Hood Group — FlowForge Integration",
+    }),
+    ("cil-general","PROD-10026", "[15015]", "CIL General — Non-Billable", {
+        "PROD-12925": "CIL API Versioning",
+    }),
 ]
 
 # Map every epic key → initiative slug (built at runtime)
-EPIC_TO_INIT = {}
-INIT_EPICS   = {}  # slug → [epic keys]
-INIT_PROD    = {}  # slug → prod key
-INIT_IPROJ   = {}  # slug → iproj label
-INIT_ITITLE  = {}  # slug → display title
+EPIC_TO_INIT  = {}
+INIT_EPICS    = {}  # slug → {epic_key: title}
+INIT_PROD     = {}  # slug → prod key
+INIT_IPROJ    = {}  # slug → iproj label
+INIT_ITITLE   = {}  # slug → display title
 for slug, prod_key, iproj, ititle, epics in INITIATIVES:
     INIT_PROD[slug]   = prod_key
-    INIT_EPICS[slug]  = epics
+    INIT_EPICS[slug]  = epics  # dict {key: title}
     INIT_IPROJ[slug]  = iproj
     INIT_ITITLE[slug] = ititle
     EPIC_TO_INIT[prod_key] = slug
@@ -205,42 +307,40 @@ def build_ticket_row(t):
 def build_epic_group(epic_key, epic_title, tickets):
     if not tickets:
         return ""
-    rows = "\n              ".join(build_ticket_row(t) for t in tickets)
+    rows = "\n            ".join(build_ticket_row(t) for t in tickets)
     count = len(tickets)
     eg_key_html = (
-        f'<a href="{JIRA_URL}/browse/{epic_key}" target="_blank" '
-        f'style="color:inherit;text-decoration:none">{epic_key}</a>'
+        f'<a href="{JIRA_URL}/browse/{epic_key}" target="_blank">{epic_key}</a>'
         if epic_key else ""
     )
     return (
-        f'      <div class="epic-group">\n'
-        f'          <div class="epic-group-head">\n'
-        f'            <span class="eg-key">{eg_key_html}</span>\n'
-        f'            <span class="eg-title">{html_lib.escape(epic_title)}</span>\n'
-        f'            <span class="eg-count">{count} ticket{"s" if count != 1 else ""}</span>\n'
-        f'          </div>\n'
-        f'          <table class="ticket-table">\n'
-        f'            <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th>'
+        f'\n            <div class="epic-group">\n'
+        f'        <div class="epic-group-head">\n'
+        f'          <span class="eg-key">{eg_key_html}</span>\n'
+        f'          <span class="eg-title">{epic_title}</span>\n'
+        f'          <span class="eg-count">{count} ticket{"s" if count != 1 else ""}</span>\n'
+        f'        </div>\n'
+        f'        <table class="ticket-table">\n'
+        f'          <thead><tr><th>Key</th><th>Summary</th><th>Assignee</th>'
         f'<th>Author</th><th>Status</th><th>Created</th><th>AI Cost</th><th>Done</th></tr></thead>\n'
-        f'            <tbody>\n'
-        f'              {rows}\n'
-        f'            </tbody>\n'
-        f'          </table>\n'
+        f'          <tbody>\n'
+        f'            {rows}\n'
+        f'          </tbody>\n'
+        f'        </table>\n'
         f'      </div>\n'
     )
 
 
-def build_initiative_body(slug, tickets_by_epic, epic_titles):
+def build_initiative_body(slug, tickets_by_epic):
     """Build the initiative-body div content for one initiative."""
-    epics = INIT_EPICS[slug]
+    epics = INIT_EPICS[slug]   # dict {epic_key: display_title}
     prod_key = INIT_PROD[slug]
     parts = []
 
-    # Known epics in order
+    # Known epics in config order
     seen_epics = set()
-    for epic_key in epics:
+    for epic_key, title in epics.items():
         ts = tickets_by_epic.get(epic_key, [])
-        title = epic_titles.get(epic_key, epic_key)
         if ts:
             parts.append(build_epic_group(epic_key, title, ts))
             seen_epics.add(epic_key)
@@ -254,21 +354,24 @@ def build_initiative_body(slug, tickets_by_epic, epic_titles):
     # Any tickets with unexpected parent keys (show them under their parent)
     for epic_key, ts in tickets_by_epic.items():
         if epic_key not in seen_epics:
-            title = epic_titles.get(epic_key, epic_key)
+            title = epics.get(epic_key, epic_key)
             parts.append(build_epic_group(epic_key, title, ts))
 
     body = "".join(parts)
-    return f'    <div class="initiative-body">\n{body}    </div>\n'
+    return f'    <div class="initiative-body">\n{body}\n    </div>\n'
 
 
 def build_icounts(tickets):
     done = sum(1 for t in tickets if t["cat"] == "Done")
     wip  = sum(1 for t in tickets if t["cat"] == "In Progress")
     todo = sum(1 for t in tickets if t["cat"] == "To Do")
+    total_cost = sum(t["ai_cost"] for t in tickets if t["ai_cost"] > 0)
     parts = []
-    if done: parts.append(f'<span class="badge badge-done">{done} done</span>')
     if wip:  parts.append(f'<span class="badge badge-wip">{wip} active</span>')
+    if done: parts.append(f'<span class="badge badge-done">{done} done</span>')
     if todo: parts.append(f'<span class="badge badge-todo">{todo} to do</span>')
+    if total_cost > 0:
+        parts.append(f'<span class="badge-cost">✦ ${total_cost:.0f}</span>')
     return "\n        ".join(parts)
 
 
@@ -533,7 +636,7 @@ def fetch_epic_titles(epic_keys):
 
 # ── HTML patcher ──────────────────────────────────────────────────────────────
 
-def patch_html(html, all_tickets, epic_titles):
+def patch_html(html, all_tickets):
     """Rebuild all dynamic sections of the dashboard HTML."""
 
     # ── 1. Initiatives section ─────────────────────────────────────────────
@@ -571,14 +674,13 @@ def patch_html(html, all_tickets, epic_titles):
                 f'    <div class="initiative-block" data-init="{slug}">\n'
                 f'    <div class="initiative-head" onclick="toggleInit(this)">\n'
                 f'      <span class="iarrow">▶</span>\n'
-                f'      <span class="ikey"><a href="{JIRA_URL}/browse/{prod_key}" target="_blank" '
-                f'style="color:inherit;text-decoration:none">{prod_key}</a></span>\n'
+                f'      <span class="ikey"><a href="{JIRA_URL}/browse/{prod_key}" target="_blank" style="color:inherit;text-decoration:none">{prod_key}</a></span>\n'
                 f'      <span class="iproj">{html_lib.escape(iproj)}</span>\n'
                 f'      <span class="ititle">{html_lib.escape(ititle)}</span>\n'
                 f'      <div class="icounts">\n        {icounts_html}\n      </div>\n'
                 f'    </div>\n'
             )
-            body = build_initiative_body(slug, tickets_by_epic, epic_titles)
+            body = build_initiative_body(slug, tickets_by_epic)
             new_blocks.append(
                 head + body
                 + f'    </div><!-- end initiative-block data-init={slug} -->\n\n'
@@ -649,11 +751,6 @@ def main():
     tickets = [t for t in tickets if t["status"] != "Closed"]
     print(f"  {len(tickets)} tickets (Closed excluded)")
 
-    # Fetch epic titles for all known epics
-    all_epic_keys = list({e for _, _, _, _, epics in INITIATIVES for e in epics if e})
-    print(f"Fetching titles for {len(all_epic_keys)} epics…")
-    epic_titles = fetch_epic_titles(all_epic_keys)
-
     if args.dry_run:
         by_cat = defaultdict(int)
         for t in tickets:
@@ -668,7 +765,7 @@ def main():
         html = f.read()
 
     print("Patching HTML…")
-    new_html = patch_html(html, tickets, epic_titles)
+    new_html = patch_html(html, tickets)
 
     with open(DASHBOARD_FILE, "w") as f:
         f.write(new_html)
