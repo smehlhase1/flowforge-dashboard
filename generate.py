@@ -772,8 +772,7 @@ def main():
         f.write(new_html)
     print(f"  Written {DASHBOARD_FILE}")
 
-    print(f"Written: {DASHBOARD_FILE}")
-    print(f"  {len(html):,} → {len(new_html):,} chars (delta {len(new_html)-len(html):+,})")
+    print(f"  {len(new_html):,} chars written")
 
 
 if __name__ == "__main__":
