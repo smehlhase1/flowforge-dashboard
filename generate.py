@@ -596,7 +596,7 @@ def build_top10_devs(all_tickets):
     )
 
 
-def build_summary_bar(all_tickets, static_cards_html):
+def build_summary_bar(all_tickets, static_cards_html, active_init_count=None):
     total = len(all_tickets)
     done  = sum(1 for t in all_tickets if t["cat"] == "Done")
     wip   = sum(1 for t in all_tickets if t["cat"] == "In Progress")
@@ -604,6 +604,9 @@ def build_summary_bar(all_tickets, static_cards_html):
 
     # Authors (unique reporters)
     authors = len(set(t["reporter"] for t in all_tickets))
+
+    # Initiatives: only count those with at least one ticket
+    n_inits = active_init_count if active_init_count is not None else len(INITIATIVES)
 
     # Avg AI cost (sum of non-zero / count of non-zero)
     costs = [t["ai_cost"] for t in all_tickets if t["ai_cost"] > 0]
@@ -615,7 +618,7 @@ def build_summary_bar(all_tickets, static_cards_html):
         f'    <div class="summary-card green"><div class="num">{done}</div><div class="lbl">Done</div></div>\n'
         f'    <div class="summary-card amber"><div class="num">{wip}</div><div class="lbl">In Progress / Review</div></div>\n'
         f'    <div class="summary-card gray"><div class="num">{todo}</div><div class="lbl">To Do</div></div>\n'
-        f'    <div class="summary-card blue"><div class="num">{len(INITIATIVES)}</div><div class="lbl">Initiatives</div></div>\n'
+        f'    <div class="summary-card blue"><div class="num">{n_inits}</div><div class="lbl">Initiatives</div></div>\n'
         f'    <div class="summary-card red"><div class="num">{authors}</div><div class="lbl">Authors</div></div>\n'
     )
 
@@ -672,7 +675,9 @@ def patch_html(html, all_tickets):
         for t in unrouted[:10]:
             print(f"    {t['key']} parent={t['parent']}", file=sys.stderr)
 
-    # Build all 25 initiative blocks from config — never reads existing HTML blocks.
+    active_init_count = 0  # will be set when building blocks below
+
+    # Build all initiative blocks from config — never reads existing HTML blocks.
     section_start_tag = '<div id="init-section-body">'
     section_end_tag   = '</div><!-- end init-section-body -->'
     section_start = html.find(section_start_tag)
@@ -684,6 +689,9 @@ def patch_html(html, all_tickets):
         for slug, prod_key, iproj, ititle, _ in INITIATIVES:
             tickets_by_epic = init_ticket_map.get(slug, {})
             all_init_tickets = [t for ts in tickets_by_epic.values() for t in ts]
+            if not all_init_tickets:
+                continue
+            active_init_count += 1
             icounts_html = build_icounts(all_init_tickets)
 
             head = (
@@ -716,8 +724,16 @@ def patch_html(html, all_tickets):
             r'\s*<div class="summary-card [^"]*"><div class="num">[^<]*</div><div class="lbl">(?:Total Tickets|Done|In Progress.*?|To Do|Initiatives|Authors)</div></div>',
             '', bar_m.group(2), flags=re.DOTALL
         )
-        new_bar_content = build_summary_bar(all_tickets, static_cards)
+        new_bar_content = build_summary_bar(all_tickets, static_cards, active_init_count)
         html = html[:bar_m.start(2)] + "\n" + new_bar_content + "\n  " + html[bar_m.end(2):]
+
+    # ── 2b. ai-badge (header stats) ────────────────────────────────────────
+    authors_count = len(set(t["reporter"] for t in all_tickets))
+    html = re.sub(
+        r'✦ FlowForge · \d+ tickets · \d+ initiatives · \d+ authors',
+        f'✦ FlowForge · {len(all_tickets)} tickets · {active_init_count} initiatives · {authors_count} authors',
+        html
+    )
 
     # ── 3. By-author section ────────────────────────────────────────────────
     ba_start = html.find('id="by-author-body"')
