@@ -181,7 +181,7 @@ INITIATIVES = [
         "PROD-13079": "AzP — Lounge Zone Access (QR code)",
         "PROD-13800": "AzP AUS — Login (tactical solution to unblock development)",
     }),
-    ("agentmax-w1", "PROD-11333", "[15020]", "AgentMax Replacement — Wave 1 (DE, AT, CH)", {
+    ("agentmax-w1", "PROD-11333", "[15820]", "AgentMax Replacement — Wave 1 (DE, AT, CH)", {
         "PROD-11345": "AgentMax W1 — Project Setup",
         "PROD-11522": "AgentMax W1 — Sales: Fetching Quotes",
         "PROD-11561": "AgentMax W1 — Enable Saved Quotes",
