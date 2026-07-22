@@ -66,7 +66,6 @@ INITIATIVES = [
         "PROD-13136": "Travel — Gadget Fields Integration",
         "PROD-13282": "Travel — [FR-09] Save &amp; Retrieve via Email",
         "PROD-13201": "CIL Library — USPG API Provider",
-        "PROD-13245": "Fusion B2C US — Policy Recalculation for Contract Management (Amendments)",
     }),
     ("mddr",    "PROD-12356", "[15044]", "MDDR individual policies", {
         "PROD-12497": "MDDR — Individual Policies: E2E Testing",
@@ -94,11 +93,27 @@ INITIATIVES = [
     }),
     ("clara",   "PROD-13092", "[15832]", "Clara EHA Beneficiary Management and MP Access", {
         "PROD-13255": "Clara EHA — CIL Beneficiary Management Implementation",
-        "PROD-13225": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
-        "PROD-12536": "Clara Replacement — Get Policy (Retail &amp; Meta Portal)",
-        "PROD-13190": "Clara Replacement — Remove Unnecessary OnePay Fields",
-        "PROD-12535": "Clara Replacement — Travel Sales Data Flows",
-        "PROD-12730": "Clara Replacement — Post-sales Policy Amendments",
+        "PROD-13235": "FlowForge for Clara EHA Beneficiary Management",
+    }),
+    ("clara-replacement", "PROD-11743", "[15832]", "Clara Replacement", {
+        "PROD-12533": "Clara Replacement — [00] Project Setup",
+        "PROD-12534": "Clara Replacement — [02] Authentication",
+        "PROD-12535": "Clara Replacement — [03] Sales Data Flows — Quoting",
+        "PROD-12536": "Clara Replacement — [08] Post-sales — Fetch Policy Data",
+        "PROD-12537": "Clara Replacement — [09] Post-sales — Fetch Claims Data",
+        "PROD-13189": "Clara Replacement — [04] Sales Data Flows — Payments",
+        "PROD-13190": "Clara Replacement — [06] Sales Data Flows — Policy Creation",
+        "PROD-13219": "Clara Replacement — [07] Sales Data Flows — Medical Assessment SMS",
+        "PROD-13220": "Clara Replacement — [11] Post-sales — Policy Cancellations",
+        "PROD-13234": "Clara Replacement — [13] FlowForge",
+        "PROD-12730": "Clara Replacement — [10] Post-sales — Policy Amendments (non-price)",
+        "PROD-13902": "Clara Replacement — [11] Post-sales — Policy Amendments (price relevant)",
+    }),
+    ("clara-price", "PROD-13218", "[15832]", "Clara Price Relevant Modifications (xLOB)", {
+        "PROD-13245": "Policy Recalculation for Contract Management (Amendments)",
+    }),
+    ("travel-claims-gap", "PROD-13098", "[15832]", "Travel Claims Feature Gap", {
+        "PROD-13491": "Travel Claims — Unified Claims View Single CIL Entry Point",
     }),
     ("global-ch",  "PROD-12331", "[18201]", "Global App CH Switzerland", {
         "PROD-12480": "CH — Person Details 2",
@@ -158,9 +173,6 @@ INITIATIVES = [
     ("bmw",        "PROD-13231", "[15037]", "BMW", {
         "PROD-13231": "BMW — Handle customer self-payment for service",
         "PROD-13233": "BMW — Handle empty ETA returned by RSA GET /geolocation",
-    }),
-    ("travel-claims",    "PROD-13491", "[Travel Claims]", "Travel Claims — Unified Claims View", {
-        "PROD-13491": "Travel Claims — Single CIL Entry Point",
     }),
     ("clara-eha-widget", "PROD-12960", "[15832]", "Clara Emergency Home Assistance", {
         "PROD-12963": "EHA Widget — Create Case",
