@@ -211,7 +211,7 @@ INITIATIVES = [
         "PROD-12038": "AgentMax ES — Sales: Buying Policies",
         "PROD-12506": "AgentMax ES — Analytics",
     }),
-    ("agentmax-cz", "PROD-12003", "[15025]", "AgentMax Replacement — CZ", {
+    ("agentmax-cz", "PROD-12003", "[15820]", "AgentMax Replacement — CZ", {
         "PROD-12020": "AgentMax CZ — Project Setup",
         "PROD-12022": "AgentMax CZ — Sales: Fetching Quotes",
         "PROD-12025": "AgentMax CZ — Enable Saved Quotes",
