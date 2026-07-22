@@ -57,6 +57,16 @@ INITIATIVES = [
         "PROD-12640": "Fox UK — [FR-14] Support of Affiliated Business Partners",
         "PROD-13070": "Fox UK — [FR-1] Q&amp;B flow / Fixes and bugs",
         "PROD-13820": "Fox — GO LIVE",
+        "PROD-11818": "Fox UK — CIL/Meta Portal Data Flows",
+        "PROD-11819": "Fox UK — [FR-1] Q&amp;B flow",
+        "PROD-11855": "Fox UK — [FR-10] Contract Modification Flows",
+        "PROD-12634": "Fox UK — [FR-4] Medical Screening Process",
+    }),
+    ("fox-uk-day2", "PROD-12418", "[15011]", "Fox UK (Day 2)", {
+        "PROD-12416": "Fox UK — [FR-11] Travel Policies Premium Modifications",
+    }),
+    ("fox-uk-emagin", "PROD-12914", "[15039]", "Fox UK - eMagin Bundle documents", {
+        "PROD-12539": "Fox UK — [FR-30] eMagin Bundle documents",
     }),
     ("travel",  "PROD-12933", "[15803]", "Fusion B2C US (Phase 1)", {
         "PROD-13143": "[FR-04] Requote 'Get a Quote' (Traveler's Details)",
@@ -66,6 +76,7 @@ INITIATIVES = [
         "PROD-13136": "Travel — Gadget Fields Integration",
         "PROD-13282": "Travel — [FR-09] Save &amp; Retrieve via Email",
         "PROD-13201": "CIL Library — USPG API Provider",
+        "PROD-12844": "Fusion B2C US — Discovery",
     }),
     ("mddr",    "PROD-12356", "[15044]", "MDDR individual policies", {
         "PROD-12497": "MDDR — Individual Policies: E2E Testing",
@@ -73,6 +84,10 @@ INITIATIVES = [
         "PROD-13075": "MDDR — Expand Beneficiaries",
         "PROD-13221": "MDDR Open Policies — Beneficiary Creation Events (webhook intake)",
         "PROD-13223": "MDDR Open Policies — Beneficiary Modification Events (webhook intake)",
+        "PROD-12474": "MDDR — Verify &amp; Integrate Quote + Person Create Flow",
+    }),
+    ("mddr-bene", "PROD-13095", "[15044]", "MDDR Beneficiaries", {
+        "PROD-13225": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
     }),
     ("nbg",     "PROD-13185", "[15045]", "NBG Motor", {
         "PROD-13244": "NBG Motor — API Modifications",
@@ -86,6 +101,25 @@ INITIATIVES = [
         "PROD-13535": "NBG Property — Amend &amp; Cancel Policy",
         "PROD-12920": "NBG Motor — Fix Missing Field Mappings",
         "PROD-13403": "NBG Health — Partner Flow &amp; Product Setup",
+        "PROD-13399": "NBG Motor — Lookups Integration",
+    }),
+    ("nbg-sr", "PROD-13146", "[15045]", "NBG Service Request", {
+        "PROD-13148": "NBG SR — API Draft",
+        "PROD-13151": "NBG SR — Mock Enabled Endpoints",
+    }),
+    ("nbg-ul", "PROD-13264", "[15045]", "NBG Unit Linked Single", {
+        "PROD-13284": "NBG UL Single — Offer/Quote Integration",
+        "PROD-13414": "NBG UL Single — Issuance Integration (Payments with RF)",
+        "PROD-13689": "NBG UL Single — Get Policy Details Integration",
+        "PROD-13712": "NBG UL Single — Cancellation and Amendments Integration",
+        "PROD-13895": "NBG UL Single — Lookup Data Integration",
+        "PROD-13906": "NBG UL Single — Apply for Policy and Issuance (clone)",
+    }),
+    ("nbg-health-inp", "PROD-13293", "[15045]", "NBG Health Inpatient", {
+        "PROD-13461": "NBG Health Inpatient — Quote/Offer Integration",
+    }),
+    ("nbg-home", "PROD-13168", "[15045]", "NBG Home Property", {
+        "PROD-13782": "NBG Home Property — Policy Details",
     }),
     ("nbg-standing-order", "PROD-13287", "[15045]", "NBG Financial Services (Payments, Commissions)", {
         "PROD-13576": "NBG Standing Order — API Modifications",
@@ -127,6 +161,11 @@ INITIATIVES = [
         "PROD-13686": "CH PI-III — Technical Debts",
         "PROD-13304": "CH PI-III — Customer Profile Delete",
         "PROD-12484": "CH PI-II — Motor Insurance Certificate",
+        "PROD-12287": "CH — List Policy Integration",
+        "PROD-12805": "CH PI-II — Green Card",
+        "PROD-12957": "CH PI-II — Lookups for Data Lists",
+        "PROD-13308": "CH PI-III — Customer Bank Account Improvements",
+        "PROD-13508": "CH PI-III — Loyalty Promotion Codes",
     }),
     ("global-azd", "PROD-12339", "[18202]", "Global App AzD - Allianz Direct NL", {
         "PROD-12769": "AzD NL — Display All Policies",
@@ -134,11 +173,13 @@ INITIATIVES = [
         "PROD-12773": "AzD NL — Display Claims",
         "PROD-13502": "Global App AzD NL — Risk Address &amp; Actions",
         "PROD-13500": "Global App AzD NL — Available Actions",
+        "PROD-13501": "Global App AzD NL — Policy Documents",
     }),
     ("global-azp", "PROD-12514", "[18204]", "Global App - AUS Az Partners", {
         "PROD-13082": "Allyz AUS — Get Emergency Numbers",
         "PROD-13083": "Allyz AUS — Hospital Finder",
         "PROD-13079": "AzP — Lounge Zone Access (QR code)",
+        "PROD-13800": "AzP AUS — Login (tactical solution to unblock development)",
     }),
     ("agentmax-w1", "PROD-11333", "[15020]", "AgentMax Replacement — Wave 1 (DE, AT, CH)", {
         "PROD-11345": "AgentMax W1 — Project Setup",
@@ -206,11 +247,26 @@ INITIATIVES = [
         "": "Partner Onboarding — New Integrations",
         "PROD-12116": "Coverwise — Production Issues",
     }),
+    ("coverwise-travel", "PROD-13243", "[15051]", "CIL Coverwise Travel", {
+        "": "Coverwise Travel — General",
+    }),
+    ("santander-bugs", "PROD-12320", "[15005]", "CIL RUN Post Go-Live Incident Management (Santander)", {
+        "PROD-13068": "Santander — Production Defects and Bugs (Development 2026)",
+    }),
+    ("dkb", "PROD-13094", "[15xxx]", "DKB Bank Beneficiaries", {
+        "PROD-13822": "DKB — Partner Creation and Configuration",
+        "PROD-13894": "DKB — Enable Beneficiary Lifecycle Management (mock integration)",
+    }),
     ("netrisk",    "PROD-12355", "[15043]", "Netrisk - COI Retrival", {
         "": "Netrisk — Grafana",
+        "PROD-13655": "Netrisk — Analytics",
     }),
     ("bbva",       "PROD-13037", "[15036]", "[BBVA/SISU] Implementation of new business partner", {
         "": "BBVA — Grafana",
+    }),
+    ("bbva-rsa",   "PROD-12232", "[15036]", "BBVA RSA", {
+        "PROD-12717": "BBVA RSA — Expand Search Criteria",
+        "PROD-13658": "BBVA RSA — Analytics",
     }),
     ("globus-threat", "PROD-12332", "[18200]", "Global App - General work", {
         "PROD-13653": "Globus — Threat Model Remediation",
@@ -221,10 +277,15 @@ INITIATIVES = [
         "": "FlowForge — Tooling &amp; Infrastructure",
         "CIL-6148":   "[FlowForge] BA/PO Upstream Pipeline Epic",
         "PROD-13861": "FlowForge /flowforge.review — Replace Human Code Analysis Stage",
+        "PROD-13009": "AI Rollout — FlowForge",
+        "PROD-13116": "AI Rollout — Rollout: FlowForge to Integration Layer",
     }),
     ("bmw",        "PROD-13231", "[15037]", "BMW", {
         "PROD-13231": "BMW — Handle customer self-payment for service",
         "PROD-13233": "BMW — Handle empty ETA returned by RSA GET /geolocation",
+    }),
+    ("bmw-wave2",  "PROD-12835", "[15037]", "BMW RSA — Wave 2 (Street Operations in DE)", {
+        "PROD-13618": "BMW — Adjustments to CreateCase endpoint",
     }),
     ("clara-eha-widget", "PROD-12960", "[15832]", "Clara Emergency Home Assistance", {
         "PROD-12963": "EHA Widget — Create Case",
@@ -235,6 +296,14 @@ INITIATIVES = [
     ("global-aal", "PROD-12340", "[18203]", "Global App Australia (AAL)", {
         "PROD-13791": "GlobaApp AAL OE — General Time Tracking",
         "PROD-13701": "AAL — PI 3 Planning",
+        "PROD-12729": "AAL — Personal Profile: Update Address (Mock data)",
+        "PROD-13326": "AAL — Notifications (Transactional)",
+        "PROD-13541": "AAL — My Policies: Dashboard incl. Active Policies (Mock data)",
+        "PROD-13595": "AAL — Policy Details: List All Policy Details (Mock data)",
+        "PROD-13597": "AAL — Policy Details: List All Policy Details (end-to-end)",
+        "PROD-13598": "AAL — Personal Profile Info (Mock data)",
+        "PROD-13600": "AAL — Personal Profile Info (end-to-end)",
+        "PROD-13602": "AAL — Login (tactical solution to unblock development)",
     }),
     ("rrb",        "PROD-12919", "[15047]", "AU Regional Banks (RRB)", {
         "PROD-13809": "RRB — CIL Partner Integration",
@@ -242,6 +311,7 @@ INITIATIVES = [
     ("hood",       "PROD-12918", "[15048]", "Hood Group", {
         "PROD-13238": "Hood Group — FlowForge Integration",
         "": "Hood Group — General",
+        "PROD-13909": "Hood Group — Travel Insurance Integration (Virgin, Sainsbury's, RAC)",
     }),
     ("cil-general","PROD-10026", "[15015]", "CIL General — Non-Billable", {
         "PROD-12925": "CIL API Versioning",
