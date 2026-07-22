@@ -701,9 +701,12 @@ def fill_template(all_tickets):
         else:
             unrouted.append(t)
     if unrouted:
-        print(f"  ⚠ {len(unrouted)} tickets not routed to any initiative:", file=sys.stderr)
-        for t in unrouted[:10]:
-            print(f"    {t['key']} parent={t['parent']}", file=sys.stderr)
+        # Group by parent for a compact summary
+        from collections import Counter
+        parent_counts = Counter(t['parent'] for t in unrouted)
+        print(f"  ⚠ {len(unrouted)} tickets not routed to any initiative ({len(parent_counts)} unique parent epics):", file=sys.stderr)
+        for parent, count in sorted(parent_counts.items()):
+            print(f"    UNROUTED_PARENT: {parent} ({count} tickets)", file=sys.stderr)
 
     # ── Build initiatives slot ────────────────────────────────────────────────
     init_blocks = []
