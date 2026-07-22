@@ -507,7 +507,7 @@ def build_initiative_body(slug, tickets_by_epic):
     prod_key = INIT_PROD[slug]
     parts = []
 
-    # Render all configured epic groups in order (even empty — baseline shows them).
+    # Only render epic groups that have tickets — empty groups are hidden.
     # An empty-string key "" in the config means: no eg-key displayed, tickets come
     # from the initiative's prod_key directly.
     seen_epics = set(k for k in epics.keys() if k)
@@ -518,7 +518,8 @@ def build_initiative_body(slug, tickets_by_epic):
             ts = tickets_by_epic.get(prod_key, [])
         else:
             ts = tickets_by_epic.get(epic_key, [])
-        parts.append(build_epic_group(epic_key, title, ts))
+        if ts:
+            parts.append(build_epic_group(epic_key, title, ts))
 
     # Tickets parented directly to the initiative PROD key, but only if no explicit
     # "" placeholder was configured for them already
