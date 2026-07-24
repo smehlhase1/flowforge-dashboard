@@ -279,6 +279,7 @@ INITIATIVES = [
         "PROD-13861": "FlowForge /flowforge.review — Replace Human Code Analysis Stage",
         "PROD-13009": "AI Rollout — FlowForge",
         "PROD-13116": "AI Rollout — Rollout: FlowForge to Integration Layer",
+        "PROD-13946": "FlowForge /flowforge.integration &amp; /flowforge.integration.status",
     }),
     ("bmw",        "PROD-13231", "[15037]", "BMW", {
         "PROD-13231": "BMW — Handle customer self-payment for service",
