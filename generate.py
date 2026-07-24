@@ -385,8 +385,8 @@ def _done_date_from_changelog(issue):
 
 def fetch_all_flowforge_tickets():
     """Return list of dicts with fields we care about."""
-    # CIL board only — PROD-* tickets are excluded intentionally
-    jql = 'project = CIL AND labels = "FlowForge" ORDER BY created ASC'
+    # CIL and AGB boards — PROD-* tickets are excluded intentionally
+    jql = 'project in (CIL, AGB) AND labels = "FlowForge" ORDER BY created ASC'
     fields = f"summary,status,assignee,reporter,parent,created,{AI_COST_FIELD},resolutiondate,labels"
     raw = jira_search(jql, fields, expand=["changelog"])
     tickets = []
