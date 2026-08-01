@@ -324,7 +324,7 @@
     <p class="eyebrow">Claude Code · spec-driven development</p>
     <h1>Flow<span class="g">Forge</span></h1>
     <p class="sub">A structured pipeline inside Claude Code that covers the <strong style="color:var(--text)">full feature lifecycle</strong> — from problem framing to a reviewed, CI-delivered PR. The BA upstream pipeline (CIL-6148) handles discovery through PRD; the dev pipeline drives code generation; the new IIE review stage (PROD-13861) replaces manual pre-analysis with an evidence-driven gate.</p>
-    <p class="datestamp">Updated 17 Jul 2026 · v1.1.1 live · CIL-6148 &amp; PROD-13861 in development</p>
+    <p class="datestamp">Updated 31 Jul 2026 · v1.1.1 live · CIL-6148 scoped (13 tasks, CIL-6171 in code review) &amp; PROD-13861 in development</p>
   </header>
 
   <!-- ============ LIFECYCLE OVERVIEW BAR ============ -->
@@ -368,7 +368,7 @@
       <div class="lc-group-label">BA Pipeline · CIL-6148</div>
       <div class="lc-icon">📄</div>
       <div class="lc-cmd c-ba">.prd</div>
-      <div class="lc-desc">13-section living PRD → Confluence</div>
+      <div class="lc-desc">14-section living PRD → Confluence</div>
       <span class="lc-badge planned">Planned</span>
       <div class="lc-arr">→</div>
     </div>
@@ -421,17 +421,17 @@
       <div class="grid3">
         <!-- .start patch -->
         <div class="card pcard future">
-          <div class="sbadge planned">CIL-6171 · T001</div>
-          <div class="tno">Step 00 — pre-flight patch</div>
+          <div class="sbadge indev">CIL-6171 · US-001 · in code review</div>
+          <div class="tno">Step 00 — git pre-flight</div>
           <div class="cmd"><span class="slash future-slash">/flowforge.</span>start</div>
-          <p class="pdesc">Existing command patched to initialize <code style="font-family:'JetBrains Mono',monospace">status.json</code> on first run if missing. All existing pre-flight checks (git repo, stale master, open branch dependency) unchanged.</p>
-          <div class="meta"><span class="owner ba">BA / Dev</span><span class="pinfo future">→ status.json</span></div>
-          <p class="agents">Required by /ff.discover and all downstream BA commands. <b>No new agents.</b> Change is additive — if status.json already exists, guard is a no-op.</p>
+          <p class="pdesc">Eliminates the git barrier for non-technical BAs: <b>auto-pulls latest master</b>, <b>guards against the unmerged-branch dependency trap</b> (lists open branches, requires confirmation), creates the branch from a clean HEAD, and records <code style="font-family:'JetBrains Mono',monospace">start_confirmed</code> in status.json.</p>
+          <div class="meta"><span class="owner ba">BA / Dev</span><span class="pinfo future">→ clean branch · status.json</span></div>
+          <p class="agents">Required by /flowforge.discover and all downstream BA commands. <b>No new agents.</b> The one BA-pipeline task already in code review.</p>
         </div>
 
         <!-- .discover -->
         <div class="card pcard future">
-          <div class="sbadge planned">CIL-6172–6174 · T002–T004</div>
+          <div class="sbadge planned">CIL-6851 · US-002</div>
           <div class="tno">Step BA-01 — 3 phases · 10 agents</div>
           <div class="cmd"><span class="slash future-slash">/flowforge.</span>discover</div>
           <p class="pdesc">Single command that runs problem framing, landscape research, and solution ideation in sequence. Produces three artifacts before any spec is written.</p>
@@ -443,42 +443,42 @@
 
         <!-- .require enhanced -->
         <div class="card pcard future">
-          <div class="sbadge planned">CIL-6175–6176 · T005–T006</div>
-          <div class="tno">Step BA-02 — 5 phases · 8 agents</div>
+          <div class="sbadge planned">CIL-6852/53/54/55/58/59 · US-003–010</div>
+          <div class="tno">Step BA-02 — 5 phases · 8-agent panel</div>
           <div class="cmd"><span class="slash future-slash">/flowforge.</span>require <span class="arg">(enhanced)</span></div>
-          <p class="pdesc">Existing 3 post-capture agents continue unchanged. 5 new specialists added (Phase 3). Phase 4: Decomposition Assessor slices the spec into stories. Phase 5: Agenda Builder produces a copy-paste refinement agenda and creates Jira tickets.</p>
-          <div class="meta"><span class="owner future">BA</span><span class="pinfo future">8 agents total</span><span class="pinfo future">→ 1-spec.md · 0-split-map.md · Jira tickets</span></div>
-          <p class="agents"><b>New in Phase 3</b>: Completeness Auditor · Edge Case Hunter · Ambiguity Detector · GDPR Probe · Scope Guard<br>
-          <b>Phase 4</b>: Story Slicer · MVP Identifier · Dependency Mapper<br>
-          <b>Phase 5</b>: Agenda Builder (refinement agenda embedded in Jira tickets)</p>
+          <p class="pdesc">Existing 3 post-capture agents continue unchanged. 5 new specialists join the Phase 2 review panel (8 total). Phase 4: Decomposition Assessor evaluates 4 criteria and, when warranted, creates a PROD epic + CIL tasks. Phase 5: Agenda Builder produces the refinement agenda. Phase 3 also creates <code style="font-family:'JetBrains Mono',monospace">0-eval.json</code>.</p>
+          <div class="meta"><span class="owner future">BA</span><span class="pinfo future">8-agent panel</span><span class="pinfo future">→ 1-spec.md · 0-split-map.json · 0-eval.json · Jira tickets</span></div>
+          <p class="agents"><b>New review specialists</b>: Completeness Auditor · Edge Case Hunter · Ambiguity Detector · GDPR Probe · Scope Guard <span style="color:var(--muted-2)">(CIL-6854)</span><br>
+          <b>Phase 4</b>: Decomposition Assessor — 4 criteria → PROD epic + CIL tasks + <code style="font-family:'JetBrains Mono',monospace">0-split-map.json</code> + <code style="font-family:'JetBrains Mono',monospace">qaAuto.tasks[]</code> seed <span style="color:var(--muted-2)">(CIL-6855)</span><br>
+          <b>Phase 5</b>: Agenda Builder → <code style="font-family:'JetBrains Mono',monospace">0-refine-agenda.md</code> <span style="color:var(--muted-2)">(CIL-6859)</span> · Gap Reviewer overhaul (CIL-6852) · qa-author DRAFT (CIL-6858)</p>
         </div>
       </div>
 
       <div class="grid2" style="margin-top:14px;">
         <!-- .refine -->
         <div class="card pcard future">
-          <div class="sbadge planned">CIL-6177 · T007</div>
+          <div class="sbadge planned">CIL-6856 · US-007</div>
           <div class="tno">Step BA-03 — live facilitation</div>
           <div class="cmd"><span class="slash future-slash">/flowforge.</span>refine</div>
-          <p class="pdesc">Live meeting facilitation only — loads the pre-built agenda from /ff.require, runs a guided item-by-item decision loop, and syncs accepted changes back to the spec and Jira with Jira hierarchy enforcement (theme → initiative → epic → task). <code style="font-family:'JetBrains Mono',monospace">/ff.prd</code> auto-triggers as the final step.</p>
+          <p class="pdesc">Live meeting facilitation only — loads the pre-built agenda from /flowforge.require, runs a guided item-by-item decision loop, and syncs accepted changes back to the spec and Jira with Jira hierarchy enforcement (theme → initiative → epic → task). <code style="font-family:'JetBrains Mono',monospace">/flowforge.prd</code> auto-triggers as the final step.</p>
           <div class="meta"><span class="owner future">BA</span><span class="pinfo future">3 agents</span><span class="pinfo future">→ spec update · Jira sync</span></div>
           <p class="agents">Agents · <b>Agenda Loader</b> (reads Phase 5 artifact) · <b>Spec Editor</b> (applies confirmed scope changes) · <b>Jira Sync</b> (user-confirmed writes, hierarchy enforced)</p>
         </div>
 
         <!-- .prd -->
         <div class="card pcard future">
-          <div class="sbadge planned">CIL-6178 · T008</div>
+          <div class="sbadge planned">CIL-6857 · US-008 <span style="opacity:.7">· hooks CIL-7105</span></div>
           <div class="tno">Step BA-04 — living PRD</div>
           <div class="cmd"><span class="slash future-slash">/flowforge.</span>prd</div>
-          <p class="pdesc">Assembles all upstream outputs into a 13-section stakeholder PRD in non-technical language and publishes to Confluence. Auto-updates whenever any engineering phase modifies <code style="font-family:'JetBrains Mono',monospace">1-spec.md</code> — the PRD stays live throughout the full pipeline.</p>
-          <div class="meta"><span class="owner future">BA</span><span class="pinfo future">2 agents</span><span class="pinfo future">→ Confluence page</span></div>
-          <p class="agents">Agents · <b>Document Assembler</b> (compiles all upstream files, notes any skipped steps) · <b>Confluence Publisher</b> (creates/updates page, returns URL)<br>Auto-triggers from /ff.refine and auto-updates on spec changes through to /ff.verify.</p>
+          <p class="pdesc">Reads <code style="font-family:'JetBrains Mono',monospace">0-eval.json</code> (single source of truth), writes <code style="font-family:'JetBrains Mono',monospace">0-prd.md</code>, then publishes a 14-section stakeholder PRD to <b>one</b> Confluence page as ADF — version-drift-checked so out-of-band edits are never clobbered — and attaches <code style="font-family:'JetBrains Mono',monospace">eval.json</code> for cross-feature discovery.</p>
+          <div class="meta"><span class="owner future">BA</span><span class="pinfo future">2 agents</span><span class="pinfo future">→ Confluence page · eval.json</span></div>
+          <p class="agents">Agents · <b>Document Assembler</b> (compiles from the eval, notes any skipped steps) · <b>Confluence Publisher</b> (drift check → ADF overwrite → eval.json attach)<br>Auto-publishes <b>non-blocking</b> at /flowforge.refine, .build, .verify, and .review boundaries when <code style="font-family:'JetBrains Mono',monospace">prd.enabled</code> (hooks: CIL-7105).</p>
         </div>
       </div>
 
       <div class="callout future-cta" style="margin-top:14px;">
         <span class="lbl">Traceability from first thought to CI delivery</span>
-        <p>Once CIL-6148 ships: <b>0-discovery.md → 0-research.md → 0-options.md → 1-spec.md → 0-split-map.md → 2-plan.md → code → CI</b>. The acceptance criteria a BA captures in /ff.discover are the same criteria /ff.verify checks. Jira hierarchy is enforced throughout (theme → initiative → epic → task). The BA stays in charge — agents draft, humans confirm all writes.</p>
+        <p>Once CIL-6148 ships: <b>0-discovery.md → 0-research.md → 0-options.md → 1-spec.md → 0-split-map.json → 0-eval.json → 2-plan.md → code → CI</b>. The acceptance criteria a BA captures in /flowforge.discover are the same criteria /flowforge.verify checks. Jira hierarchy is enforced throughout (theme → initiative → epic → task). The BA stays in charge — agents draft, humans confirm all writes.</p>
       </div>
 
     </div>
@@ -613,7 +613,7 @@
   </div>
 
   <!-- ============================================================
-       PHASE 3 — /ff.review — IIE PIPELINE (PROD-13861)
+       PHASE 3 — /flowforge.review — IIE PIPELINE (PROD-13861)
        ============================================================ -->
   <div class="phase-block">
     <div class="phase-header ph-rev">
@@ -693,7 +693,7 @@
           <div class="task-id">CIL-6412 · T4</div>
           <div class="task-title">Policy Routing Engine &amp; Controlled Fix Loop</div>
           <div class="task-desc">Maps each IIE finding to exactly one action via a severity-by-confidence table. Writes the authoritative verdict independently of the IIE's advisory proposal. Drives fix loop up to its 2-cycle limit.</div>
-          <div class="task-acs"><b>Key ACs:</b> Architecture/compliance/scope → escalate regardless of severity · auto-fix sends structured JSON to /ff.fix (not full IIE output) · medium auto-fix flagged requires_human_confirmation</div>
+          <div class="task-acs"><b>Key ACs:</b> Architecture/compliance/scope → escalate regardless of severity · auto-fix sends structured JSON to /flowforge.fix (not full IIE output) · medium auto-fix flagged requires_human_confirmation</div>
           <span class="task-status">In Progress</span>
         </div>
 
@@ -749,7 +749,7 @@
 
   <!-- ============ TRACEABILITY CHAIN ============ -->
   <h2>Full traceability chain</h2>
-  <p class="h2note">One thread ties every artifact together — the acceptance criteria captured in <code style="font-family:'JetBrains Mono',monospace;color:var(--ba)">/ff.discover</code> are the same criteria <code style="font-family:'JetBrains Mono',monospace;color:var(--review)">/ff.review</code> verifies in the IIE gate.</p>
+  <p class="h2note">One thread ties every artifact together — the acceptance criteria captured in <code style="font-family:'JetBrains Mono',monospace;color:var(--ba)">/flowforge.discover</code> are the same criteria <code style="font-family:'JetBrains Mono',monospace;color:var(--review)">/flowforge.review</code> verifies in the IIE gate.</p>
 
   <div class="chain">
     <div class="link">
@@ -790,7 +790,7 @@
 
   <!-- ============ THE FOUR LANES ============ -->
   <h2>The four lanes</h2>
-  <p class="h2note"><b style="color:var(--text)">Express and Fast go through JIRA automation; Standard and Heavy follow the normal process.</b> The split is about how obvious the design is — not how big the change feels. /ff.review runs in all four lanes.</p>
+  <p class="h2note"><b style="color:var(--text)">Express and Fast go through JIRA automation; Standard and Heavy follow the normal process.</b> The split is about how obvious the design is — not how big the change feels. /flowforge.review runs in all four lanes.</p>
 
   <div class="grid4">
     <div class="card lane" style="--c:var(--express)">
@@ -839,7 +839,7 @@
 
   <!-- ============ MATRIX ============ -->
   <h2>What runs in each lane</h2>
-  <p class="h2note">The shared pipeline, dialled per lane. Automated lanes lean on JIRA + agents with one human sign-off; normal-process lanes add review and approval gates. <b style="color:var(--text)">/ff.review IIE gate runs in every lane.</b></p>
+  <p class="h2note">The shared pipeline, dialled per lane. Automated lanes lean on JIRA + agents with one human sign-off; normal-process lanes add review and approval gates. <b style="color:var(--text)">/flowforge.review IIE gate runs in every lane.</b></p>
 
   <div class="mscroll">
     <table class="matrix">
@@ -1037,24 +1037,24 @@
       <div><div class="status-cmd">/flowforge.investigate · replay · status · init</div><div class="status-lbl">Live · supporting utilities</div></div>
     </div>
     <div class="status-item">
-      <div class="status-dot planned"></div>
-      <div><div class="status-cmd">/flowforge.start (patch)</div><div class="status-lbl">CIL-6171 · T001 · status.json init guard</div></div>
+      <div class="status-dot indev"></div>
+      <div><div class="status-cmd">/flowforge.start</div><div class="status-lbl">CIL-6171 · US-001 · git pre-flight · in code review</div></div>
     </div>
     <div class="status-item">
       <div class="status-dot planned"></div>
-      <div><div class="status-cmd">/flowforge.discover</div><div class="status-lbl">CIL-6172–6174 · T002–T004 · 3 phases, 10 agents</div></div>
+      <div><div class="status-cmd">/flowforge.discover</div><div class="status-lbl">CIL-6851 · US-002 · 3 phases, 10 agents</div></div>
     </div>
     <div class="status-item">
       <div class="status-dot planned"></div>
-      <div><div class="status-cmd">/flowforge.require (enhanced)</div><div class="status-lbl">CIL-6175–6176 · T005–T006 · 8 agents total</div></div>
+      <div><div class="status-cmd">/flowforge.require (enhanced)</div><div class="status-lbl">CIL-6852–6859 · US-003–010 · 8-agent panel + decomposition</div></div>
     </div>
     <div class="status-item">
       <div class="status-dot planned"></div>
-      <div><div class="status-cmd">/flowforge.refine</div><div class="status-lbl">CIL-6177 · T007 · live meeting facilitation</div></div>
+      <div><div class="status-cmd">/flowforge.refine</div><div class="status-lbl">CIL-6856 · US-007 · live meeting facilitation</div></div>
     </div>
     <div class="status-item">
       <div class="status-dot planned"></div>
-      <div><div class="status-cmd">/flowforge.prd</div><div class="status-lbl">CIL-6178 · T008 · 13-section living PRD → Confluence</div></div>
+      <div><div class="status-cmd">/flowforge.prd</div><div class="status-lbl">CIL-6857 · US-008 · 14-section living PRD → Confluence</div></div>
     </div>
     <div class="status-item" style="grid-column:span 1;">
       <div class="status-dot planned" style="background:var(--future-ba);"></div>
@@ -1065,7 +1065,7 @@
   <footer>
     <strong style="color:var(--muted)">Live (v1.1.1):</strong> <code>start → require → lane → plan → analyze → build → verify → fix → review (advisory)</code> · shortcuts: <code>express · fast</code> · QA: <code>qa.manual · qa.automation · qa.scenarios-from-history</code> · utilities: <code>investigate · replay · status · init</code><br><br>
     <strong style="color:var(--muted)">In Development (PROD-13861):</strong> <code>/flowforge.review</code> extended to a gated IIE pipeline — 9 tasks (Orchestrator, Pre-review Hooks, IIE Agent, Policy Routing, Artifact Structure, Author Action Plan, Adjudicator, AC Traceability Gate, Metrics). Replaces solo human pre-analysis; peer code review unchanged. Gate: PASS requires zero critical, zero undismissed high, 100% AC traceability — simultaneously.<br><br>
-    <strong style="color:var(--muted)">Planned (CIL-6148):</strong> <code>start (patch) → discover (3 phases, 10 agents) → require (enhanced, 8 agents) → refine (live facilitation) → prd (13-section, Confluence)</code> · 5 commands, 15+ upstream agents · target: −45% BA time per feature, −33% total cycle time · Jira hierarchy enforced throughout (theme → initiative → epic → task) · /ff.prd auto-updates on any engineering phase that modifies the spec.<br><br>
+    <strong style="color:var(--muted)">Scoped — CIL-6148 (In Progress):</strong> <code>start → discover (3 phases, 10 agents) → require (enhanced, 8-agent panel) → refine (live facilitation) → prd (14-section, Confluence)</code> · decomposed into <b>13 engineering tasks</b>: <code>CIL-7103 foundation · CIL-6851–6860 (US-002–011) · CIL-7104 dev-eval-writes · CIL-7105 PRD-hooks</code>, plus <code>CIL-6171</code> (/flowforge.start, in code review) · target: −45% BA time per feature, −33% total cycle time · <code>0-eval.json</code> is the single source of truth; <code>/flowforge.prd</code> publishes 14 ADF sections to one Confluence page (drift-checked) + attaches <code>eval.json</code> for cross-feature discovery; auto-publishes non-blocking at refine/build/verify/review when <code>prd.enabled</code> · Jira hierarchy enforced (initiative → epic → task).<br><br>
     Lanes: <code>Express · Fast · Standard · Heavy</code> — Express &amp; Fast: automated JIRA → draft PR (~20 min); Standard &amp; Heavy: normal process; Heavy: classification only. The engineer is always in charge — nothing merges without human review.
   </footer>
 
