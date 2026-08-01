@@ -50,6 +50,7 @@ DASHBOARD_FILE = os.path.join(os.path.dirname(__file__), "index.html")
 # Epic titles are hardcoded here — never fetched from Jira — so the design never drifts.
 INITIATIVES = [
     ("fox-uk",  "PROD-11100", "[15011]", "Fox UK (Day 1)", {
+        "PROD-12626": "Fox UK — [FR-22] Marketing Consent",
         "PROD-12307": "Fox UK — UAT Wave 1",
         "PROD-12353": "Fox UK — [FR-8] Save and Retrieve Quote",
         "PROD-13072": "Fox UK — [FR-13] Migration / Bugs &amp; Fixes",
@@ -90,6 +91,11 @@ INITIATIVES = [
         "PROD-13225": "MDDR Open Policies — eAPI Integration: MDDR Device Fields",
     }),
     ("nbg",     "PROD-13185", "[15045]", "NBG Motor", {
+        "PROD-14005": "NBG Motor — Look-up: E2E Integration",
+        "PROD-14006": "NBG Motor — Quote &amp; Buy: E2E Integration",
+        "PROD-14008": "NBG Motor — Issuance &amp; Payments: E2E Integration",
+        "PROD-14010": "NBG Motor — STP Amendment: E2E Integration",
+        "PROD-14013": "NBG Motor — Employee Discount: E2E Integration",
         "PROD-13244": "NBG Motor — API Modifications",
         "PROD-13170": "NBG Property — API Draft",
         "PROD-13171": "NBG Property — Quote/Offer Integration",
@@ -104,10 +110,13 @@ INITIATIVES = [
         "PROD-13399": "NBG Motor — Lookups Integration",
     }),
     ("nbg-sr", "PROD-13146", "[15045]", "NBG Service Request", {
+        "PROD-14022": "NBG SR — Motor Service Requests API (Sandbox)",
         "PROD-13148": "NBG SR — API Draft",
         "PROD-13151": "NBG SR — Mock Enabled Endpoints",
     }),
     ("nbg-ul", "PROD-13264", "[15045]", "NBG Unit Linked Single", {
+        "PROD-14028": "NBG UL Single — Quote &amp; Buy: E2E Integration",
+        "PROD-14030": "NBG UL Single — Look-up: E2E Integration",
         "PROD-13284": "NBG UL Single — Offer/Quote Integration",
         "PROD-13414": "NBG UL Single — Issuance Integration (Payments with RF)",
         "PROD-13689": "NBG UL Single — Get Policy Details Integration",
@@ -150,6 +159,9 @@ INITIATIVES = [
         "PROD-13491": "Travel Claims — Unified Claims View Single CIL Entry Point",
     }),
     ("global-ch",  "PROD-12331", "[18201]", "Global App CH Switzerland", {
+        "PROD-12471": "CH PI-III — Notifications",
+        "PROD-12819": "CH PI-III — Multiple Customer Numbers",
+        "AUT-3000":   "CH — Global App CH (MOCK-ENABLED)",
         "PROD-12480": "CH — Person Details 2",
         "PROD-12481": "CH PI-III — Mailbox-List",
         "PROD-12482": "CH PI-III — Mailbox-Item",
@@ -176,6 +188,7 @@ INITIATIVES = [
         "PROD-13501": "Global App AzD NL — Policy Documents",
     }),
     ("global-azp", "PROD-12514", "[18204]", "Global App - AUS Az Partners", {
+        "PROD-13084": "AzP AUS — Health: Need a Doctor? (web view)",
         "PROD-13082": "Allyz AUS — Get Emergency Numbers",
         "PROD-13083": "Allyz AUS — Hospital Finder",
         "PROD-13079": "AzP — Lounge Zone Access (QR code)",
@@ -242,6 +255,7 @@ INITIATIVES = [
     }),
     ("allyz-ca",   "PROD-13100", "[60999]", "Allyz Canada", {
         "PROD-13269": "Allyz CA — GetPolicy &amp; Setup",
+        "PROD-13270": "Allyz CA — CU API: Get Policy Documents",
     }),
     ("coverwise",  "PROD-12115", "[15005 · 15019]", "Coverwise - post go live", {
         "": "Partner Onboarding — New Integrations",
@@ -249,6 +263,7 @@ INITIATIVES = [
     }),
     ("coverwise-travel", "PROD-13243", "[15051]", "CIL Coverwise Travel", {
         "": "Coverwise Travel — General",
+        "CIL-6520": "Coverwise — Travel Insurance Integration",
     }),
     ("santander-bugs", "PROD-12320", "[15005]", "CIL RUN Post Go-Live Incident Management (Santander)", {
         "PROD-13068": "Santander — Production Defects and Bugs (Development 2026)",
@@ -269,6 +284,7 @@ INITIATIVES = [
         "PROD-13658": "BBVA RSA — Analytics",
     }),
     ("globus-threat", "PROD-12332", "[18200]", "Global App - General work", {
+        "PROD-13397": "Global App — Notification Centre (CIL Kafka setup)",
         "PROD-13653": "Globus — Threat Model Remediation",
         "PROD-12978": "Global App — Login Beta+",
         "PROD-12923": "Global App — Virtual OE",
@@ -287,6 +303,7 @@ INITIATIVES = [
     }),
     ("bmw-wave2",  "PROD-12835", "[15037]", "BMW RSA — Wave 2 (Street Operations in DE)", {
         "PROD-13618": "BMW — Adjustments to CreateCase endpoint",
+        "PROD-13230": "BMW — Prolongation of Hotel &amp; Replacement Vehicle Services",
     }),
     ("clara-eha-widget", "PROD-12960", "[15832]", "Clara Emergency Home Assistance", {
         "PROD-12963": "EHA Widget — Create Case",
@@ -295,6 +312,8 @@ INITIATIVES = [
         "PROD-11516": "JLR Wallbox — Internal E2E Testing",
     }),
     ("global-aal", "PROD-12340", "[18203]", "Global App Australia (AAL)", {
+        "PROD-13620": "AAL — Login mock (CIL/Mobile BFF bridge)",
+        "PROD-13669": "AAL — Service Structure (basic setup)",
         "PROD-13791": "GlobaApp AAL OE — General Time Tracking",
         "PROD-13701": "AAL — PI 3 Planning",
         "PROD-12729": "AAL — Personal Profile: Update Address (Mock data)",
@@ -313,6 +332,27 @@ INITIATIVES = [
         "PROD-13238": "Hood Group — FlowForge Integration",
         "": "Hood Group — General",
         "PROD-13909": "Hood Group — Travel Insurance Integration (Virgin, Sainsbury's, RAC)",
+    }),
+    ("westpac-gen", "PROD-11098", "[15017]", "AzP Australia — Westpac (General)", {
+        "PROD-11226": "Westpac — [General] Authentication &amp; Beneficiary Import",
+    }),
+    ("fox-agent", "PROD-12346", "[15038]", "FOX UK Agent Flow", {
+        "PROD-12376": "FOX Agent Flow — Sales: Quote &amp; Buy",
+    }),
+    ("bluebird-hoa", "PROD-12872", "[15050]", "Bluebird HOA", {
+        "PROD-11266": "Bluebird — HOA Address Range Handling for Property",
+    }),
+    ("travel-bene-w2", "PROD-13215", "[15041]", "Travel Beneficiary Modification — Wave 2", {
+        "PROD-13928": "Top Viaggi Wave 2 — Beneficiary Creation, Modification &amp; Cancellation",
+    }),
+    ("nbg-life", "PROD-13296", "[15045]", "NBG Life Standalone", {
+        "PROD-13440": "NBG Life Standalone — Quote &amp; Buy (Sandbox)",
+        "PROD-13442": "NBG Life Standalone — Issuance &amp; Payments (Sandbox)",
+        "PROD-13443": "NBG Life Standalone — Apply for Policy Integration",
+        "PROD-13944": "NBG Life Standalone — Integration Set Up",
+    }),
+    ("nbg-ul-regular", "PROD-13299", "[15045]", "NBG Unit Linked Regular", {
+        "PROD-14049": "NBG UL Regular — Kafka Events: GR Event Push (E2E)",
     }),
     ("cil-general","PROD-10026", "[15015]", "CIL General — Non-Billable", {
         "PROD-12925": "CIL API Versioning",
