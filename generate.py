@@ -347,9 +347,20 @@ INITIATIVES = [
     }),
     ("nbg-life", "PROD-13296", "[15045]", "NBG Life Standalone", {
         "PROD-13440": "NBG Life Standalone — Quote &amp; Buy (Sandbox)",
+        "PROD-13441": "NBG Life Standalone — Documents (Sandbox)",
         "PROD-13442": "NBG Life Standalone — Issuance &amp; Payments (Sandbox)",
         "PROD-13443": "NBG Life Standalone — Apply for Policy Integration",
         "PROD-13944": "NBG Life Standalone — Integration Set Up",
+    }),
+    ("nbg-life-mortgage", "PROD-13295", "[15045]", "NBG Life Mortgage", {
+        "PROD-13447": "NBG Life Mortgage — Quote &amp; Buy (Sandbox)",
+        "PROD-13448": "NBG Life Mortgage — Documents (Sandbox)",
+        "PROD-13449": "NBG Life Mortgage — Issuance &amp; Payments (Sandbox)",
+        "PROD-13450": "NBG Life Mortgage — Apply for Policy Integration",
+        "PROD-14087": "NBG Life Mortgage — Get Policy Details (Sandbox)",
+    }),
+    ("nbg-cyber", "PROD-13289", "[15045]", "NBG Cyber", {
+        "PROD-13986": "NBG Cyber — Integration Set Up",
     }),
     ("nbg-ul-regular", "PROD-13299", "[15045]", "NBG Unit Linked Regular", {
         "PROD-14049": "NBG UL Regular — Kafka Events: GR Event Push (E2E)",
